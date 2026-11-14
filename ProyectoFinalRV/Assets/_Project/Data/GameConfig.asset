@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6089ceb98a777734095eb71c59fe4adc, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: Assembly-CSharp::QCXR.GameConfigSO
+  sessionDuration: 180
+  maxStrikes: 5
+  beltSpeedByDifficulty:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.18
+      inSlope: 0
+      outSlope: 0.22
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0.4
+      inSlope: 0.22
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  productTimeByDifficulty:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 28
+      inSlope: 0
+      outSlope: -13
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 15
+      inSlope: -13
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spawnDelayAfterResolve: 1.2
+  defectChance: 0.7
+  maxDefectsPerProduct: 2
+  perfectPlaced: 100
+  repairedPlaced: 150
+  discardedCorrect: 120
+  reportCorrectBonus: 50
+  reportWrongPenalty: -10
+  wrongSocket: -50
+  placedDefective: -75
+  discardedWasteful: -40
+  timedOut: -30
+  comboStep: 0.25
+  maxComboMultiplier: 2.5
+  gradeS: 0.9
+  gradeA: 0.75
+  gradeB: 0.5
+  firstEventDelay: 25
+  eventInterval: {x: 18, y: 32}

@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 
 namespace QCXR
 {
@@ -185,13 +188,15 @@ namespace QCXR
         }
     }
 
-    /// ÚNICO lugar que toca la API de vibración (XRI 2.x). Con XRI 3.x solo cambias esto.
+    /// ÚNICO lugar que toca la API de vibración (XRI 3.x): busca el HapticImpulsePlayer
+    /// del controlador (viene en los prefabs de Starter Assets) y le manda el pulso.
     public static class HapticUtility
     {
         public static void Send(IXRInteractor interactor, float amplitude, float duration)
         {
-            if (interactor is XRBaseControllerInteractor ci && ci.xrController != null)
-                ci.xrController.SendHapticImpulse(amplitude, duration);
+            if (interactor == null || interactor.transform == null) return;
+            var player = interactor.transform.GetComponentInParent<HapticImpulsePlayer>();
+            if (player != null) player.SendHapticImpulse(amplitude, duration);
         }
     }
 }

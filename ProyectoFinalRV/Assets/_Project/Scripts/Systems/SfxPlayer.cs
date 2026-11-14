@@ -19,7 +19,7 @@ namespace QCXR
 
         readonly Dictionary<SfxId, Entry> map = new Dictionary<SfxId, Entry>();
 
-        void Awake() { foreach (var e in entries) map[e.id] = e; }
+        void Awake() { if (entries == null) return; foreach (var e in entries) map[e.id] = e; }
         void OnEnable()  => GameEvents.SfxRequested += Play;
         void OnDisable() => GameEvents.SfxRequested -= Play;
 

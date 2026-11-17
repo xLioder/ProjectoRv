@@ -122,7 +122,7 @@ Rama de trabajo: `art/visual-pass` (creada desde `origin/petro`). Sin push: los 
 
 ---
 
-## Fase 5 · Animaciones y VFX — completada
+## Fase 5 · Animaciones y VFX — completada (commit 47d25d9)
 
 ### Decisiones tomadas (con autonomía delegada)
 - **Animación "al activarse"** para todo lo que los scripts ya encienden/apagan: el clip es el estado por defecto
@@ -150,3 +150,22 @@ Rama de trabajo: `art/visual-pass` (creada desde `origin/petro`). Sin push: los 
 - Ajuste tras revisión: el humo del circuito era casi invisible → más opaco, más grande y más denso (se aplica en la
   siguiente regeneración).
 - Incidencia: `GetComponent<T>() ?? AddComponent<T>()` falla en Unity (nulo falso) → cambiado a comprobación explícita.
+
+---
+
+## Fase 6 · Prefabs y escena final — completada
+
+### Decisiones tomadas (con autonomía delegada)
+- **Manos**: hijas de `Left/Right Controller` del XR Origin existente (no se sustituye nada); modelo del mando de
+  Starter Assets desactivado; el driver escucha Near-Far + Poke (teletransporte excluido para que no cambie la pose).
+- **Jerarquía del brief** aplicada moviendo/renombrando objetos (sin recrearlos): GameManager · Environment ·
+  Factory · Products · Tools · XR Origin · UI · Effects. Verificado que ningún script de juego busca por nombre.
+- **Productos de referencia** en sus estantes, desactivados y EditorOnly (activos, el socket los puntuaría).
+- **Build Settings**: `QCXR_MainScene` primera; `SampleScene` se mantiene detrás (único cambio en ProjectSettings
+  que se incluye en el commit).
+- Un solo menú (`Fase 4-6 · Montar QCXR_MainScene completa`) regenera estación, animaciones, efectos y escena final.
+
+### Verificación
+- Log del montaje: manos L y R con 2 interactores cada una (Poke + Near-Far); jerarquía final volcada en el log y
+  coincidente con el brief; renders de la escena sin regresiones (sello de nota visible en Results).
+- Humo del circuito regenerado con la versión más visible.

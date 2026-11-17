@@ -21,7 +21,7 @@ namespace QCXR.EditorTools.Art
         public const string ScenePath = "Assets/_Project/Scenes/QCXR_MainScene.unity";
         const string Env = QCXRStationBuilder.PrefabDir;
 
-        [MenuItem("QCXR/Arte/Fase 4-5 · Montar QCXR_MainScene (entorno + animaciones + VFX)")]
+        [MenuItem("QCXR/Arte/Fase 4-6 · Montar QCXR_MainScene completa")]
         public static void Assemble()
         {
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
@@ -141,6 +141,9 @@ namespace QCXR.EditorTools.Art
 
             // ── Fase 5: efectos en escena, puente de presentación, botones, paneles y sello ──
             QCXRFxBuilder.HookScene(Find, Find("QCXR_Scene"), belt, rack, bin);
+
+            // ── Fase 6: manos en el XR Origin, jerarquía del brief, productos de referencia, Build Settings ──
+            QCXRSceneFinalizer.Finalize(scene);
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);

@@ -71,7 +71,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8857648974226833644}
-  - component: {fileID: 963451189317011978}
+  - component: {fileID: 3415555226268289021}
   m_Layer: 0
   m_Name: Env_ButtonCap_Green
   m_TagString: Untagged
@@ -97,7 +97,7 @@ Transform:
   - {fileID: 1294187825211479096}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &963451189317011978
+--- !u!95 &3415555226268289021
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0

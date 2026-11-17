@@ -248,3 +248,52 @@ Materiales: `QCXR_FX_Additive`, `QCXR_FX_Alpha`, `QCXR_FX_Confetti` (URP Particl
 
 Escucha `BeltJamChanged`, `SfxRequested` y `SessionSummaryReady`. Solo dispara animaciones y partículas; no emite
 eventos ni cambia el estado del juego. Está en `Managers/Presentation` con todas sus referencias ya asignadas.
+
+---
+
+# Fase 6 · Prefabs y escena final
+
+Un solo menú regenera todo el montaje: **`QCXR > Arte > Fase 4-6 · Montar QCXR_MainScene completa`**
+(`QCXRSceneAssembler` → `QCXRStationBuilder` → `QCXRFxBuilder` → `QCXRSceneFinalizer`). Si se regeneran los
+productos (Fase 2) o las manos/herramientas (Fase 3), basta con volver a ejecutar este menú después.
+
+## Jerarquía de `QCXR_MainScene`
+
+```
+GameManager                 GameManager + Systems, RandomEvents, ProductFlow, Onboarding, Presentation
+Environment                 Floor (collider) · Env_Room (Floor, Walls, Ceiling, Decor, Signage) · Lighting (Directional Light, Global Volume)
+Factory
+├── ProductSpawnPoint · InspectionPoint · BeltEnd
+├── ConveyorBelt            BeltZone (ConveyorBelt) · *_Collider · Env_ConveyorBelt
+├── ToolTable               ToolTable_Collider · Env_ToolBench
+├── ButtonConsole           Console_Collider · Env_ButtonConsole · Btn_StartShift · Btn_ResetBelt (apagado hasta el atasco)
+├── Shelves                 Rack*_Collider · Env_ShelfRack · Shelf_<Producto> (socket + AttachPoint + etiqueta)
+├── DiscardBin              DiscardBin_Trigger (ProductStation) · Bin*_Collider · Env_DiscardBin
+└── EmergencyIndicator      JamIndicator (atasco) · EmergencyLight (falla eléctrica)
+Products                    _LEEME · ReferenceOnShelves (EditorOnly, desactivado: 5 productos en su estante)
+Tools                       Tool_Hammer · Tool_Screwdriver · Tool_Magnifier (sobre sus siluetas del banco)
+XR Origin (XR Rig)          el de Starter Assets, sin sustituir · Hand_L / Hand_R bajo Left/Right Controller
+UI                          GameUI › HUD · Feedback · Instructions · Report · Results (Stamp › Grade)
+Effects                     FX_RepairFlash · FX_HammerDust · FX_Confetti
+EventSystem
+```
+
+Los objetos solo se movieron o renombraron (`*_Collider`, `ProductSpawnPoint`, `DiscardBin_Trigger`); ningún
+script del juego busca objetos por nombre, y las referencias serializadas siguen intactas.
+
+## Manos en el XR Origin
+
+- `Hand_L` / `Hand_R` son hijos de `Left Controller` / `Right Controller` (pose de agarre del mando), en el origen.
+- El modelo del mando de Starter Assets (`XR Controller Left/Right`) queda desactivado.
+- `HandPoseDriver.interactors` = Near-Far + Poke de cada mano (el de teletransporte se excluye a propósito).
+- **Validar en el visor**: si la mano no cae justo sobre el mando, ajustar solo `HandOffset` (ver Fase 3).
+
+## Build Settings
+
+`QCXR_MainScene` es la escena 0. `SampleScene` sigue en la lista, detrás (no se modificó).
+
+## Productos de referencia
+
+`Products/ReferenceOnShelves` contiene los 5 prefabs colocados en el `AttachPoint` de su estante para revisar
+encajes en el editor. Está **desactivado** y con tag **EditorOnly** (no entra en la build): si se activara,
+el socket del estante los "colocaría" y puntuarían.

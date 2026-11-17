@@ -149,3 +149,53 @@ herramienta). La rotación del eje del destornillador sigue siendo de `Tool.cs`;
   `selectEntered/selectExited` de los interactores de su mano → parámetros del Animator. Agarrar un `XRSimpleInteractable`
   (botón) dispara `Press`. **Pendiente de escena (Fase 6):** asignar `interactors` (Near-Far / Poke de cada controlador).
 - `HandPoseHint`: componente de datos que indica la pose de agarre de un objeto. Sin él → pose genérica `Grab`.
+
+---
+
+# Fase 4 · Estación y entorno
+
+Generado por `QCXR > Arte > Fase 4 · Montar QCXR_MainScene` (`QCXRStationBuilder.cs` + `QCXRSceneAssembler.cs`).
+
+## Escena `Assets/_Project/Scenes/QCXR_MainScene.unity`
+
+Se crea copiando `Assets/Scenes/SampleScene.unity` (que **no se modifica**) y sustituyendo solo la parte visual.
+Todos los objetos con scripts y sus referencias se conservan; a los placeholders se les quita la malla y conservan
+su collider. Volver a ejecutar el menú regenera la escena desde cero.
+
+Distribución (jugador en el origen mirando a +Z, todo a ≤ 0.75 m):
+
+| Elemento | Posición | Notas |
+|---|---|---|
+| XR Origin | (0, 0, 0) | En `petro` estaba a 0.87 m de altura y dentro de la banda |
+| Banda | centro (0, 0.9, 0.75), avance −X | `ConveyorBelt.beltRenderer` → `Env_ConveyorBelt/BeltSurface`, `textureScroll = 1/0.48` |
+| Banco de herramientas | z 0.24–0.42, superficie 0.8 m | Collider `ToolTable` reajustado; herramientas tumbadas sobre sus siluetas |
+| Consola | (0.8, 0.9, 0.25), frente −X | INICIAR TURNO z 0.15 · REINICIAR BANDA z 0.35 (oculto fuera del atasco) |
+| Estantería | (−0.85, 0, −0.2), frente +X | Fila baja 0.9 m (Robot, Radio, Lámpara) · fila alta 1.32 m (Tostadora, Reloj) |
+| Cubo de desecho | (0.8, 0, −0.3) | Interior oscuro visible, borde a 0.98 m |
+| Indicador de atasco | (0, 1.61, 1.08) | Sobre el pórtico de inspección; hijo `SparksAnchor` junto al riel trasero |
+| Baliza de emergencia | (0, 2.2, 0.75) | Cuelga del techo; `LitDome` + `Rotor` bajo `EmergencyLight` |
+
+## Prefabs — `Prefabs/Environment/`
+
+| Prefab | Contenido / referencias |
+|---|---|
+| `Env_ConveyorBelt` | Bastidor, rieles, rodillos, patas, máquina de entrada con cortina de tiras, tolva de salida, pórtico de inspección. `BeltSurface` (material `QCXR_Belt`, UV: V a lo largo, avance −X) · `SurfaceRef` (+Z = sentido de avance) · `InspectionZone` · `SpawnMouth` · `ExitMouth` |
+| `Env_ToolBench` | Banco con alfombrilla y siluetas · `Spot_Hammer`, `Spot_Screwdriver`, `Spot_Magnifier` |
+| `Env_ButtonConsole` | Pedestal + `Base_StartShift`, `Base_ResetBelt` (carcasas fijas) |
+| `Env_ButtonCap_Green` / `_Red` | Tapa móvil (`Cap`, pivote en la base) + `RestPos` / `PressedPos` (−12 mm). Se instancian como hijo `Cap` de cada `Btn_*` |
+| `Env_ShelfRack` | Armario + balda alta · `Bay_<Producto>` › `BayLight` (emisivo, destello verde/rojo en Fase 5) + `PlacementZone` |
+| `Env_DiscardBin` | Pedestal, cubeta roja con franjas · `FlashRing` (emisivo, destello en Fase 5) · `EntryZone` |
+| `Env_JamIndicatorLit` | `LitDome` ámbar + `Rotor` (gira en Fase 5) + `SparksAnchor` |
+| `Env_EmergencyBeaconLit` | `LitDome` rojo + `Rotor` |
+| `Env_Room` | Suelo con juntas y zona de trabajo señalizada, paredes, columnas, techo con vigas y luminarias emisivas, tuberías, palés, cajas, bidones, armario eléctrico, extintor y carteles |
+
+Cada `Shelf_<Producto>` de la escena tiene un hijo `AttachPoint` asignado como `attachTransform` de su
+`XRSocketInteractor`: el producto queda apoyado en su base y con su frente hacia el jugador.
+
+## Iluminación y rendimiento
+
+- Una única luz direccional con sombras suaves + ambiente Trilight. Las luminarias del techo son emisivas (sin luces extra).
+- `RandomEventSystem.lights` sigue apuntando a la direccional (el parpadeo de la falla eléctrica funciona igual).
+- Paredes, techo y suelo no proyectan sombra. El entorno está marcado como estático (batching + GI), así que se puede
+  hornear luz más adelante sin tocar nada.
+- Materiales de toda la escena: `QCXR_Atlas` (casi todo), `QCXR_Belt`, `QCXR_Glass`, `QCXR_Crack` y los de UI/TMP.

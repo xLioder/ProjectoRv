@@ -11,7 +11,8 @@ namespace QCXR.EditorTools.Art
         Chrome, Rubber, Brass, Black, White, RobotBlue, RobotBlueDark, RadioRed,
         RadioRedDark, LampYellow, LampYellowDark, ClockGreen, ClockGreenDark, Wood, Grille, Visor,
         LedCyan, LedGreen, LedRed, LedAmber, Bulb, PcbGreen, PcbTrace, Char,
-        Scorch, Ember, PaintRed, HazardYellow, Count
+        Scorch, Ember, PaintRed, HazardYellow, Concrete, ConcreteDark, LampWhite, SafetyGreen,
+        WallPanel, Count
     }
 
     /// Paleta industrial estilizada: pintura crema y naranja, chasis grafito, acero, goma y LEDs emisivos.
@@ -72,6 +73,11 @@ namespace QCXR.EditorTools.Art
                 case Sw.Ember:          return new Entry("#FF6A1F", 0f, 0.30f, "#E0400A");
                 case Sw.PaintRed:       return new Entry("#D8322A", 0f, 0.45f);
                 case Sw.HazardYellow:   return new Entry("#F5C518", 0f, 0.45f);
+                case Sw.Concrete:       return new Entry("#8D9095", 0f, 0.25f);
+                case Sw.ConcreteDark:   return new Entry("#6C6F75", 0f, 0.20f);
+                case Sw.LampWhite:      return new Entry("#FFF8EA", 0f, 0.60f, "#FFF1D6");
+                case Sw.SafetyGreen:    return new Entry("#5CFF8A", 0f, 0.60f, "#2EE860");
+                case Sw.WallPanel:      return new Entry("#B9B4A6", 0.05f, 0.35f);
                 default:                return new Entry("#FF00FF", 0f, 0.5f);
             }
         }

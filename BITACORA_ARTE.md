@@ -73,3 +73,49 @@ Rama de trabajo: `art/visual-pass` (creada desde `origin/petro`). Sin push: los 
   → Animator) y `HandPoseHint` (qué pose usa cada objeto). No tocan GameEvents ni lógica de juego.
 - **Acciones de mano solo en dedos** (aditivas): mover la muñeca separaría la mano de la herramienta, que sigue al
   controlador real. Así se respeta el control físico del jugador.
+
+---
+
+## Fase 4 · Estación y entorno — completada
+
+### Decisiones tomadas (con autonomía delegada)
+- **Montaje sobre copia**: `QCXR_MainScene` (`Assets/_Project/Scenes/`) se genera copiando `SampleScene` (que no se toca)
+  para conservar todos los objetos con scripts y sus referencias ya conectadas. Solo se quitan las mallas primitivas
+  (los colliders siguen) y se añaden prefabs visuales. Es reproducible: `QCXR > Arte > Fase 4 · Montar QCXR_MainScene`.
+- **XR Origin recolocado** a `(0,0,0)`: en `petro` estaba a 0.87 m de altura y dentro de la banda (z 0.5).
+- **Banco de herramientas** movido delante de la banda (z 0.24–0.42, superficie a 0.8 m) con las herramientas tumbadas
+  a lo largo de X sobre siluetas. Antes la mesa quedaba entre jugador y banda y el centro de la banda a >0.9 m.
+- **Consola** con frente hacia el jugador (−X) y botones uno al lado del otro en Z (INICIAR TURNO más cerca).
+  El botón rojo sigue apagándose fuera del atasco (lo hace RandomEventSystem); su carcasa es parte de la consola y
+  siempre se ve.
+- **Estantes**: cada `Shelf_X` recibe un `AttachPoint` para que el producto quede apoyado en su base y mirando al
+  jugador (antes el centro del producto se encajaba a la altura del socket y se hundía en la balda).
+- **Banda**: `ConveyorBelt.beltRenderer` apunta a la superficie nueva y `textureScroll = 1/0.48` para que la textura
+  avance a la misma velocidad que los productos (función ya existente en el script; no se programó movimiento).
+- **Iluminación Quest**: una sola direccional con sombras + ambiente Trilight; luminarias del techo emisivas
+  (sin luces extra). Paredes, techo y suelo no proyectan sombra. Objetos de entorno marcados como estáticos
+  (batching + GI) para poder hornear luz más adelante sin tocar nada.
+- **Paleta ampliada** (Concrete, ConcreteDark, LampWhite, SafetyGreen, WallPanel) añadiendo celdas al final del atlas,
+  sin mover las existentes (los modelos de las fases 2 y 3 no cambian).
+
+### Incidencia de entorno: Unity se cerraba al arrancar (resuelta)
+- Síntoma: desde las 10:32 cada ejecución batch moría con `Shut down.` (exit 127) durante la recarga de ensamblados,
+  antes de ejecutar ningún método. No era la otra sesión de Claude (lo confirmó) ni la red.
+- Causa (Visor de eventos de Windows): **fallo nativo en `OVRPlugin.dll` (Meta XR SDK 1.207), excepción 0xc0000409**,
+  dentro de `OVRTelemetry startSession`. El estado local de la telemetría de Meta
+  (`%LOCALAPPDATA%\Oculus\Unity\Unity.json`, reescrito a las 10:28) quedó inválido.
+- Arreglo: renombré ese archivo a `Unity.json.bak-20261117` (no se borró; el SDK lo regenera). Desde entonces Unity
+  arranca bien. **No toca el proyecto**: si a otro integrante le pasa lo mismo, hacer lo mismo en su equipo.
+- También borré `Library/LastSceneManagerSetup.txt` y un `Temp/UnityLockfile` huérfano (estado regenerable de Unity).
+
+### Ajustes tras la revisión visual
+- Etiquetas de los estantes (TMP de `ProductStation`): eran enormes y se solapaban → movidas al canto frontal de cada
+  balda, tamaño legible, mirando al jugador. Etiquetas de los botones colocadas sobre cada botón.
+
+### Resultado de la Fase 4
+- 10 prefabs de entorno (`Prefabs/Environment/`) y `QCXR_MainScene` montada y verificada con renders desde el punto
+  de vista del jugador (frente, izquierda, derecha) y dos vistas generales.
+- Todo al alcance desde el origen: banda a 0.5–1.0 m, herramientas a 0.24–0.42 m, consola y cubo a la derecha,
+  estantería a la izquierda.
+- Pendiente para fases siguientes: animaciones y partículas que usan los anclajes creados aquí (`Rotor`, `SparksAnchor`,
+  `BayLight`, `FlashRing`, `Cap/PressedPos`) → Fase 5. Manos en el XR Origin y reorganización de jerarquía → Fase 6.

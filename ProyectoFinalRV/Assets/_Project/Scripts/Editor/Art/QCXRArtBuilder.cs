@@ -64,7 +64,7 @@ namespace QCXR.EditorTools.Art
 
         // ═════════════════════════ MATERIALES ═════════════════════════
 
-        static void BuildMaterials()
+        internal static void BuildMaterials()
         {
             QCXRPrefabBuilder.EnsureFolder(TexDir);
             int cells = Palette.Grid, px = 8, size = cells * px;

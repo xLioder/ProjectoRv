@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1054404127547806766}
-  - component: {fileID: 1106757903226128257}
+  - component: {fileID: 1479339240844370561}
   m_Layer: 0
   m_Name: Env_JamIndicatorLit
   m_TagString: Untagged
@@ -35,7 +35,7 @@ Transform:
   - {fileID: 2005047026851897185}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &1106757903226128257
+--- !u!95 &1479339240844370561
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
@@ -298,10 +298,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6632351671169603951}
+  - {fileID: 8446789459430214282}
   m_Father: {fileID: 1054404127547806766}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &6713243557028159765
+--- !u!1001 &8365970139241624304
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -358,8 +358,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0c27b9ca3a516c841a18845b46ef8de8, type: 3}
---- !u!4 &6632351671169603951 stripped
+--- !u!4 &8446789459430214282 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 81315236776228986, guid: 0c27b9ca3a516c841a18845b46ef8de8, type: 3}
-  m_PrefabInstance: {fileID: 6713243557028159765}
+  m_PrefabInstance: {fileID: 8365970139241624304}
   m_PrefabAsset: {fileID: 0}

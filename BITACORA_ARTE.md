@@ -169,3 +169,30 @@ Rama de trabajo: `art/visual-pass` (creada desde `origin/petro`). Sin push: los 
 - Log del montaje: manos L y R con 2 interactores cada una (Poke + Near-Far); jerarquía final volcada en el log y
   coincidente con el brief; renders de la escena sin regresiones (sello de nota visible en Results).
 - Humo del circuito regenerado con la versión más visible.
+
+---
+
+## Fase 7 · Control de calidad — completada (auditoría final: 157 OK · 0 fallas · 1 aviso intencional)
+
+### Qué se hizo
+- **Recursos 2D (sección 7 del brief, que faltaba)**: 5 iconos de producto y 4 de defecto (render de los modelos con
+  alfa por doble pasada negro/blanco), panel, marco, botón, franja decorativa e indicadores OK/error/aviso. Aplicados:
+  iconos en los botones del reporte, paneles con fondo/marco/franja, iconos de producto en los estantes.
+- **Optimización**: sombras a 8 m, formatos ASTC en Android para todas las texturas del arte.
+- **Auditoría automática** (`QC_Informe.md`) contra el brief + menú `Reconstruir todo (Fases 2-7)` que regenera todo
+  desde cero (probado: reconstrucción completa sin errores).
+
+### Problemas encontrados por la auditoría y corregidos
+- **Grieta sin emisión (bug real)**: la validación de URP retiraba la palabra clave `_EMISSION` del material de la grieta
+  → el brillo al revelar con la lupa NO se habría visto. Tras dos intentos (flags de GI, color casi negro) se optó por la
+  solución robusta: `QCXR_Crack` pasa a **URP Unlit** y el revelado anima `_BaseColor` (oscuro → naranja → rescoldo),
+  que en Unlit se ve como brillo propio sin depender de palabras clave (y es más barato en Quest).
+- **Reloj demasiado profundo** (8.1 cm vs 6 cm): llave de cuerda aplanada y agujas pegadas a la esfera → 7.0 cm.
+- **Poses Press e Inspect** existían como clips pero no eran alcanzables: añadidas al Animator como poses 5 y 6
+  (`HandPose.Press`, `HandPose.Inspect`).
+- **Humo del circuito en capa Default** dentro del defecto: ahora hereda la capa `Defect`.
+- Falso negativo de la auditoría ("URP activo"): el proyecto asigna URP por nivel de calidad; comprobación corregida.
+
+### Incidencias de API (Unity 6000.6)
+- `TMP_Text.enableWordWrapping` y `SerializedProperty.objectReferenceInstanceIDValue` son errores de compilación
+  (obsoletos) → `textWrappingMode` y `objectReferenceEntityIdValue`.

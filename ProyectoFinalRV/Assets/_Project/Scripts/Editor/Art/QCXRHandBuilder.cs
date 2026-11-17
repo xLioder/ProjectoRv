@@ -382,7 +382,7 @@ namespace QCXR.EditorTools.Art
             // Capa 1: Hold (override, peso controlado por HandPoseDriver)
             ctrl.AddLayer("Hold");
             var hold = ctrl.layers[1].stateMachine;
-            var holdStates = new (string clip, int pose)[] { ("Grab", 1), ("HoldHammer", 2), ("HoldScrewdriver", 3), ("HoldMagnifier", 4) };
+            var holdStates = new (string clip, int pose)[] { ("Grab", 1), ("HoldHammer", 2), ("HoldScrewdriver", 3), ("HoldMagnifier", 4), ("Press", 5), ("Inspect", 6) };
             foreach (var (clip, pose) in holdStates)
             {
                 var st = hold.AddState(clip);

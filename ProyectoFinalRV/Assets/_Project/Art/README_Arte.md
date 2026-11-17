@@ -17,7 +17,7 @@ un color de identidad por producto (Robot azul, Radio rojo-naranja, Lámpara ama
 | Material | Uso | Notas |
 |---|---|---|
 | `Art/Materials/QCXR_Atlas.mat` | **Todos** los productos y defectos | URP Lit. Paleta 64×64 px (8×8 celdas): albedo, metálico/suavidad y emisión. Una malla por producto → 1 draw call. |
-| `Art/Materials/QCXR_Crack.mat` | Grieta oculta | URP Lit con `_EMISSION` activo y `_EmissionColor` negro: la animación de revelado (Fase 5) sube la emisión. |
+| `Art/Materials/QCXR_Crack.mat` | Grieta oculta | URP Unlit; la animación de revelado (Fase 5) anima `_BaseColor` oscuro → naranja → rescoldo (brillo sin palabras clave de emisión). |
 
 La paleta está definida en `QCXRMeshKit.cs` (`enum Sw` + `Palette.Get`). **No reordenes el enum**: las UV apuntan a las celdas.
 
@@ -212,7 +212,7 @@ Generado junto con la escena por `QCXR > Arte > Fase 4-5 · Montar QCXR_MainScen
 |---|---|---|---|---|
 | Tornillo apretándose (`Defect_ScrewTighten`) | 0.4 s | `Defect_Screw` | `Defect_LooseScrew/Fixed` | Al repararse (`Fixed` se activa) |
 | Abolladura enderezándose (`Defect_DentStraighten`) | 0.3 s | `Defect_Dent` | `Defect_Dent/Fixed` | Al repararse |
-| Revelar grieta (`Defect_CrackReveal`) | 0.4 s | `Defect_Crack` | `Defect_HiddenCrack/Visual` | Al revelarla la lupa (`Visual` se activa) |
+| Revelar grieta (`Defect_CrackReveal`, anima `_BaseColor` del material Unlit) | 0.4 s | `Defect_Crack` | `Defect_HiddenCrack/Visual` | Al revelarla la lupa (`Visual` se activa) |
 | Producto entrando (`Product_Enter`) | 0.3 s | `Product_Model` | `Product_*/Model` | Al instanciarse |
 | Botón presionándose (`Button_Press`) | 0.15 s | `Button` | `Btn_*/Cap` | `XRButton.onPressed` → `SetTrigger("Press")` |
 | Banda atascada (`Belt_Jam`) | bucle | `Belt` | `Env_ConveyorBelt` (mueve `BeltSurface`) | `PresentationBridge` ← `BeltJamChanged` |
@@ -297,3 +297,46 @@ script del juego busca objetos por nombre, y las referencias serializadas siguen
 `Products/ReferenceOnShelves` contiene los 5 prefabs colocados en el `AttachPoint` de su estante para revisar
 encajes en el editor. Está **desactivado** y con tag **EditorOnly** (no entra en la build): si se activara,
 el socket del estante los "colocaría" y puntuarían.
+
+---
+
+# Fase 7 · Control de calidad, UI 2D y optimización
+
+**Menú maestro: `QCXR > Arte > Reconstruir todo (Fases 2-7)`** — regenera productos, defectos, herramientas, manos,
+estación, animaciones, efectos, recursos 2D y la escena, aplica la optimización y escribe el informe de calidad.
+`QCXR > Arte > Fase 7 · Auditoría de calidad` solo vuelve a auditar.
+
+## Informe automático — `Art/QC_Informe.md`
+
+Comprueba, contra cada sección del brief: componentes y jerarquía de productos y defectos (capa `Defect`, piezas
+independientes, `Product.defects` enlazado, dimensiones ±15 %, pivote), herramientas (`Tip`, `Attach`, `Shaft`
+separado y girando sobre su eje, `LensPoint`), manos (21 huesos, 6 articulaciones, 9 poses en el Animator), escena
+(grupos del brief, XR Origin conservado, manos con interactores, **referencias rotas**, sockets con `AttachPoint`,
+catálogo de `ProductFlow`), rendimiento (triángulos, renderers, materiales, luces, partículas, MSAA, sombras, HDR,
+IL2CPP, ARM64, formatos ASTC), recursos 2D, clips y efectos.
+
+## Recursos 2D — `Art/UI/`
+
+| Recurso | Archivos | Uso en la escena |
+|---|---|---|
+| Iconos de producto | `Icons/Icon_Product_<Robot/Radio/Lamp/Toaster/Clock>.png` (render del modelo real, fondo transparente) | Junto a la etiqueta de cada hueco de la estantería |
+| Iconos de defecto | `Icons/Icon_Defect_<LooseScrew/Dent/HiddenCrack/BurnedCircuit>.png` | En los 4 botones del panel de reporte |
+| Fondo de panel | `QCXR_UI_Panel.png` (9-slice, se tiñe con `Image.color`) | `Bg` de HUD, Instructions, Report, Results |
+| Marco | `QCXR_UI_Frame.png` (9-slice) | `Frame` naranja de cada panel |
+| Decoración | `QCXR_UI_Hazard.png` (repetible) | Franja `Deco` superior de cada panel |
+| Botón | `QCXR_UI_Button.png` (9-slice con bisel) | Botones de Report y Results |
+| Indicadores | `QCXR_UI_Indicator_OK / _Error / _Warning.png` | Disponibles para la lógica de UI |
+| Sellos | `QCXR_Stamp_S / A / B / C.png` | `Results/Stamp` (Fase 5) |
+
+Todos los sprites son ASTC 4×4 en Android. No se tocó la lógica ni la navegación de los paneles.
+
+## Optimización Quest aplicada
+
+- `Mobile_RPAsset`: distancia de sombras 50 → **8 m** (la nave mide 5.4 × 4.4 m), 1 cascada. MSAA 4x, HDR apagado,
+  IL2CPP y ARM64 ya estaban configurados.
+- Texturas del arte en Android: **ASTC 4×4** (sprites/UI), **ASTC 6×6** (banda y partículas); paletas de 64 px sin comprimir
+  (color plano, 16 KB).
+- Un material atlas para casi todo, entorno estático (batching + GI), una sola luz direccional con sombras,
+  partículas ≤ 304 simultáneas en total.
+- **Luz horneada: no aplicada a propósito.** `RandomEventSystem` baja la intensidad de las luces en la falla eléctrica;
+  con luz 100 % horneada el efecto no se vería. El entorno ya es estático para hornear GI indirecta si se decide.

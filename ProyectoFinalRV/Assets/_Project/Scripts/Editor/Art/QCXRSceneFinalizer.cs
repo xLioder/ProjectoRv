@@ -31,6 +31,7 @@ namespace QCXR.EditorTools.Art
             AddProductReferences(find);   // antes de ordenar la raíz
             Reorganize(scene, find);
             SetBuildScene();
+            QCXRUIBuilder.ApplyToScene(scene);        // Fase 7: recursos 2D en la UI y en los estantes
             Debug.Log("[QCXR Art] Fase 6: jerarquía final\n" + DumpHierarchy(scene));
         }
 

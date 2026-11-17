@@ -28,6 +28,7 @@ namespace QCXR.EditorTools.Art
             QCXRArtBuilder.BuildMaterials();          // paleta ampliada con colores de entorno
             QCXRStationBuilder.BuildPrefabs();
             QCXRFxBuilder.BuildAll();                 // Fase 5: efectos, clips y parches de prefabs
+            QCXRUIBuilder.BuildSprites();             // Fase 7: iconos (render) y sprites de UI
 
             QCXRPrefabBuilder.EnsureFolder("Assets/_Project/Scenes");
             AssetDatabase.DeleteAsset(ScenePath);
@@ -292,16 +293,36 @@ namespace QCXR.EditorTools.Art
             return null;
         }
 
+        /// Reconstruye TODO el arte desde cero (Fases 2 → 7), en el orden correcto.
+        [MenuItem("QCXR/Arte/Reconstruir todo (Fases 2-7)")]
+        public static void RebuildEverything()
+        {
+            if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            QCXRArtBuilder.BuildPhase2();        // productos y defectos
+            QCXRToolBuilder.BuildTools();        // herramientas
+            QCXRHandBuilder.BuildHands();        // manos
+            Assemble();                          // estación, animaciones, VFX, escena final, UI 2D
+            QCXRQualityAudit.Run(QCXRQualityAudit.ApplyOptimizations());
+        }
+
+        /// Entrada batch: reconstruye todo, renderiza vistas, audita y SALE con EditorApplication.Exit.
+        public static void BatchRebuildEverything() => BatchRun(true);
+
         /// Entrada batch: monta la escena, renderiza vistas y SALE con EditorApplication.Exit (evita cuelgues al cerrar).
-        public static void BatchAssembleAndRender()
+        public static void BatchAssembleAndRender() => BatchRun(false);
+
+        static void BatchRun(bool everything)
         {
             int code = 0;
             try
             {
+                if (everything) { QCXRArtBuilder.BuildPhase2(); QCXRToolBuilder.BuildTools(); QCXRHandBuilder.BuildHands(); }
                 Assemble();
                 string outDir = Arg("-qcxrOut") ?? Path.GetFullPath(Path.Combine(Application.dataPath, "../Temp/QCXRPreviews"));
                 RenderScene(outDir);
                 QCXRFxBuilder.RenderPreviews(outDir);
+                var optimizations = QCXRQualityAudit.ApplyOptimizations();   // Fase 7
+                QCXRQualityAudit.Run(optimizations);
                 AssetDatabase.SaveAssets();
             }
             catch (System.Exception e) { Debug.LogException(e); code = 1; }

@@ -108,12 +108,10 @@ namespace QCXR.EditorTools.Art
             // Grieta: material propio para poder animar su emisión (brillo al revelarse con la lupa).
             crackMat = Mat(MatDir + "/QCXR_Crack.mat", m =>
             {
+                // Unlit: el revelado anima _BaseColor (oscuro → naranja intenso → rescoldo) y se ve como brillo propio,
+                // sin depender de la palabra clave _EMISSION (que la validación de URP retiraba). Además es más barato.
+                m.shader = Shader.Find("Universal Render Pipeline/Unlit");
                 m.SetColor("_BaseColor", new Color(0.05f, 0.04f, 0.04f, 1f));
-                m.SetFloat("_Metallic", 0f);
-                m.SetFloat("_Smoothness", 0.15f);
-                m.SetColor("_EmissionColor", Color.black);
-                m.EnableKeyword("_EMISSION");
-                m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.EmissiveIsBlack;
             });
         }
 
@@ -670,18 +668,17 @@ namespace QCXR.EditorTools.Art
                 var m = Matrix4x4.TRS(new Vector3(0, fy, -0.0318f), Quaternion.Euler(0, 0, -a), Vector3.one);
                 k.Box(m * Matrix4x4.Translate(new Vector3(0, 0.054f, 0)), new Vector3(major ? 0.005f : 0.0028f, major ? 0.011f : 0.007f, 0.0012f), 0f, major ? Sw.Orange : Sw.Black);
             }
-            k.Box(Matrix4x4.TRS(new Vector3(0, fy, -0.0328f), Quaternion.Euler(0, 0, -60f), Vector3.one) * Matrix4x4.Translate(new Vector3(0, 0.016f, 0)),
+            k.Box(Matrix4x4.TRS(new Vector3(0, fy, -0.0322f), Quaternion.Euler(0, 0, -60f), Vector3.one) * Matrix4x4.Translate(new Vector3(0, 0.016f, 0)),
                   new Vector3(0.0055f, 0.034f, 0.0012f), 0.0006f, Sw.Graphite);
-            k.Box(Matrix4x4.TRS(new Vector3(0, fy, -0.0338f), Quaternion.Euler(0, 0, -200f), Vector3.one) * Matrix4x4.Translate(new Vector3(0, 0.022f, 0)),
+            k.Box(Matrix4x4.TRS(new Vector3(0, fy, -0.0328f), Quaternion.Euler(0, 0, -200f), Vector3.one) * Matrix4x4.Translate(new Vector3(0, 0.022f, 0)),
                   new Vector3(0.0035f, 0.048f, 0.0012f), 0.0006f, Sw.Graphite);
-            k.Cyl(new Vector3(0, fy, -0.0345f), 0.0045f, 0.002f, Sw.Orange, new Vector3(90, 0, 0), 12);
+            k.Cyl(new Vector3(0, fy, -0.0334f), 0.0045f, 0.0012f, Sw.Orange, new Vector3(90, 0, 0), 12);
             // Tornillos decorativos en tres esquinas (la cuarta es el slot del tornillo flojo)
             k.ScrewHead(new Vector3(0.07f, fy + 0.07f, -0.03f), Front, 0.0045f);
             k.ScrewHead(new Vector3(-0.07f, fy + 0.07f, -0.03f), Front, 0.0045f);
             k.ScrewHead(new Vector3(0.07f, fy - 0.07f, -0.03f), Front, 0.0045f);
             // Llave de cuerda trasera
-            k.Cyl(new Vector3(0, 0.03f, 0.034f), 0.012f, 0.008f, Sw.Orange, new Vector3(90, 0, 0), 12, 0.002f);
-            k.Box(new Vector3(0, 0.03f, 0.042f), new Vector3(0.03f, 0.008f, 0.006f), 0.002f, Sw.Orange);
+            k.Cyl(new Vector3(0, 0.03f, 0.032f), 0.012f, 0.004f, Sw.Orange, new Vector3(90, 0, 0), 12, 0.0015f);   // llave de cuerda plana (fondo total ≈ 6.8 cm)
 
             slots = new List<Slot>
             {

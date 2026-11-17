@@ -189,7 +189,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5497537463775296781}
-  - component: {fileID: 1287118461252847579}
+  - component: {fileID: 8983990601619294970}
   m_Layer: 0
   m_Name: Env_EmergencyBeaconLit
   m_TagString: Untagged
@@ -214,7 +214,7 @@ Transform:
   - {fileID: 8474511782458432548}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &1287118461252847579
+--- !u!95 &8983990601619294970
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0

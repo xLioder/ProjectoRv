@@ -334,6 +334,13 @@ namespace QCXR.EditorTools.Art
             new Curve(path, typeof(MeshRenderer), "material._EmissionColor.b", t, c.Select(q => q.b).ToArray()),
         };
 
+        static Curve[] BaseColor(string path, float[] t, Color[] c) => new[]
+        {
+            new Curve(path, typeof(MeshRenderer), "material._BaseColor.r", t, c.Select(q => q.r).ToArray()),
+            new Curve(path, typeof(MeshRenderer), "material._BaseColor.g", t, c.Select(q => q.g).ToArray()),
+            new Curve(path, typeof(MeshRenderer), "material._BaseColor.b", t, c.Select(q => q.b).ToArray()),
+        };
+
         static Curve[] Join(params Curve[][] parts) => parts.SelectMany(p => p).ToArray();
 
         static AnimatorController NewController(string path)
@@ -389,7 +396,7 @@ namespace QCXR.EditorTools.Art
 
             // ── Revelar grieta (0.4 s): brillo naranja que se apaga dejando un rescoldo; la grieta "se propaga" — en Visual ──
             var crack = MakeClip($"{P}/Defect_CrackReveal.anim", false, Join(
-                Emission("Crack", new[] { 0f, 0.12f, 0.4f }, new[] { new Color(0, 0, 0), new Color(4f, 2.2f, 0.6f), new Color(0.55f, 0.22f, 0.05f) }),
+                BaseColor("Crack", new[] { 0f, 0.12f, 0.4f }, new[] { new Color(0.05f, 0.04f, 0.04f), new Color(1f, 0.7f, 0.25f), new Color(0.4f, 0.13f, 0.03f) }),
                 new[] { new Curve("Crack", T, "m_LocalScale.x", new[] { 0f, 0.25f }, new[] { 0.3f, 1f }) }));
             c = NewController($"{P}/Defect_Crack.controller"); State(c, "Reveal", crack, true); Ctrl["Crack"] = c;
 
@@ -489,6 +496,7 @@ namespace QCXR.EditorTools.Art
             var inst = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>($"{FxPrefabDir}/{fx}.prefab"), parent);
             inst.transform.localPosition = Vector3.zero;
             inst.transform.localRotation = Quaternion.identity;
+            QCXRArtBuilder.SetLayer(inst, parent.gameObject.layer);   // misma capa que su defecto (p. ej. "Defect")
         }
 
         static void PatchPrefabs()

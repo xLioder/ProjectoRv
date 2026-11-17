@@ -1,0 +1,13 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: BinFlash
+  m_Controller: {fileID: 9100000, guid: 9d674a2959352f049aafcaf4251d8fad, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 4a7bef7bd4fe10444953d646e3ab34f9, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 22b2baf891b49eb4aabe6889d5e8a43c, type: 2}

@@ -80,3 +80,72 @@ y los de la **Lámpara** quedan fuera de la sombra de la pantalla (brazo y panta
 - `ConveyorBelt` mueve la raíz con `MovePosition` → la animación de entrada va en `Model`.
 - `Tool.FindDefectAtTip` busca colliders en la capa `Defect` → todo `Defect_*` está en esa capa.
 - La lupa revela por distancia/ángulo a `defect.transform.position` → el origen del defecto está sobre la superficie.
+
+---
+
+# Fase 3 · Herramientas y manos
+
+Generado por `QCXR > Arte > Fase 3 · Herramientas` (`QCXRToolBuilder.cs`) y `QCXR > Arte > Fase 3 · Manos` (`QCXRHandBuilder.cs`).
+
+## Convención de agarre (común a herramientas y manos)
+
+- El mango de cada herramienta va a lo largo de **+Z local** y `Attach` (rotación identidad) está en el centro del puño.
+- La raíz de `Hand_L` / `Hand_R` es ese mismo punto: **origen = centro del puño cerrado, +Z = eje del puño** (sale por el
+  lado del índice). Al colgar la mano del punto de agarre del controlador, la herramienta agarrada (alineada por XRI con
+  su `Attach`) queda dentro del puño sin ajustes.
+- Si en el visor hiciera falta corregir la orientación, se ajusta **solo** `HandOffset` (no afecta a huesos ni clips).
+
+## Herramientas — `Prefabs/Tools/`
+
+Editadas en sitio: se conservan `Tool`, `XRGrabInteractable`, `Rigidbody` y los objetos de referencia con sus fileID.
+
+```
+Tool_Hammer        Handle · Head · Tip (cara de golpe, -Y) · Attach · Colliders
+Tool_Screwdriver   Handle · Shaft (SEPARADO, pivote en su raíz, gira sobre +Z) · Tip · Attach · Colliders
+Tool_Magnifier     Handle · Frame · Lens (QCXR_Glass) · LensPoint (+Z mira a través del cristal) › LensLight · Tip · Attach · Colliders
+```
+
+- `Tool.spinPart` → `Shaft` (corrige el placeholder, cuyo eje estaba en Y y no giraba sobre sí mismo).
+- `Tool.lens` → `LensPoint` (rotación 90° en X: su +Z apunta a -Y, hacia lo que hay bajo la lupa).
+- Cada herramienta lleva `HandPoseHint` con su pose (Hammer / Screwdriver / Magnifier).
+- `QCXR_Glass.mat`: URP Lit transparente, sin sombras ni profundidad (el único transparente del set).
+
+## Manos — `Prefabs/Hands/Hand_L`, `Hand_R`
+
+Guantes de trabajo industriales. Malla con piel rígida (`SkinnedMeshRenderer`, 1 hueso por vértice), material atlas.
+
+```
+Hand_R                      Animator (Hand_R.controller) · HandPoseDriver
+├── HandOffset              conversión marco de modelado → marco de agarre (ajustable)
+│   ├── Wrist
+│   │   ├── Thumb1 › Thumb2 › Thumb3 › Thumb_Tip
+│   │   ├── Index1 › Index2 › Index3 › Index_Tip      (Index_Tip = punto de pulsado/poke)
+│   │   ├── Middle1… · Ring1… · Pinky1…
+│   └── HandMesh            SkinnedMeshRenderer (rootBone = Wrist)
+└── GripPoint               = centro del puño = donde queda el Attach de la herramienta
+```
+
+Flexión de dedos = rotación +X local de cada hueso. La mano izquierda es el espejo exacto (X → -X) y usa
+`Hand_L.overrideController` sobre el mismo controlador con sus clips espejados.
+
+### Animator (`Animations/Hands/Hand_R.controller`)
+
+| Capa | Modo | Contenido |
+|---|---|---|
+| Base | Override | Blend 2D `Grip` × `Trigger`: Open (0,0) · Point (1,0) · IndexCurl (0,1) · Fist (1,1) |
+| Hold | Override, peso por script | `Pose` (int): 1 Grab · 2 HoldHammer · 3 HoldScrewdriver · 4 HoldMagnifier |
+| Action | Aditiva | `Strike` (trigger) · `Press` (trigger) · `Twist` (bool, bucle) · `Inspect` (bool, bucle) |
+
+Clips (`Animations/Hands/Right|Left/`): poses `Open, Fist, Grab, HoldHammer, HoldScrewdriver, HoldMagnifier, Point, Press,
+Inspect, IndexCurl`; transiciones `Close` / `Release` (0.2 s); acciones aditivas `Strike` (0.3 s), `PressTap` (0.15 s),
+`Twist` (bucle 0.5 s), `InspectLoop` (bucle 2 s), `ActionIdle`.
+
+Las acciones mueven **solo los dedos**: la muñeca la da el controlador real (mover la muñeca separaría la mano de la
+herramienta). La rotación del eje del destornillador sigue siendo de `Tool.cs`; la mano solo acompaña con el pulgar.
+
+### Scripts visuales (fuera de los 17) — `Scripts/Visual/`
+
+- `HandPoseDriver`: lee `Select Value` / `Activate Value` (XRI Starter Assets, ya asignadas) y los eventos
+  `selectEntered/selectExited` de los interactores de su mano → parámetros del Animator. Agarrar un `XRSimpleInteractable`
+  (botón) dispara `Press`. **Pendiente de escena (Fase 6):** asignar `interactors` (Near-Far / Poke de cada controlador).
+- `HandPoseHint`: componente de datos que indica la pose de agarre de un objeto. Sin él → pose genérica `Grab`.

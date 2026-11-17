@@ -153,10 +153,151 @@ namespace QCXR.EditorTools.Art
         }
 
         /// Punto de entrada batch: construye la Fase 2 y renderiza las vistas previas.
-        public static void BuildAndRender()
+        public static void BuildAndRender() => RunBatch(() =>
         {
             QCXRArtBuilder.BuildPhase2();
             RenderAll();
+        });
+
+        // En batchmode, salir explícitamente: con solo -quit Unity se ha quedado colgado
+        // horas en el cierre (petición de red de Curl). Exit(0/1) termina el proceso al acabar.
+        static void RunBatch(System.Action work)
+        {
+            int code = 0;
+            try { work(); AssetDatabase.SaveAssets(); }
+            catch (System.Exception e) { Debug.LogException(e); code = 1; }
+            if (Application.isBatchMode) EditorApplication.Exit(code);
         }
+
+        // ═════════════════════════ FASE 3 ═════════════════════════
+
+        static readonly string[] Tools = { "Hammer", "Screwdriver", "Magnifier" };
+        static readonly string[] PoseNames = { "Open", "Fist", "Grab", "HoldHammer", "HoldScrewdriver", "HoldMagnifier", "Point", "Press", "Inspect", "IndexCurl" };
+
+        static Camera Stage(out GameObject ground)
+        {
+            EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            var sun = new GameObject("Sun").AddComponent<Light>();
+            sun.type = LightType.Directional; sun.intensity = 1.25f; sun.color = new Color(1f, 0.96f, 0.9f);
+            sun.shadows = LightShadows.Soft; sun.transform.rotation = Quaternion.Euler(52, -35, 0);
+            var fill = new GameObject("Fill").AddComponent<Light>();
+            fill.type = LightType.Directional; fill.intensity = 0.4f; fill.color = new Color(0.75f, 0.85f, 1f);
+            fill.transform.rotation = Quaternion.Euler(25, 150, 0);
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+            RenderSettings.ambientLight = new Color(0.42f, 0.44f, 0.48f);
+            ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            ground.transform.localScale = Vector3.one * 0.2f;
+            var gm = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            gm.SetColor("_BaseColor", new Color(0.62f, 0.64f, 0.66f)); gm.SetFloat("_Smoothness", 0.2f);
+            ground.GetComponent<Renderer>().sharedMaterial = gm;
+            var cam = new GameObject("Cam").AddComponent<Camera>();
+            cam.fieldOfView = 28f; cam.nearClipPlane = 0.01f; cam.farClipPlane = 10f;
+            cam.clearFlags = CameraClearFlags.SolidColor; cam.backgroundColor = new Color(0.16f, 0.18f, 0.21f);
+            return cam;
+        }
+
+        /// Envolvente real de una mano posada (las bounds del SkinnedMeshRenderer son fijas).
+        static Bounds BoneBounds(GameObject hand)
+        {
+            var ts = hand.transform.Find("HandOffset/Wrist").GetComponentsInChildren<Transform>();
+            var b = new Bounds(ts[0].position, Vector3.zero);
+            foreach (var t in ts) b.Encapsulate(t.position);
+            b.Expand(0.04f);
+            return b;
+        }
+
+        static GameObject Load(string path) => (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(path));
+
+        static void Ground(GameObject ground, Bounds b) => ground.transform.position = new Vector3(b.center.x, b.min.y - 0.002f, b.center.z);
+
+        static GameObject HoldTool(string tool)
+        {
+            var t = Load($"Assets/_Project/Prefabs/Tools/Tool_{tool}.prefab");
+            var attach = t.transform.Find("Attach");
+            t.transform.rotation = Quaternion.Inverse(attach.localRotation);
+            t.transform.position = -(t.transform.rotation * attach.localPosition);
+            return t;
+        }
+
+        static GameObject Hand(bool left, string pose)
+        {
+            string s = left ? "L" : "R";
+            var h = Load($"Assets/_Project/Prefabs/Hands/Hand_{s}.prefab");
+            var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>($"Assets/_Project/Animations/Hands/{(left ? "Left" : "Right")}/Hand_{s}_{pose}.anim");
+            clip.SampleAnimation(h, 0f);
+            return h;
+        }
+
+        [MenuItem("QCXR/Arte/Renderizar vistas previas · Fase 3")]
+        public static void RenderPhase3()
+        {
+            if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            string outDir = Arg("-qcxrOut") ?? Path.GetFullPath(Path.Combine(Application.dataPath, "../Temp/QCXRPreviews"));
+            Directory.CreateDirectory(outDir);
+            var cam = Stage(out var ground);
+            var rt = new RenderTexture(Tile, Tile, 24, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB) { antiAliasing = 4 };
+
+            // Herramientas: 3/4, lateral y detalle del extremo de trabajo
+            var tsheet = new Texture2D(Tile * 3, Tile * Tools.Length, TextureFormat.RGB24, false);
+            for (int i = 0; i < Tools.Length; i++)
+            {
+                var go = Load($"Assets/_Project/Prefabs/Tools/Tool_{Tools[i]}.prefab");
+                go.transform.rotation = Quaternion.Euler(0, 90, 0);
+                var b = Bounds(go);
+                Ground(ground, b);
+                int y = (Tools.Length - 1 - i) * Tile;
+                Shot(cam, rt, b, new Vector3(-0.5f, 0.6f, -1f), tsheet, 0, 1f, y);
+                Shot(cam, rt, b, new Vector3(0f, 0.15f, -1f), tsheet, 1, 1f, y);
+                var tip = go.transform.Find("Tip");
+                Shot(cam, rt, new Bounds(tip.position, Vector3.one * 0.06f), new Vector3(-0.4f, 0.5f, -1f), tsheet, 2, 1f, y);
+                Object.DestroyImmediate(go);
+            }
+            Save(tsheet, Path.Combine(outDir, "Tools.png"));
+
+            // Poses de la mano derecha (marco de modelado: palma abajo, dedos al fondo)
+            var psheet = new Texture2D(Tile * 5, Tile * 2, TextureFormat.RGB24, false);
+            for (int i = 0; i < PoseNames.Length; i++)
+            {
+                var h = Hand(false, PoseNames[i]);
+                var off = h.transform.Find("HandOffset");
+                h.transform.rotation = Quaternion.Inverse(off.localRotation);
+                h.transform.position = Vector3.zero;
+                var b = BoneBounds(h);
+                Ground(ground, b);
+                Shot(cam, rt, b, new Vector3(0.45f, 0.8f, 0.7f), psheet, i % 5, 0.85f, i < 5 ? Tile : 0);
+                Object.DestroyImmediate(h);
+            }
+            Save(psheet, Path.Combine(outDir, "HandPoses.png"));
+
+            // Cada mano sujetando cada herramienta por su Attach
+            var gsheet = new Texture2D(Tile * 4, Tile * Tools.Length, TextureFormat.RGB24, false);
+            string[] holds = { "HoldHammer", "HoldScrewdriver", "HoldMagnifier" };
+            for (int i = 0; i < Tools.Length; i++)
+            {
+                int y = (Tools.Length - 1 - i) * Tile;
+                for (int side = 0; side < 2; side++)
+                {
+                    bool left = side == 1;
+                    var h = Hand(left, holds[i]);
+                    var t = HoldTool(Tools[i]);
+                    var b = Bounds(h); b.Encapsulate(Bounds(t));
+                    Ground(ground, b);
+                    float sx = left ? -1f : 1f;
+                    Shot(cam, rt, b, new Vector3(sx * 0.9f, 0.45f, -0.35f), gsheet, side * 2, 1f, y);
+                    Shot(cam, rt, b, new Vector3(-sx * 0.7f, 0.6f, -0.6f), gsheet, side * 2 + 1, 1f, y);
+                    Object.DestroyImmediate(h); Object.DestroyImmediate(t);
+                }
+            }
+            Save(gsheet, Path.Combine(outDir, "HandsHoldingTools.png"));
+            Object.DestroyImmediate(ground);
+            Debug.Log("[QCXR Art] Vistas previas Fase 3 en " + outDir);
+        }
+
+        public static void BuildAndRenderPhase3() => RunBatch(() =>
+        {
+            QCXRToolBuilder.BuildTools();
+            QCXRHandBuilder.BuildHands();
+            RenderPhase3();
+        });
     }
 }

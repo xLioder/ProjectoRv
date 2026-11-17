@@ -20,6 +20,8 @@ namespace QCXR.EditorTools.Art
 
         static Material atlas, crackMat;
 
+        public static Material Atlas => atlas != null ? atlas : (atlas = AssetDatabase.LoadAssetAtPath<Material>(MatDir + "/QCXR_Atlas.mat"));
+
         public struct Slot
         {
             public DefectType type; public Vector3 pos, euler; public float spin, scale;
@@ -133,7 +135,7 @@ namespace QCXR.EditorTools.Art
             return AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
         }
 
-        static Material Mat(string path, System.Action<Material> setup)
+        internal static Material Mat(string path, System.Action<Material> setup)
         {
             var shader = Shader.Find("Universal Render Pipeline/Lit");
             var m = AssetDatabase.LoadAssetAtPath<Material>(path);
@@ -159,7 +161,7 @@ namespace QCXR.EditorTools.Art
             return m;
         }
 
-        static GameObject MeshObject(string name, Transform parent, Mesh mesh, Material mat, bool shadows)
+        internal static GameObject MeshObject(string name, Transform parent, Mesh mesh, Material mat, bool shadows)
         {
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
@@ -210,7 +212,7 @@ namespace QCXR.EditorTools.Art
             return prefab;
         }
 
-        static void SetLayer(GameObject go, int layer)
+        internal static void SetLayer(GameObject go, int layer)
         {
             go.layer = layer;
             foreach (Transform t in go.transform) SetLayer(t.gameObject, layer);

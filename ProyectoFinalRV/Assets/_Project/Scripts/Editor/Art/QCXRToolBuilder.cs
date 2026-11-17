@@ -66,7 +66,8 @@ namespace QCXR.EditorTools.Art
                 rb.mass = mass;
                 rb.interpolation = RigidbodyInterpolation.Interpolate;
                 rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
-                var hint = root.GetComponent<HandPoseHint>() ?? root.AddComponent<HandPoseHint>();
+                var hint = root.GetComponent<HandPoseHint>();
+                if (hint == null) hint = root.AddComponent<HandPoseHint>();
                 var so = new SerializedObject(hint);
                 so.FindProperty("pose").enumValueIndex = (int)pose;
                 so.ApplyModifiedPropertiesWithoutUndo();

@@ -21,12 +21,13 @@ namespace QCXR.EditorTools.Art
         public const string ScenePath = "Assets/_Project/Scenes/QCXR_MainScene.unity";
         const string Env = QCXRStationBuilder.PrefabDir;
 
-        [MenuItem("QCXR/Arte/Fase 4 · Montar QCXR_MainScene")]
+        [MenuItem("QCXR/Arte/Fase 4-5 · Montar QCXR_MainScene (entorno + animaciones + VFX)")]
         public static void Assemble()
         {
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             QCXRArtBuilder.BuildMaterials();          // paleta ampliada con colores de entorno
             QCXRStationBuilder.BuildPrefabs();
+            QCXRFxBuilder.BuildAll();                 // Fase 5: efectos, clips y parches de prefabs
 
             QCXRPrefabBuilder.EnsureFolder("Assets/_Project/Scenes");
             AssetDatabase.DeleteAsset(ScenePath);
@@ -110,7 +111,7 @@ namespace QCXR.EditorTools.Art
 
             // ── Cubo de desecho ──
             foreach (var n in new[] { "BinPedestal", "BinFloor", "BinWallL", "BinWallR", "BinWallF", "BinWallB" }) Strip(Find(n));
-            Place("Env_DiscardBin", stations, new Vector3(0.8f, 0, -0.3f));
+            var bin = Place("Env_DiscardBin", stations, new Vector3(0.8f, 0, -0.3f));
 
             // ── Indicador de atasco (se activa con el evento) y baliza de emergencia ──
             var jam = Find("JamIndicator");
@@ -137,6 +138,9 @@ namespace QCXR.EditorTools.Art
             RenderSettings.ambientEquatorColor = new Color(0.48f, 0.47f, 0.45f);
             RenderSettings.ambientGroundColor = new Color(0.26f, 0.25f, 0.24f);
             RenderSettings.fog = false;
+
+            // ── Fase 5: efectos en escena, puente de presentación, botones, paneles y sello ──
+            QCXRFxBuilder.HookScene(Find, Find("QCXR_Scene"), belt, rack, bin);
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
@@ -292,7 +296,9 @@ namespace QCXR.EditorTools.Art
             try
             {
                 Assemble();
-                RenderScene(Arg("-qcxrOut") ?? Path.GetFullPath(Path.Combine(Application.dataPath, "../Temp/QCXRPreviews")));
+                string outDir = Arg("-qcxrOut") ?? Path.GetFullPath(Path.Combine(Application.dataPath, "../Temp/QCXRPreviews"));
+                RenderScene(outDir);
+                QCXRFxBuilder.RenderPreviews(outDir);
                 AssetDatabase.SaveAssets();
             }
             catch (System.Exception e) { Debug.LogException(e); code = 1; }

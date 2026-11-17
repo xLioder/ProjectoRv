@@ -119,3 +119,34 @@ Rama de trabajo: `art/visual-pass` (creada desde `origin/petro`). Sin push: los 
   estantería a la izquierda.
 - Pendiente para fases siguientes: animaciones y partículas que usan los anclajes creados aquí (`Rotor`, `SparksAnchor`,
   `BayLight`, `FlashRing`, `Cap/PressedPos`) → Fase 5. Manos en el XR Origin y reorganización de jerarquía → Fase 6.
+
+---
+
+## Fase 5 · Animaciones y VFX — completada
+
+### Decisiones tomadas (con autonomía delegada)
+- **Animación "al activarse"** para todo lo que los scripts ya encienden/apagan: el clip es el estado por defecto
+  del Animator, así arranca solo sin código nuevo. Aplica a: tornillo apretándose y chapa enderezándose (en `Fixed`),
+  revelar grieta (en `Visual`), producto entrando a la banda (en `Model`), balizas (en `Env_*Lit`), paneles de UI
+  y sello de nota.
+- **Un único `PresentationBridge`** (`Scripts/Visual/`, fuera de los 17, solo visual) para lo que depende de un evento:
+  vibración de la banda (`BeltJamChanged`), polvo del martillo (Sfx `Hit`), destello de reparación (Sfx `Fixed`),
+  destello verde/rojo del hueco o del cubo (Sfx `Success`/`Fail`/`Report`, que `ProductStation` ya emite con su
+  posición) y sello + confeti (`SessionSummaryReady`).
+- **Botones**: `XRButton.onPressed` (UnityEvent existente) → `Animator.SetTrigger("Press")` de la tapa, conectado
+  como listener persistente desde el editor (sin código).
+- **Sin animaciones propias de herramientas**: el movimiento es físico (lo hace el jugador); las acciones de mano
+  (golpe, giro, inspección) ya están en la Fase 3 y el giro del eje sigue siendo de `Tool.cs`. No se duplica nada.
+- **Fundido de salida de UI**: el clip `UI_FadeOut` existe (trigger `Hide`), pero `GameUI` apaga los paneles con
+  `SetActive(false)` al instante; para verlo, el programador debe llamar al trigger y desactivar al terminar.
+- **Partículas Quest**: 3 materiales compartidos (aditivo, alfa, confeti sin textura), texturas de 64 px, máximo
+  120 partículas (confeti) y ≤ 24 en el resto; sin sombras ni sondas.
+
+### Resultado de la Fase 5
+- 17 clips + 9 controladores (+1 override), 5 prefabs de partículas, 4 sellos de nota, `PresentationBridge`.
+- Verificado con renders: efectos simulados a media vida y animaciones de defectos muestreadas (tornillo inclinado →
+  plano, chapa aplastada → rebote, grieta que se propaga). En la escena guardada: 6 destinos de destello, 4 sprites
+  de nota y los 2 botones conectados a su tapa.
+- Ajuste tras revisión: el humo del circuito era casi invisible → más opaco, más grande y más denso (se aplica en la
+  siguiente regeneración).
+- Incidencia: `GetComponent<T>() ?? AddComponent<T>()` falla en Unity (nulo falso) → cambiado a comprobación explícita.

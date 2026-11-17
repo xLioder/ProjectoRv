@@ -199,3 +199,52 @@ Cada `Shelf_<Producto>` de la escena tiene un hijo `AttachPoint` asignado como `
 - Paredes, techo y suelo no proyectan sombra. El entorno está marcado como estático (batching + GI), así que se puede
   hornear luz más adelante sin tocar nada.
 - Materiales de toda la escena: `QCXR_Atlas` (casi todo), `QCXR_Belt`, `QCXR_Glass`, `QCXR_Crack` y los de UI/TMP.
+
+---
+
+# Fase 5 · Animaciones y VFX
+
+Generado junto con la escena por `QCXR > Arte > Fase 4-5 · Montar QCXR_MainScene` (`QCXRFxBuilder.cs`).
+
+## Clips (`Animations/`) y dónde viven
+
+| Animación | Duración | Controlador | Objeto | Cómo se dispara |
+|---|---|---|---|---|
+| Tornillo apretándose (`Defect_ScrewTighten`) | 0.4 s | `Defect_Screw` | `Defect_LooseScrew/Fixed` | Al repararse (`Fixed` se activa) |
+| Abolladura enderezándose (`Defect_DentStraighten`) | 0.3 s | `Defect_Dent` | `Defect_Dent/Fixed` | Al repararse |
+| Revelar grieta (`Defect_CrackReveal`) | 0.4 s | `Defect_Crack` | `Defect_HiddenCrack/Visual` | Al revelarla la lupa (`Visual` se activa) |
+| Producto entrando (`Product_Enter`) | 0.3 s | `Product_Model` | `Product_*/Model` | Al instanciarse |
+| Botón presionándose (`Button_Press`) | 0.15 s | `Button` | `Btn_*/Cap` | `XRButton.onPressed` → `SetTrigger("Press")` |
+| Banda atascada (`Belt_Jam`) | bucle | `Belt` | `Env_ConveyorBelt` (mueve `BeltSurface`) | `PresentationBridge` ← `BeltJamChanged` |
+| Baliza (`Beacon_Spin`) | bucle | `Beacon` | `Env_JamIndicatorLit`, `Env_EmergencyBeaconLit` | Al activarse (atasco / falla eléctrica) |
+| Estante aceptando (`Flash_Good` / `Flash_Bad`) | 0.4 s | `Flash` | `Bay_*/BayLight` | `PresentationBridge` ← Sfx Success / Fail |
+| Cubo recibiendo (`Bin_Flash`) | 0.3 s | `BinFlash` (override) | `Env_DiscardBin/FlashRing` | `PresentationBridge` ← Sfx Success / Fail / Report |
+| Panel de UI (`UI_FadeIn` / `UI_FadeOut`) | 0.2 s | `UI_Panel` | `HUD`, `Instructions`, `Report`, `Results` | Entrada al activarse; salida con trigger `Hide` |
+| Sello de nota (`Stamp_Drop`) | 0.5 s | `Stamp` | `Results/Stamp` | Al mostrarse Results |
+
+No se recrean (ya las hace el código): encogimiento del producto al desaparecer, giro del eje del destornillador,
+parpadeo de luces y mensajes de pantalla. Las herramientas no tienen clips propios: su movimiento es físico; las
+acciones de mano (golpe, giro, inspección) están en la Fase 3.
+
+## Efectos (`Prefabs/Effects/`, materiales en `VFX/`)
+
+| Prefab | Tipo | Dónde está |
+|---|---|---|
+| `FX_Sparks` | bucle | `Env_JamIndicatorLit/SparksAnchor` (se enciende con el atasco) |
+| `FX_RepairFlash` | una vez | `Effects/` en la escena; el puente lo coloca en el defecto reparado |
+| `FX_HammerDust` | una vez | `Effects/`; el puente lo coloca en el punto del golpe |
+| `FX_BurnedCircuitSmoke` | bucle | `Defect_BurnedCircuit/Visual/SmokeAnchor` (visible solo con el defecto activo) |
+| `FX_Confetti` | una vez | `Effects/`, bajo el panel de resultados |
+
+Materiales: `QCXR_FX_Additive`, `QCXR_FX_Alpha`, `QCXR_FX_Confetti` (URP Particles/Unlit, compartidos).
+
+## Sellos S / A / B / C
+
+`Art/UI/QCXR_Stamp_S|A|B|C.png`: S estrella dorada, A festoneado verde, B hexágono azul, C círculo rojo. El texto
+`Grade` (que sigue escribiendo `GameUI`) es hijo de `Results/Stamp`; `PresentationBridge` cambia el sprite según
+`SessionRecord.grade` al recibir `SessionSummaryReady` y lanza el confeti.
+
+## `PresentationBridge` (`Scripts/Visual/`, fuera de los 17)
+
+Escucha `BeltJamChanged`, `SfxRequested` y `SessionSummaryReady`. Solo dispara animaciones y partículas; no emite
+eventos ni cambia el estado del juego. Está en `Managers/Presentation` con todas sus referencias ya asignadas.

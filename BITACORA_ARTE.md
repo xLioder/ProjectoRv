@@ -196,3 +196,25 @@ Rama de trabajo: `art/visual-pass` (creada desde `origin/petro`). Sin push: los 
 ### Incidencias de API (Unity 6000.6)
 - `TMP_Text.enableWordWrapping` y `SerializedProperty.objectReferenceInstanceIDValue` son errores de compilación
   (obsoletos) → `textWrappingMode` y `objectReferenceEntityIdValue`.
+
+---
+
+## Verificación posterior · Build de prueba para Quest (rama `Abeth`)
+
+Tras fusionar las PR #1 (→ `petro`) y #2 (→ `Abeth`), se trabaja desde `Abeth`.
+
+- Nuevo menú `QCXR > Arte > Build de prueba Quest (APK)` (`QCXRBuildCheck.cs`, solo editor): compila
+  `QCXR_MainScene` para Android con los Player Settings tal como están, sin modificarlos.
+- **Resultado: build correcta** · IL2CPP · ARM64 · 29.9 min · **APK de 70.6 MB** (214 MB descomprimido).
+  El "1.2 GB" que muestra el informe de Unity incluye símbolos e intermedios que no van en el APK.
+  - Contenido propio del juego: 36 MB sin comprimir (texturas 20.7 MB, shaders 8.8 MB, mallas 4.3 MB).
+  - Lo más pesado es nativo: `libil2cpp.so` 92 MB (crece con el `com.meta.xr.sdk.all` completo), `libunity` 25 MB,
+    `libOVRPlugin` 7 MB, `libmrutilitykitshared` 5 MB.
+- **Manifiesto verificado**: incluye `com.oculus.intent.category.VR`, `android.hardware.vr.headtracking` y
+  `com.oculus.supportedDevices` = quest2 / quest3 → el APK arranca como app VR.
+- **16 NullReferenceException durante la build** (la build termina bien igualmente): todas vienen del editor del
+  paquete OpenXR (`FeatureHelpersInternal.RefreshAllFeatureInfo`), que encuentra una "feature" nula al recorrer la
+  configuración de OpenXR; arrastra a otros procesadores del manifiesto (Meta, XR Hands, XR Management). No es del
+  arte ni de los 17 scripts. Recomendación al equipo: abrir *Project Settings > XR Plug-in Management > OpenXR*,
+  revisar features en rojo/faltantes y, si sobra, quitar paquetes Meta que no se usen (Voice, MRUK, Platform).
+- El error de `MetaXRAcousticMap.cs` (Meta XR Audio) no bloqueó la build de jugador.

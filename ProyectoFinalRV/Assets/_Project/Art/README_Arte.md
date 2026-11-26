@@ -340,3 +340,23 @@ Todos los sprites son ASTC 4×4 en Android. No se tocó la lógica ni la navegac
   partículas ≤ 304 simultáneas en total.
 - **Luz horneada: no aplicada a propósito.** `RandomEventSystem` baja la intensidad de las luces en la falla eléctrica;
   con luz 100 % horneada el efecto no se vería. El entorno ya es estático para hornear GI indirecta si se decide.
+
+---
+
+# Complemento · Animaciones de respuesta de las herramientas (sección 8 del encargo)
+
+Las herramientas siguen moviéndose con la mano real del jugador: estas animaciones **solo mueven piezas hijas**
+(nunca la raíz, que lleva `Rigidbody` + `XRGrabInteractable`) y no sustituyen el control físico.
+
+| Herramienta | Clip | Qué hace | Cómo se dispara |
+|---|---|---|---|
+| Martillo | `Tools/Hammer_Hit` (0.25 s) | Golpe: la cabeza se aplasta al impactar y se recupera con rebote | `PresentationBridge` ← Sfx `Hit` (lo emite `Tool.cs` al golpear un defecto) |
+| Destornillador | `Tools/Screwdriver_Press` (0.25 s) | Presión: el eje entra 6 mm y vuelve. Solo posición: **el giro sigue siendo de `Tool.cs`** | `PresentationBridge` ← Sfx `Screw` (cada 0.25 s mientras atornilla) |
+| Lupa | `Tools/Magnifier_Focus` (bucle) | Inspección / orientación: aro cian pulsante mientras apunta a un defecto oculto | `MagnifierFocusFX` (bool `Focus`) |
+| Lupa | `Tools/Magnifier_Reveal` (0.4 s) | Acercamiento logrado: destello del aro y del marco al revelar | `PresentationBridge` ← Sfx `Reveal` |
+
+- Pivotes nuevos: `Tool_Hammer/Head` en el centro de la cabeza y `Tool_Magnifier/Frame` en el centro del cristal
+  (antes estaban en el mango y la escala los habría desplazado). `Tip`, `Attach` y `LensPoint` no cambian.
+- `Tool_Magnifier/FocusRing`: aro cian emisivo (escala 0 en reposo).
+- `MagnifierFocusFX` (`Scripts/Visual/`, solo lectura): usa la misma distancia (0.30 m) y ángulo (25°) que `Tool.cs`;
+  si se cambian en `Tool`, ajustar también aquí.

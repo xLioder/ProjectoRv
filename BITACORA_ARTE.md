@@ -218,3 +218,22 @@ Tras fusionar las PR #1 (→ `petro`) y #2 (→ `Abeth`), se trabaja desde `Abet
   arte ni de los 17 scripts. Recomendación al equipo: abrir *Project Settings > XR Plug-in Management > OpenXR*,
   revisar features en rojo/faltantes y, si sobra, quitar paquetes Meta que no se usen (Voice, MRUK, Platform).
 - El error de `MetaXRAcousticMap.cs` (Meta XR Audio) no bloqueó la build de jugador.
+
+---
+
+## Complemento · Animaciones de respuesta de las herramientas (rama `Abeth`)
+
+- Detectado al repasar el encargo: la sección 8 pedía movimientos propios de martillo (golpe y recuperación),
+  destornillador (presión) y lupa (inspección, acercamiento, orientación) y no se habían hecho (había decidido que
+  bastaba con el movimiento físico + acciones de mano). Ahora sí:
+  - `Hammer_Hit`, `Screwdriver_Press`, `Magnifier_Focus`, `Magnifier_Reveal` + controladores `Tools/Tool_*.controller`.
+  - Solo animan piezas hijas; la raíz sigue siendo de la mano real. El giro del eje no se duplica.
+  - `MagnifierFocusFX` (visual, solo lectura) y `PresentationBridge` ampliado (Sfx `Hit`, `Screw`, `Reveal`).
+  - Pivotes de `Head` y `Frame` centrados; aro `FocusRing` añadido.
+- Auditoría: **165 OK · 0 fallas · 1 aviso** (8 comprobaciones nuevas de herramientas).
+- Blender: está instalado vía Steam y el conector MCP de Blender Lab está configurado, pero falta el complemento
+  dentro de Blender (repositorio de extensiones `https://lab.blender.org/`). Se deja para más adelante por decisión
+  del usuario; los modelos siguen generándose desde Unity.
+- Revisión visual (hoja `Anim_Tools`): el primer intento del golpe hacía desaparecer la cabeza del martillo porque el
+  clip solo animaba la componente Y de la posición (las otras quedaban en 0 y la cabeza saltaba al mango). Corregido
+  animando el vector completo (también en el eje del destornillador). Verificado: aplastamiento + rebote en su sitio.

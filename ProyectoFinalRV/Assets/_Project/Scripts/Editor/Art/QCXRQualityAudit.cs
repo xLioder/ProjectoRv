@@ -170,6 +170,8 @@ namespace QCXR.EditorTools.Art
                 var grab = new SerializedObject(go.GetComponent<XRGrabInteractable>()).FindProperty("m_AttachTransform");
                 R.Check($"{t}: XRGrabInteractable usa Attach", grab != null && grab.objectReferenceValue == go.transform.Find("Attach"));
                 R.Check($"{t}: HandPoseHint", go.GetComponent<HandPoseHint>() != null);
+                var ta = go.GetComponent<Animator>();
+                R.Check($"{t}: Animator de respuesta (solo piezas hijas)", ta != null && ta.runtimeAnimatorController != null && !ta.applyRootMotion, ta && ta.runtimeAnimatorController ? ta.runtimeAnimatorController.name : "");
                 if (t == "Screwdriver")
                 {
                     var shaft = so.FindProperty("spinPart").objectReferenceValue as Transform;
@@ -184,6 +186,7 @@ namespace QCXR.EditorTools.Art
                     var lens = so.FindProperty("lens").objectReferenceValue as Transform;
                     R.Check("Magnifier: LensPoint en el centro del cristal", lens != null && lens.name == "LensPoint" && Vector3.Distance(lens.localPosition, go.transform.Find("Lens").GetComponent<MeshFilter>().sharedMesh.bounds.center) < 0.003f);
                     R.Check("Magnifier: +Z de LensPoint mira a través del cristal (normal ±Y)", lens != null && Mathf.Abs(Vector3.Dot(lens.forward, Vector3.up)) > 0.99f);
+                    R.Check("Magnifier: MagnifierFocusFX con LensPoint y LensLight", go.GetComponent<MagnifierFocusFX>() != null);
                     R.Check("Magnifier: cristal transparente", go.transform.Find("Lens").GetComponent<MeshRenderer>().sharedMaterial.renderQueue >= 3000);
                 }
             }
@@ -305,7 +308,8 @@ namespace QCXR.EditorTools.Art
             R.Section("Animaciones (8) y efectos (9)");
             string[] clipFiles = { "Products/Defect_ScrewTighten", "Products/Defect_DentStraighten", "Products/Defect_CrackReveal", "Products/Product_Enter",
                                    "Environment/Button_Press", "Environment/Belt_Jam", "Environment/Beacon_Spin", "Environment/Flash_Good", "Environment/Flash_Bad",
-                                   "Environment/Bin_Flash", "UI/UI_FadeIn", "UI/UI_FadeOut", "UI/Stamp_Drop" };
+                                   "Environment/Bin_Flash", "UI/UI_FadeIn", "UI/UI_FadeOut", "UI/Stamp_Drop",
+                                   "Tools/Hammer_Hit", "Tools/Screwdriver_Press", "Tools/Magnifier_Focus", "Tools/Magnifier_Reveal" };
             foreach (var c in clipFiles)
             {
                 var clip = Load<AnimationClip>($"Assets/_Project/Animations/{c}.anim");

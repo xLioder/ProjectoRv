@@ -130,8 +130,8 @@ namespace QCXR.EditorTools.Art
             h.Cyl(new Vector3(0, 0, 0.162f), 0.0135f, 0.014f, Sw.Orange, AlongZ, 12, 0.002f);
             Part(root, "Handle", h);
 
-            var k = new MeshKit();
             const float hz = 0.19f;
+            var k = new MeshKit { Base = Matrix4x4.Translate(new Vector3(0, 0, -hz)) };   // pivote en el centro de la cabeza (animación de impacto)
             k.Box(new Vector3(0, -0.002f, hz), new Vector3(0.038f, 0.07f, 0.042f), 0.006f, Sw.Steel);
             k.Box(new Vector3(0, 0.004f, hz), new Vector3(0.0425f, 0.016f, 0.0465f), 0.003f, Sw.Orange);
             foreach (int sx in new[] { -1, 1 })
@@ -142,7 +142,7 @@ namespace QCXR.EditorTools.Art
             k.Box(new Vector3(0, 0.036f, hz), new Vector3(0.034f, 0.008f, 0.038f), 0.003f, Sw.SteelDark);
             foreach (int sx in new[] { -1, 1 })
                 k.Box(new Vector3(sx * 0.0085f, 0.052f, hz), new Vector3(0.013f, 0.03f, 0.034f), 0.003f, Sw.SteelDark, new Vector3(0, 0, -sx * 8));
-            Part(root, "Head", k);
+            Part(root, "Head", k).transform.localPosition = new Vector3(0, 0, hz);
 
             Ref(root, "Tip", new Vector3(0, -0.061f, hz), Vector3.zero);
             Ref(root, "Attach", Vector3.zero, Vector3.zero);
@@ -198,7 +198,7 @@ namespace QCXR.EditorTools.Art
             h.Cyl(new Vector3(0, 0, 0.087f), 0.0095f, 0.01f, Sw.Orange, AlongZ, 12, 0.002f);
             Part(root, "Handle", h);
 
-            var f = new MeshKit();
+            var f = new MeshKit { Base = Matrix4x4.Translate(new Vector3(0, 0, -lz)) };   // pivote en el centro del cristal
             f.Ring(new Vector3(0, 0, lz), 0.062f, 0.0075f, Sw.Orange, default, 32, 8);
             f.Ring(new Vector3(0, 0.003f, lz), 0.0565f, 0.0022f, Sw.Chrome, default, 32, 6);
             f.Ring(new Vector3(0, -0.003f, lz), 0.0565f, 0.0022f, Sw.Chrome, default, 32, 6);
@@ -207,7 +207,15 @@ namespace QCXR.EditorTools.Art
                 Vector3 p = new Vector3(Mathf.Sin(a * Mathf.Deg2Rad), 0, -Mathf.Cos(a * Mathf.Deg2Rad)) * 0.062f + new Vector3(0, 0.0072f, lz);
                 f.Rivet(p, Vector3.zero, 0.0028f);
             }
-            Part(root, "Frame", f);
+            Part(root, "Frame", f).transform.localPosition = new Vector3(0, 0, lz);
+
+            // Aro de enfoque (cian emisivo): aparece cuando la lupa apunta a un defecto oculto (MagnifierFocusFX + Animator)
+            var fr = new MeshKit { Base = Matrix4x4.Translate(new Vector3(0, 0, -lz)) };
+            fr.Ring(new Vector3(0, 0.0045f, lz), 0.0655f, 0.0028f, Sw.LedCyan, default, 32, 6);
+            var ring = Part(root, "FocusRing", fr);
+            ring.transform.localPosition = new Vector3(0, 0, lz);
+            ring.transform.localScale = Vector3.zero;
+            ring.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 
             var l = new MeshKit();
             l.Cyl(new Vector3(0, 0, lz), 0.0575f, 0.004f, Sw.White, default, 32, 0.0015f);

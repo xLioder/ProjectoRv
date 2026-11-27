@@ -68,6 +68,7 @@ namespace QCXR.EditorTools.Art
                 rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
                 var hint = root.GetComponent<HandPoseHint>();
                 if (hint == null) hint = root.AddComponent<HandPoseHint>();
+                if (root.GetComponent<ToolRespawn>() == null) root.AddComponent<ToolRespawn>();   // reaparece en la mesa si se cae
                 var so = new SerializedObject(hint);
                 so.FindProperty("pose").enumValueIndex = (int)pose;
                 so.ApplyModifiedPropertiesWithoutUndo();

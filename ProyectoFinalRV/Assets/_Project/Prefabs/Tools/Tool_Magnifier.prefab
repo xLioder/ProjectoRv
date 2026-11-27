@@ -394,6 +394,7 @@ GameObject:
   - component: {fileID: 3613868270534205586}
   - component: {fileID: 16787014695813268}
   - component: {fileID: 3071764360855596006}
+  - component: {fileID: 1049324409698799815}
   m_Layer: 0
   m_Name: Tool_Magnifier
   m_TagString: Untagged
@@ -660,6 +661,22 @@ MonoBehaviour:
   lensLight: {fileID: 7285479649094489009}
   distance: 0.3
   angle: 25
+--- !u!114 &1049324409698799815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3753569211237437000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8f3da31f5c70724bba7ab59ab64b9f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QCXR.ToolRespawn
+  minHeight: 0.55
+  maxDistance: 0.9
+  delay: 0.8
+  popDuration: 0.25
 --- !u!1 &3943793672383215748
 GameObject:
   m_ObjectHideFlags: 0

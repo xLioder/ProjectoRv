@@ -75,6 +75,7 @@ namespace QCXR.EditorTools.Art
         [MenuItem("QCXR/Arte/Fase 3 · Manos")]
         public static void BuildHands()
         {
+            if (!QCXRSceneAssembler.ConfirmPrefabRegen("las manos (Hand_L / Hand_R)")) return;
             QCXRPrefabBuilder.EnsureFolder(ArtDir);
             QCXRPrefabBuilder.EnsureFolder(AnimDir + "/Right");
             QCXRPrefabBuilder.EnsureFolder(AnimDir + "/Left");

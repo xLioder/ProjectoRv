@@ -22,6 +22,7 @@ namespace QCXR.EditorTools.Art
         [MenuItem("QCXR/Arte/Fase 4 · Prefabs de estación")]
         public static void BuildPrefabs()
         {
+            if (!QCXRSceneAssembler.ConfirmPrefabRegen("los prefabs de estación (Env_*)")) return;
             QCXRPrefabBuilder.EnsureFolder(PrefabDir);
             QCXRPrefabBuilder.EnsureFolder(Dir);
             atlas = QCXRArtBuilder.Atlas;

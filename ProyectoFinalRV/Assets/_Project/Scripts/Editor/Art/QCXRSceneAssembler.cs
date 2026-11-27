@@ -24,6 +24,25 @@ namespace QCXR.EditorTools.Art
         /// La escena YA NO es solo del generador: el equipo la edita a mano (paneles, métricas, tutorial...).
         /// Regenerarla parte de SampleScene y BORRA esos cambios, así que exige confirmación explícita:
         /// diálogo en el editor, o el argumento -qcxrAllowSceneRegen en modo batch.
+        /// true mientras un montaje completo (escena + prefabs) está en curso: ahí recrear prefabs es lo esperado.
+        public static bool RegenInProgress;
+
+        /// Recrear prefabs de entorno, efectos o manos les cambia los identificadores internos y ROMPE las referencias
+        /// que la escena (editada a mano por el equipo) tenga hacia ellos. Fuera de un montaje completo, pedir confirmación.
+        public static bool ConfirmPrefabRegen(string what)
+        {
+            if (RegenInProgress) return true;
+            if (Application.isBatchMode)
+            {
+                bool ok = System.Environment.GetCommandLineArgs().Any(a => a == "-qcxrAllowPrefabRegen" || a == "-qcxrAllowSceneRegen");
+                if (!ok) Debug.LogError($"[QCXR Art] Regenerar {what} rompería referencias de QCXR_MainScene. Añade -qcxrAllowPrefabRegen y después ejecuta QCXR > Escena > Reparar referencias.");
+                return ok;
+            }
+            return EditorUtility.DisplayDialog("QCXR · Regenerar prefabs",
+                $"Regenerar {what} recrea esos prefabs desde cero: sus componentes internos cambian de identificador y la escena PIERDE las referencias hacia ellos (destellos, banda, botones, efectos...).\n\nDespués ejecuta QCXR > Escena > Reparar referencias del arte.\n\n¿Continuar?",
+                "Sí, regenerar", "Cancelar");
+        }
+
         static bool AllowSceneRegen()
         {
             if (!System.IO.File.Exists(System.IO.Path.Combine(Application.dataPath, ScenePath.Substring("Assets/".Length)))) return true;
@@ -42,6 +61,7 @@ namespace QCXR.EditorTools.Art
         public static void Assemble()
         {
             if (!AllowSceneRegen()) throw new System.OperationCanceledException("Regeneración de QCXR_MainScene cancelada para proteger los cambios del equipo.");
+            RegenInProgress = true;
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             QCXRArtBuilder.BuildMaterials();          // paleta ampliada con colores de entorno
             QCXRStationBuilder.BuildPrefabs();
@@ -233,6 +253,7 @@ namespace QCXR.EditorTools.Art
             btn.position = worldPos;
             var box = btn.GetComponent<BoxCollider>();
             if (box) { box.size = new Vector3(0.1f, 0.04f, 0.1f); box.center = Vector3.zero; }
+            QCXRButtonPokeSetup.Configure(btn.gameObject);   // pulsable con el dedo (poke), no solo con agarre
             var label = btn.GetComponentInChildren<TMPro.TMP_Text>(true);
             if (label != null)
             {
@@ -316,6 +337,7 @@ namespace QCXR.EditorTools.Art
         public static void RebuildEverything()
         {
             if (!AllowSceneRegen()) return;
+            RegenInProgress = true;
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             QCXRArtBuilder.BuildPhase2();        // productos y defectos
             QCXRToolBuilder.BuildTools();        // herramientas
@@ -336,6 +358,7 @@ namespace QCXR.EditorTools.Art
             try
             {
                 if (!AllowSceneRegen()) throw new System.OperationCanceledException("Regeneración cancelada: falta -qcxrAllowSceneRegen.");
+                RegenInProgress = true;
                 if (everything) { QCXRArtBuilder.BuildPhase2(); QCXRToolBuilder.BuildTools(); QCXRHandBuilder.BuildHands(); }
                 Assemble();
                 string outDir = Arg("-qcxrOut") ?? Path.GetFullPath(Path.Combine(Application.dataPath, "../Temp/QCXRPreviews"));

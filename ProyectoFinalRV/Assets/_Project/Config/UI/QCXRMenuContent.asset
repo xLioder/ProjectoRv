@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7fcf31b84c1629449882b88d244ac10, type: 3}
+  m_Name: QCXRMenuContent
+  m_EditorClassIdentifier: Assembly-CSharp::QCXR.QCXRMenuContent
+  marca: UAO  /  IMMERSIVE SOLUTIONS
+  titulo: 'CONTROL DE
+
+    CALIDAD XR'
+  descripcion: "Bienvenido a la l\xEDnea de inspecci\xF3n. Examina, repara y clasifica cada producto antes de que se acabe el turno."
+  etiquetaPrincipal: "INICIAR INSPECCI\xD3N"
+  etiquetaTutorial: "C\xD3MO JUGAR"
+  etiquetaSalir: SALIR
+  etiquetaEstado: "SISTEMA LISTO  /  ESTACI\xD3N 01"
+  tarjetaTitulo: "TU MISI\xD3N"
+  tarjetaDescripcion: "Inspecciona productos en una banda transportadora, repara los da\xF1os posibles y reporta los defectos irreparables."
+  tarjetaDato1: 05  TIPOS DE PRODUCTO
+  tarjetaDato2: 03  HERRAMIENTAS
+  tarjetaDato3: "01  L\xCDNEA DE CALIDAD"
+  instruccionesTitulo: MANUAL DEL INSPECTOR
+  instrucciones: "01  RECIBE EL PRODUCTO\nLa banda transportadora entrega los objetos de uno en uno.\n\n02  EXAMINA Y REPARA\nUtiliza la lupa para inspeccionar; el destornillador y el martillo permiten resolver ciertos defectos.\n\n03  DECIDE SU DESTINO\nEnv\xEDa los productos aptos a su estante. Los irreparables deben desecharse y reportarse.\n\n04  CUIDA TU DESEMPE\xD1O\nEl tiempo, los aciertos y los fallos afectan tu resultado.\n\nVR: apunta a los botones con el controlador y pulsa el gatillo."
+  etiquetaVolver: "VOLVER AL MEN\xDA"
+  pie: "SIMULACI\xD3N DE ENTRENAMIENTO  /  UNITY XR"
+  fuentePersonalizada: {fileID: 0}
+  fondo: {r: 0.025, g: 0.051, b: 0.086, a: 1}
+  superficie: {r: 0.061, g: 0.115, b: 0.164, a: 1}
+  acento: {r: 0.25, g: 0.85, b: 0.92, a: 1}
+  botonPrincipal: {r: 0.05, g: 0.51, b: 0.62, a: 1}
+  textoPrincipal: {r: 0.96, g: 0.98, b: 1, a: 1}

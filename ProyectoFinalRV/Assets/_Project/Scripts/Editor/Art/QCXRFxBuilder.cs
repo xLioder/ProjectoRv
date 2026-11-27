@@ -32,6 +32,7 @@ namespace QCXR.EditorTools.Art
 
         public static void BuildAll()
         {
+            if (!QCXRSceneAssembler.ConfirmPrefabRegen("los efectos y animaciones (FX_*, controladores)")) return;
             foreach (var d in new[] { VfxDir, FxPrefabDir, AnimRoot + "/Products", AnimRoot + "/Environment", AnimRoot + "/UI", UiArtDir })
                 QCXRPrefabBuilder.EnsureFolder(d);
             BuildFxMaterials();

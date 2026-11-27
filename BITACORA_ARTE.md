@@ -253,3 +253,24 @@ Tras fusionar las PR #1 (→ `petro`) y #2 (→ `Abeth`), se trabaja desde `Abet
   confirmación para no borrar ese trabajo.
 - Sincronización: `Abeth` estaba 13 commits por detrás (merges de petro/Esteban/Elam). Los ajustes que Unity había
   reescrito en local se guardaron en un `git stash` y `.vsconfig`/`.slnx` locales se movieron a una copia de seguridad.
+
+---
+
+## Botones que solo funcionaban al agarrar + referencias rotas en la escena (rama `Abeth`, en curso)
+
+- **Causa de los botones**: el `Poke Interactor` del rig (XRI 3) tiene `Require Poke Filter` activado y los `Btn_*`
+  no tenían `XRPokeFilter` → solo el agarre podía seleccionarlos. Arreglo: `XRPokeFilter` con pulsación hacia abajo
+  (-Y, 45°), igual que el botón de ejemplo de XRI (`QCXRButtonPokeSetup`).
+- **Problema mayor descubierto al guardar la escena**: la escena del equipo tenía **9 referencias rotas** hacia
+  componentes internos de prefabs de arte (5 luces de estantes, anillo del cubo, Animator de la banda, 2 tapas de
+  botón). Causa: mis generadores RECREAN esos prefabs (nuevos identificadores internos) y el equipo editó la escena a
+  partir de una versión anterior. Efecto en juego: sin destellos verde/rojo de estantes y cubo, sin vibración de la
+  banda en el atasco y sin animación de las tapas de los botones.
+- **Herramienta de reparación** `QCXR > Escena > Reparar referencias del arte + botones con el dedo`
+  (`QCXRSceneRelink`): vuelve a enlazar POR NOMBRE sobre la escena tal cual (sin regenerarla), añade el poke a los
+  botones, guarda una vez y cuenta referencias rotas antes/después.
+- **Prevención**: los generadores que recrean prefabs (manos, estación, efectos) ahora piden confirmación fuera de un
+  montaje completo y remiten a la herramienta de reparación.
+- **Bloqueo**: el fallo nativo de `OVRPlugin.dll` (Meta XR SDK 1.207, 0xc0000409 en la telemetría) volvió en modo
+  batch: 4 intentos seguidos, incluso renombrando de nuevo `%LOCALAPPDATA%\Oculus\Unity\Unity.json`. La reparación
+  queda pendiente de ejecutarse desde el editor de Unity normal (un clic de menú).

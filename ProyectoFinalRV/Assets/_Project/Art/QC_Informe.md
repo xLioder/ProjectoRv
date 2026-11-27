@@ -1,8 +1,8 @@
 # QC · Informe de control de calidad (arte)
 
-Generado automáticamente por `QCXR > Arte > Fase 7 · Auditoría de calidad` el 2026-11-17 12:13.
+Generado automáticamente por `QCXR > Arte > Fase 7 · Auditoría de calidad` el 2026-11-25 20:29.
 
-**Resultado: 157 OK · 0 fallas · 1 avisos**
+**Resultado: 165 OK · 0 fallas · 1 avisos**
 
 ## Productos (3.1) y defectos en producto (3.2)
 
@@ -80,18 +80,22 @@ Generado automáticamente por `QCXR > Arte > Fase 7 · Auditoría de calidad` el
 | Hammer: Tip y Attach | ✅ OK |  |
 | Hammer: XRGrabInteractable usa Attach | ✅ OK |  |
 | Hammer: HandPoseHint | ✅ OK |  |
+| Hammer: Animator de respuesta (solo piezas hijas) | ✅ OK | Tool_Hammer |
 | Screwdriver: Tool + XRGrabInteractable + Rigidbody + colliders | ✅ OK |  |
 | Screwdriver: Tip y Attach | ✅ OK |  |
 | Screwdriver: XRGrabInteractable usa Attach | ✅ OK |  |
 | Screwdriver: HandPoseHint | ✅ OK |  |
+| Screwdriver: Animator de respuesta (solo piezas hijas) | ✅ OK | Tool_Screwdriver |
 | Screwdriver: Shaft separado del mango (spinPart) | ✅ OK |  |
 | Screwdriver: Shaft gira sobre su eje +Z sin desplazarse | ✅ OK | bounds (0.01, 0.01, 0.11) |
 | Magnifier: Tool + XRGrabInteractable + Rigidbody + colliders | ✅ OK |  |
 | Magnifier: Tip y Attach | ✅ OK |  |
 | Magnifier: XRGrabInteractable usa Attach | ✅ OK |  |
 | Magnifier: HandPoseHint | ✅ OK |  |
+| Magnifier: Animator de respuesta (solo piezas hijas) | ✅ OK | Tool_Magnifier |
 | Magnifier: LensPoint en el centro del cristal | ✅ OK |  |
 | Magnifier: +Z de LensPoint mira a través del cristal (normal ±Y) | ✅ OK |  |
+| Magnifier: MagnifierFocusFX con LensPoint y LensLight | ✅ OK |  |
 | Magnifier: cristal transparente | ✅ OK |  |
 
 ## Manos VR (5)
@@ -140,8 +144,8 @@ Generado automáticamente por `QCXR > Arte > Fase 7 · Auditoría de calidad` el
 
 | Comprobación | Resultado | Detalle |
 |---|---|---|
-| Triángulos visibles en escena (sin productos dinámicos) | ✅ OK | 26.313 (objetivo Quest 2 < 100 k; +≈2 k por producto en banda) |
-| Renderers 3D activos | ✅ OK | 40 (con SRP Batcher) |
+| Triángulos visibles en escena (sin productos dinámicos) | ✅ OK | 26.697 (objetivo Quest 2 < 100 k; +≈2 k por producto en banda) |
+| Renderers 3D activos | ✅ OK | 41 (con SRP Batcher) |
 | Materiales distintos en escena | ✅ OK | 7: QCXR_Atlas, LiberationSans SDF Material, QCXR_Belt, Sprite-Unlit-Default, QCXR_Glass, FresnelHighlight, Default-Line |
 | Luces en tiempo real | ✅ OK | Directional Light(Directional), EmergencyLight(Point, apagada), LensLight(Spot) |
 | Partículas: máximo simultáneo acotado | ✅ OK | 9 sistemas, suma maxParticles = 304 |
@@ -196,6 +200,10 @@ Generado automáticamente por `QCXR > Arte > Fase 7 · Auditoría de calidad` el
 | Clip UI_FadeIn | ✅ OK | 0,20 s |
 | Clip UI_FadeOut | ✅ OK | 0,20 s |
 | Clip Stamp_Drop | ✅ OK | 0,50 s |
+| Clip Hammer_Hit | ✅ OK | 0,25 s |
+| Clip Screwdriver_Press | ✅ OK | 0,25 s |
+| Clip Magnifier_Focus | ✅ OK | 0,80 s, bucle |
+| Clip Magnifier_Reveal | ✅ OK | 0,40 s |
 | FX_Sparks: prefab URP | ✅ OK | max 60, bucle |
 | FX_RepairFlash: prefab URP | ✅ OK | max 4, una vez |
 | FX_HammerDust: prefab URP | ✅ OK | max 16, una vez |

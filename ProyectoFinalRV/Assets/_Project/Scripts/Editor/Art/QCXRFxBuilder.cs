@@ -468,6 +468,51 @@ namespace QCXR.EditorTools.Art
                     new Curve("", typeof(CanvasGroup), "m_Alpha", new[] { 0f, 0.12f }, new[] { 0f, 1f }),
                 }));
             c = NewController($"{U}/Stamp.controller"); State(c, "Drop", stamp, true); Ctrl["Stamp"] = c;
+
+            // ═══ Herramientas (sección 8 · "animaciones adicionales"). Solo piezas hijas: la raíz la mueve la mano real. ═══
+            string Tl = AnimRoot + "/Tools";
+            QCXRPrefabBuilder.EnsureFolder(Tl);
+
+            // Martillo: golpe (la cabeza se aplasta al impactar) y recuperación con rebote · 0.25 s
+            Vector3 hp = new Vector3(0, 0, 0.19f);   // posición de reposo de Head (se anima el vector COMPLETO: una sola componente pondría las otras a 0)
+            var hIdle = MakeClip($"{Tl}/Hammer_Idle.anim", true, Join(
+                Vec("Head", T, "m_LocalScale", new[] { 0f, 1f / 30f }, new[] { Vector3.one, Vector3.one }),
+                Vec("Head", T, "m_LocalPosition", new[] { 0f, 1f / 30f }, new[] { hp, hp })));
+            var hHit = MakeClip($"{Tl}/Hammer_Hit.anim", false, Join(
+                Vec("Head", T, "m_LocalScale", new[] { 0f, 0.04f, 0.12f, 0.19f, 0.25f },
+                    new[] { Vector3.one, new Vector3(1.12f, 0.84f, 1.12f), new Vector3(0.95f, 1.06f, 0.95f), new Vector3(1.02f, 0.99f, 1.02f), Vector3.one }),
+                Vec("Head", T, "m_LocalPosition", new[] { 0f, 0.04f, 0.12f, 0.25f }, new[] { hp, hp + new Vector3(0, 0.003f, 0), hp + new Vector3(0, -0.001f, 0), hp })));
+            c = NewController($"{Tl}/Tool_Hammer.controller");
+            c.AddParameter("Hit", AnimatorControllerParameterType.Trigger);
+            var hi = State(c, "Idle", hIdle, true); var hh = State(c, "Hit", hHit); Trigger(c, hh, "Hit"); Back(hh, hi, 0.02f);
+            Ctrl["Hammer"] = c;
+
+            // Destornillador: presión (el eje entra 6 mm y vuelve) · 0.25 s. El GIRO del eje sigue siendo de Tool.cs:
+            // estos clips solo tocan la POSICIÓN del Shaft, nunca su rotación.
+            var sIdle = MakeClip($"{Tl}/Screwdriver_Idle.anim", true, Vec("Shaft", T, "m_LocalPosition", new[] { 0f, 1f / 30f }, new[] { new Vector3(0, 0, 0.07f), new Vector3(0, 0, 0.07f) }));
+            var sPress = MakeClip($"{Tl}/Screwdriver_Press.anim", false, Vec("Shaft", T, "m_LocalPosition", new[] { 0f, 0.06f, 0.25f }, new[] { new Vector3(0, 0, 0.07f), new Vector3(0, 0, 0.064f), new Vector3(0, 0, 0.07f) }));
+            c = NewController($"{Tl}/Tool_Screwdriver.controller");
+            c.AddParameter("Press", AnimatorControllerParameterType.Trigger);
+            var di = State(c, "Idle", sIdle, true); var dp = State(c, "Press", sPress); Trigger(c, dp, "Press"); Back(dp, di, 0.02f);
+            Ctrl["Screwdriver"] = c;
+
+            // Lupa: inspección/orientación (aro cian pulsante mientras apunta a un defecto oculto) y revelado (destello del aro y del marco)
+            var mIdle = MakeClip($"{Tl}/Magnifier_Idle.anim", true, Join(
+                Vec("FocusRing", T, "m_LocalScale", new[] { 0f, 1f / 30f }, new[] { Vector3.zero, Vector3.zero }),
+                Vec("Frame", T, "m_LocalScale", new[] { 0f, 1f / 30f }, new[] { Vector3.one, Vector3.one })));
+            var mFocus = MakeClip($"{Tl}/Magnifier_Focus.anim", true, Join(
+                Vec("FocusRing", T, "m_LocalScale", new[] { 0f, 0.4f, 0.8f }, new[] { Vector3.one * 0.94f, Vector3.one * 1.04f, Vector3.one * 0.94f }),
+                Vec("Frame", T, "m_LocalScale", new[] { 0f, 1f / 30f }, new[] { Vector3.one, Vector3.one })));
+            var mReveal = MakeClip($"{Tl}/Magnifier_Reveal.anim", false, Join(
+                Vec("FocusRing", T, "m_LocalScale", new[] { 0f, 0.1f, 0.4f }, new[] { Vector3.one, Vector3.one * 1.35f, Vector3.zero }),
+                Vec("Frame", T, "m_LocalScale", new[] { 0f, 0.08f, 0.25f, 0.4f }, new[] { Vector3.one, Vector3.one * 1.07f, Vector3.one * 0.98f, Vector3.one })));
+            c = NewController($"{Tl}/Tool_Magnifier.controller");
+            c.AddParameter("Focus", AnimatorControllerParameterType.Bool); c.AddParameter("Reveal", AnimatorControllerParameterType.Trigger);
+            var mi = State(c, "Idle", mIdle, true); var mf = State(c, "Focus", mFocus); var mr = State(c, "Reveal", mReveal);
+            var f1 = mi.AddTransition(mf); f1.AddCondition(AnimatorConditionMode.If, 0, "Focus"); f1.duration = 0.08f; f1.hasExitTime = false;
+            var f2 = mf.AddTransition(mi); f2.AddCondition(AnimatorConditionMode.IfNot, 0, "Focus"); f2.duration = 0.12f; f2.hasExitTime = false;
+            Trigger(c, mr, "Reveal"); Back(mr, mi, 0.05f);
+            Ctrl["Magnifier"] = c;
         }
 
         // ═════════════════════════ PARCHES A PREFABS ═════════════════════════
@@ -518,6 +563,22 @@ namespace QCXR.EditorTools.Art
                     SetAnimator(bay.gameObject, Ctrl["Flash"]);
             });
             EditPrefab($"{En}/Env_DiscardBin.prefab", r => SetAnimator(r.transform.Find("FlashRing").gameObject, Ctrl["BinFlash"]));
+            // Herramientas: Animator en la raíz que solo anima piezas hijas (Head, Shaft, Frame, FocusRing)
+            const string Tp = "Assets/_Project/Prefabs/Tools";
+            EditPrefab($"{Tp}/Tool_Hammer.prefab", r => SetAnimator(r, Ctrl["Hammer"]));
+            EditPrefab($"{Tp}/Tool_Screwdriver.prefab", r => SetAnimator(r, Ctrl["Screwdriver"]));
+            EditPrefab($"{Tp}/Tool_Magnifier.prefab", r =>
+            {
+                SetAnimator(r, Ctrl["Magnifier"]);
+                var fx = r.GetComponent<MagnifierFocusFX>();
+                if (fx == null) fx = r.AddComponent<MagnifierFocusFX>();
+                var lp = r.transform.Find("LensPoint");
+                var so = new SerializedObject(fx);
+                so.FindProperty("lens").objectReferenceValue = lp;
+                so.FindProperty("lensLight").objectReferenceValue = lp != null ? lp.GetComponentInChildren<Light>(true) : null;
+                so.ApplyModifiedPropertiesWithoutUndo();
+            });
+
             EditPrefab($"{En}/Env_ConveyorBelt.prefab", r =>
             {
                 SetAnimator(r, Ctrl["Belt"]);
@@ -595,6 +656,34 @@ namespace QCXR.EditorTools.Art
                 Object.DestroyImmediate(go);
             }
             animSheet.Apply(); File.WriteAllBytes(Path.Combine(outDir, "Anim_Defects.png"), animSheet.EncodeToPNG()); Object.DestroyImmediate(animSheet);
+
+            // Herramientas: martillo (reposo / impacto / rebote), destornillador (reposo / presión), lupa (reposo / enfoque / revelado)
+            Object.DestroyImmediate(plate);
+            var toolRows = new (string tool, (string clip, float t)[] frames, Vector3 focus, float dist)[]
+            {
+                ("Hammer", new[] { ("Hammer_Idle", 0f), ("Hammer_Hit", 0.04f), ("Hammer_Hit", 0.12f) }, new Vector3(0, 0, 0.19f), 0.22f),
+                ("Screwdriver", new[] { ("Screwdriver_Idle", 0f), ("Screwdriver_Press", 0.06f), ("Screwdriver_Press", 0.25f) }, new Vector3(0, 0, 0.12f), 0.22f),
+                ("Magnifier", new[] { ("Magnifier_Idle", 0f), ("Magnifier_Focus", 0.4f), ("Magnifier_Reveal", 0.1f) }, new Vector3(0, 0, 0.155f), 0.3f),
+            };
+            var toolSheet = new Texture2D(T * 3, T * toolRows.Length, TextureFormat.RGB24, false);
+            for (int r = 0; r < toolRows.Length; r++)
+            {
+                var go = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/_Project/Prefabs/Tools/Tool_{toolRows[r].tool}.prefab"));
+                go.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                for (int c = 0; c < 3; c++)
+                {
+                    var (clipName, t) = toolRows[r].frames[c];
+                    var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>($"{AnimRoot}/Tools/{clipName}.anim");
+                    AnimationMode.StartAnimationMode();
+                    AnimationMode.BeginSampling();
+                    AnimationMode.SampleAnimationClip(go, clip, t);
+                    AnimationMode.EndSampling();
+                    Shot(toolSheet, c, r, toolRows.Length, toolRows[r].focus, new Vector3(-1f, 0.55f, -0.35f), toolRows[r].dist);
+                    AnimationMode.StopAnimationMode();
+                }
+                Object.DestroyImmediate(go);
+            }
+            toolSheet.Apply(); File.WriteAllBytes(Path.Combine(outDir, "Anim_Tools.png"), toolSheet.EncodeToPNG()); Object.DestroyImmediate(toolSheet);
             Debug.Log("[QCXR Art] Vistas de la Fase 5 en " + outDir);
         }
 
@@ -679,6 +768,11 @@ namespace QCXR.EditorTools.Art
             arr.arraySize = targets.Count;
             for (int i = 0; i < targets.Count; i++) arr.GetArrayElementAtIndex(i).objectReferenceValue = targets[i];
             so.FindProperty("stampImage").objectReferenceValue = stampImg;
+            foreach (var (field, tool) in new[] { ("hammerAnimator", "Tool_Hammer"), ("screwdriverAnimator", "Tool_Screwdriver"), ("magnifierAnimator", "Tool_Magnifier") })
+            {
+                var t = find(tool);
+                so.FindProperty(field).objectReferenceValue = t != null ? t.GetComponent<Animator>() : null;
+            }
             var sprites = so.FindProperty("gradeSprites");
             sprites.arraySize = 4;
             for (int i = 0; i < 4; i++) sprites.GetArrayElementAtIndex(i).objectReferenceValue = GradeSprite(i);

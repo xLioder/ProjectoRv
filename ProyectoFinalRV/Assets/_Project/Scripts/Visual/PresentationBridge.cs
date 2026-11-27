@@ -29,6 +29,14 @@ namespace QCXR.Visual
         [SerializeField] Image stampImage;
         [SerializeField] Sprite[] gradeSprites = new Sprite[4];   // S, A, B, C
 
+        [Header("Respuesta de las herramientas (solo piezas hijas, nunca la raíz)")]
+        [SerializeField] Animator hammerAnimator;       // trigger "Hit": la cabeza se aplasta y rebota
+        [SerializeField] Animator screwdriverAnimator;  // trigger "Press": el eje entra y vuelve (el giro es de Tool.cs)
+        [SerializeField] Animator magnifierAnimator;    // trigger "Reveal": destello del aro al revelar
+        static readonly int HitId = Animator.StringToHash("Hit");
+        static readonly int PressToolId = Animator.StringToHash("Press");
+        static readonly int RevealId = Animator.StringToHash("Reveal");
+
         static readonly int JammedId = Animator.StringToHash("Jammed");
         static readonly int GoodId = Animator.StringToHash("Good");
         static readonly int BadId = Animator.StringToHash("Bad");
@@ -56,7 +64,9 @@ namespace QCXR.Visual
         {
             switch (id)
             {
-                case SfxId.Hit: PlayAt(hammerDust, pos); break;
+                case SfxId.Hit: PlayAt(hammerDust, pos); if (hammerAnimator) hammerAnimator.SetTrigger(HitId); break;
+                case SfxId.Screw: if (screwdriverAnimator) screwdriverAnimator.SetTrigger(PressToolId); break;
+                case SfxId.Reveal: if (magnifierAnimator) magnifierAnimator.SetTrigger(RevealId); break;
                 case SfxId.Fixed: PlayAt(repairFlash, pos); break;
                 case SfxId.Success:
                 case SfxId.Report: Flash(pos, GoodId); break;

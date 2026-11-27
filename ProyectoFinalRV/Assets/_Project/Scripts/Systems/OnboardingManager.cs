@@ -11,7 +11,8 @@ namespace QCXR
     }
 
     /// Tutorial guiado. Cada paso se completa con un EVENTO real del juego.
-    /// Incluye la detección de locomoción (poner este script en el XR Origin o asignar `rig`).
+    /// Detecta que el jugador se mueve o gira mirando la CÁMARA: cuenta joystick, teletransporte,
+    /// caminar en el cuarto y también el movimiento simulado del Meta XR Simulator.
     public class OnboardingManager : MonoBehaviour
     {
         [Serializable]
@@ -43,6 +44,7 @@ namespace QCXR
 
         int index;
         bool active;
+        Transform track;                 // lo que se vigila: la cámara (cuenta caminar, locomoción y giro de cabeza)
         Vector3 lastPos;
         float lastYaw, accDistance, accAngle;
 
@@ -69,9 +71,8 @@ namespace QCXR
         void OnState(GameState s)
         {
             if (s != GameState.Onboarding) return;
-            if (rig == null) rig = transform;
-            lastPos = rig.position;
-            lastYaw = rig.eulerAngles.y;
+            track = null;                    // se resuelve en Update (la cámara puede no existir aún)
+            accDistance = accAngle = 0f;
             active = true;
             index = 0;
             ShowCurrent();
@@ -81,10 +82,19 @@ namespace QCXR
         void Update()
         {
             if (!active) return;
-            Vector3 p = rig.position;
+            if (track == null)
+            {
+                var cam = Camera.main;
+                track = cam != null ? cam.transform : (rig != null ? rig : transform);
+                lastPos = track.position;
+                lastYaw = track.eulerAngles.y;
+                return;
+            }
+
+            Vector3 p = track.position;
             accDistance += Vector2.Distance(new Vector2(p.x, p.z), new Vector2(lastPos.x, lastPos.z));
             lastPos = p;
-            float yaw = rig.eulerAngles.y;
+            float yaw = track.eulerAngles.y;
             accAngle += Mathf.Abs(Mathf.DeltaAngle(lastYaw, yaw));
             lastYaw = yaw;
 

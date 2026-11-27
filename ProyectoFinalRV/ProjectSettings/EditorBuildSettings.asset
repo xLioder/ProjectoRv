@@ -6,8 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/_Project/Scenes/QCXR_Menu.unity
+    guid: dd29ccd6ae9306c409c7899b271fe679
+  - enabled: 1
     path: Assets/_Project/Scenes/QCXR_MainScene.unity
-    guid: 2380f83910b0be541a1ad0874d6b80e4
+    guid: 788980ead33592f419701ebb90e04d14
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05

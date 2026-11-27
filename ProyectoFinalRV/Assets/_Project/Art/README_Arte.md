@@ -360,3 +360,25 @@ Las herramientas siguen moviéndose con la mano real del jugador: estas animacio
 - `Tool_Magnifier/FocusRing`: aro cian emisivo (escala 0 en reposo).
 - `MagnifierFocusFX` (`Scripts/Visual/`, solo lectura): usa la misma distancia (0.30 m) y ángulo (25°) que `Tool.cs`;
   si se cambian en `Tool`, ajustar también aquí.
+
+---
+
+# Reaparición de herramientas (`ToolRespawn`)
+
+El jugador está fijo en la estación: una herramienta en el suelo es inalcanzable. `Scripts/Tools/ToolRespawn.cs`
+(en los 3 prefabs de herramienta) la devuelve a su sitio exacto del banco cuando:
+
+- **nadie la sujeta**, y
+- lleva **0.8 s** seguidos por debajo de **0.55 m** (suelo o repisa inferior del banco; la superficie está a 0.8 m)
+  **o** a más de **0.9 m** en horizontal de su sitio.
+
+Si cae en un sitio alcanzable (p. ej. la banda o un estante) se queda ahí. Al reaparecer hace un pequeño efecto de
+escala (0.25 s) y suena `SfxId.Spawn`. Los cuatro valores se ajustan en el inspector. `Tool.cs` no se modificó
+(su `ReturnHome` con `fallY = -0.5` nunca se disparaba porque el suelo está en y = 0).
+
+Prueba automática: `QCXR > Herramientas > Probar reaparición (física en editor)` — abre la escena SIN guardarla y
+comprueba suelo, caída física desde el banco y caída sobre la banda (10/10 OK).
+
+> ⚠️ **La escena ya tiene cambios hechos a mano por el equipo.** Los menús que regeneran `QCXR_MainScene`
+> (`Fase 4-6 · Montar…` y `Reconstruir todo`) ahora piden confirmación (o `-qcxrAllowSceneRegen` en batch) porque
+> la recrean desde `SampleScene` y borrarían esos cambios. Para cambios de arte basta con regenerar prefabs.

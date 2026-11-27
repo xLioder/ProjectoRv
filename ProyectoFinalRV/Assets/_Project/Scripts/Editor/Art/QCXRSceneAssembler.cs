@@ -21,9 +21,27 @@ namespace QCXR.EditorTools.Art
         public const string ScenePath = "Assets/_Project/Scenes/QCXR_MainScene.unity";
         const string Env = QCXRStationBuilder.PrefabDir;
 
-        [MenuItem("QCXR/Arte/Fase 4-6 · Montar QCXR_MainScene completa")]
+        /// La escena YA NO es solo del generador: el equipo la edita a mano (paneles, métricas, tutorial...).
+        /// Regenerarla parte de SampleScene y BORRA esos cambios, así que exige confirmación explícita:
+        /// diálogo en el editor, o el argumento -qcxrAllowSceneRegen en modo batch.
+        static bool AllowSceneRegen()
+        {
+            if (!System.IO.File.Exists(System.IO.Path.Combine(Application.dataPath, ScenePath.Substring("Assets/".Length)))) return true;
+            if (Application.isBatchMode)
+            {
+                bool ok = System.Environment.GetCommandLineArgs().Contains("-qcxrAllowSceneRegen");
+                if (!ok) Debug.LogError("[QCXR Art] Regenerar QCXR_MainScene BORRARÍA los cambios hechos a mano por el equipo. Añade -qcxrAllowSceneRegen si es intencional.");
+                return ok;
+            }
+            return EditorUtility.DisplayDialog("QCXR · Regenerar escena",
+                "Esto vuelve a crear QCXR_MainScene desde SampleScene y BORRA todos los cambios hechos a mano en la escena (paneles, métricas, ajustes del equipo).\n\nPara cambios de arte normalmente basta con regenerar los prefabs.\n\n¿Regenerar la escena de todas formas?",
+                "Sí, regenerar", "Cancelar");
+        }
+
+        [MenuItem("QCXR/Arte/Fase 4-6 · Montar QCXR_MainScene completa (BORRA cambios manuales)")]
         public static void Assemble()
         {
+            if (!AllowSceneRegen()) throw new System.OperationCanceledException("Regeneración de QCXR_MainScene cancelada para proteger los cambios del equipo.");
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             QCXRArtBuilder.BuildMaterials();          // paleta ampliada con colores de entorno
             QCXRStationBuilder.BuildPrefabs();
@@ -294,9 +312,10 @@ namespace QCXR.EditorTools.Art
         }
 
         /// Reconstruye TODO el arte desde cero (Fases 2 → 7), en el orden correcto.
-        [MenuItem("QCXR/Arte/Reconstruir todo (Fases 2-7)")]
+        [MenuItem("QCXR/Arte/Reconstruir todo (Fases 2-7) · BORRA cambios manuales de la escena")]
         public static void RebuildEverything()
         {
+            if (!AllowSceneRegen()) return;
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             QCXRArtBuilder.BuildPhase2();        // productos y defectos
             QCXRToolBuilder.BuildTools();        // herramientas
@@ -316,6 +335,7 @@ namespace QCXR.EditorTools.Art
             int code = 0;
             try
             {
+                if (!AllowSceneRegen()) throw new System.OperationCanceledException("Regeneración cancelada: falta -qcxrAllowSceneRegen.");
                 if (everything) { QCXRArtBuilder.BuildPhase2(); QCXRToolBuilder.BuildTools(); QCXRHandBuilder.BuildHands(); }
                 Assemble();
                 string outDir = Arg("-qcxrOut") ?? Path.GetFullPath(Path.Combine(Application.dataPath, "../Temp/QCXRPreviews"));

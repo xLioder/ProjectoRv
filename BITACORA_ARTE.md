@@ -237,3 +237,19 @@ Tras fusionar las PR #1 (→ `petro`) y #2 (→ `Abeth`), se trabaja desde `Abet
 - Revisión visual (hoja `Anim_Tools`): el primer intento del golpe hacía desaparecer la cabeza del martillo porque el
   clip solo animaba la componente Y de la posición (las otras quedaban en 0 y la cabeza saltaba al mango). Corregido
   animando el vector completo (también en el eje del destornillador). Verificado: aplastamiento + rebote en su sitio.
+
+---
+
+## Reaparición de herramientas (petición del usuario, rama `Abeth`)
+
+- Problema: el jugador no se desplaza; si una herramienta cae de la mesa no puede recogerla. `Tool.cs` tenía
+  `ReturnHome` con `fallY = -0.5`, que nunca se cumple (suelo en y = 0) y además no comprueba si se está sujetando.
+- Solución sin tocar `Tool.cs`: componente `ToolRespawn` en los 3 prefabs (la escena lo recibe sin modificar su
+  archivo). Reaparece en su sitio si nadie la sujeta y lleva 0.8 s caída (< 0.55 m) o fuera de alcance (> 0.9 m).
+  Efecto de escala + `SfxId.Spawn`.
+- Prueba con física real en editor: **10/10 OK** (suelo → vuelve; caída del banco → vuelve y se queda; sobre la
+  banda → se queda).
+- **Protección añadida**: el equipo ya edita `QCXR_MainScene` a mano; los menús que la regeneran ahora piden
+  confirmación para no borrar ese trabajo.
+- Sincronización: `Abeth` estaba 13 commits por detrás (merges de petro/Esteban/Elam). Los ajustes que Unity había
+  reescrito en local se guardaron en un `git stash` y `.vsconfig`/`.slnx` locales se movieron a una copia de seguridad.

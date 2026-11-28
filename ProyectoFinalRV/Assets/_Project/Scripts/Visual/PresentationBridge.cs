@@ -3,14 +3,14 @@ using UnityEngine.UI;
 
 namespace QCXR.Visual
 {
-    /// Puente de PRESENTACIÓN: escucha hechos de GameEvents y dispara animaciones/partículas.
-    /// Solo visual: no emite eventos, no cambia estado de juego, no decide nada.
-    ///
-    ///  · BeltJamChanged          → Animator de la banda (bool "Jammed": vibración de la cinta)
-    ///  · Sfx Hit (martillo)       → FX_HammerDust en el punto de impacto
-    ///  · Sfx Fixed (reparación)   → FX_RepairFlash en el defecto reparado
-    ///  · Sfx Success/Fail/Report  → destello verde/rojo del hueco de estante o del cubo más cercano
-    ///  · SessionSummaryReady      → sello de nota (sprite/color por S, A, B, C) + confeti
+    // Puente de presentación: escucha hechos de GameEvents y dispara animaciones/partículas.
+    // Solo visual: no emite eventos, no cambia estado de juego, no decide nada.
+    //
+    //  - BeltJamChanged          -> Animator de la banda (bool "Jammed": vibración de la cinta)
+    //  - Sfx Hit (martillo)       -> FX_HammerDust en el punto de impacto
+    //  - Sfx Fixed (reparación)   -> FX_RepairFlash en el defecto reparado
+    //  - Sfx Success/Fail/Report  -> destello verde/rojo del hueco de estante o del cubo más cercano
+    //  - SessionSummaryReady      -> sello de nota (sprite/color por S, A, B, C) + confeti
     public class PresentationBridge : MonoBehaviour
     {
         [Header("Banda")]

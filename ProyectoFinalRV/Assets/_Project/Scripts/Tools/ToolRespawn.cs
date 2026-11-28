@@ -4,14 +4,14 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 namespace QCXR
 {
-    /// Devuelve la herramienta a su sitio de la mesa cuando se cae o queda fuera del alcance del jugador
-    /// (el jugador está fijo en la estación y no puede ir a recogerla).
-    ///  · Solo actúa si NADIE la sujeta.
-    ///  · "Perdida" = por debajo de minHeight (suelo o repisa inferior del banco; la superficie está a 0.8 m)
-    ///    o a más de maxDistance (horizontal) de su sitio, de forma continuada durante `delay` segundos
-    ///    (se la ve caer y después reaparece).
-    ///  · El sitio es la pose que tiene al empezar la escena (la misma que guarda Tool.cs como "home").
-    /// No modifica Tool.cs: su ReturnHome (fallY) sigue existiendo como último recurso.
+    // Devuelve la herramienta a su sitio de la mesa cuando se cae o queda fuera del alcance del jugador
+    // (el jugador está fijo en la estación y no puede ir a recogerla).
+    //  - Solo actúa si nadie la sujeta.
+    //  - "Perdida" = por debajo de minHeight (suelo o repisa inferior del banco; la superficie está a 0.8 m)
+    //    o a más de maxDistance (horizontal) de su sitio, de forma continuada durante `delay` segundos
+    //    (se la ve caer y después reaparece).
+    //  - El sitio es la pose que tiene al empezar la escena (la misma que guarda Tool.cs como "home").
+    // Tool.cs mantiene su ReturnHome (fallY) como respaldo.
     [RequireComponent(typeof(Rigidbody), typeof(XRGrabInteractable))]
     public class ToolRespawn : MonoBehaviour
     {
@@ -37,7 +37,7 @@ namespace QCXR
 
         void Awake() => CaptureHome();
 
-        /// Guarda la pose actual como sitio de la herramienta (se llama solo en Awake).
+        // Guarda la pose actual como sitio de la herramienta (se llama solo en Awake).
         public void CaptureHome()
         {
             grab = GetComponent<XRGrabInteractable>();
@@ -50,7 +50,7 @@ namespace QCXR
 
         void Update() => Tick(Time.deltaTime);
 
-        /// Un paso de la comprobación (separado de Update para poder probarlo).
+        // Un paso de la comprobación (separado de Update para poder probarlo).
         public void Tick(float dt)
         {
             if (!captured) CaptureHome();
@@ -63,7 +63,7 @@ namespace QCXR
             if (lostTime >= delay) RespawnNow();
         }
 
-        /// Devuelve la herramienta a su sitio inmediatamente (si nadie la sujeta).
+        // Devuelve la herramienta a su sitio inmediatamente (si nadie la sujeta).
         public void RespawnNow()
         {
             if (grab.isSelected) return;

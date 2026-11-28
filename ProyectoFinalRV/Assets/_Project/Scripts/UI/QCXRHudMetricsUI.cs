@@ -3,12 +3,10 @@ using UnityEngine;
 
 namespace QCXR
 {
-    /// <summary>
-    /// FASE 4. Complementa HUD existente; GameUI sigue mostrando score, combo,
-    /// tiempo, fallos y barra por producto. Este script solo suma contadores
-    /// de productos procesados y reparaciones hechas, sin calcular puntaje.
-    /// Debe estar en un objeto SIEMPRE activo (GameUI), NO dentro de HUD.
-    /// </summary>
+    // Complementa el HUD; GameUI sigue mostrando score, combo,
+    // tiempo, fallos y barra por producto. Este script solo suma contadores
+    // de productos procesados y reparaciones hechas, sin calcular puntaje.
+    // Debe estar en un objeto siempre activo (GameUI), no dentro de HUD.
     [DisallowMultipleComponent]
     public sealed class QCXRHudMetricsUI : MonoBehaviour
     {

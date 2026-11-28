@@ -14,19 +14,19 @@ using Object = UnityEngine.Object;
 
 namespace QCXR.EditorTools.Art
 {
-    /// Fase 7 · Optimización para Quest + auditoría automática contra el brief.
-    /// Menú QCXR > Arte > Fase 7 · Auditoría de calidad. Escribe Assets/_Project/Art/QC_Informe.md.
+    // Optimización para Quest y revisión automática del proyecto.
+    // Menú QCXR > Arte (auditoría). Escribe el informe en Assets/_Project/Art/QC_Informe.md.
     public static class QCXRQualityAudit
     {
         public const string ReportPath = QCXRArtBuilder.ArtRoot + "/QC_Informe.md";
 
-        // ═════════════════════════ OPTIMIZACIÓN ═════════════════════════
+        // Optimización
 
-        /// Ajustes de bajo riesgo para Quest 2/3. No toca XR, scripting backend ni la lógica del juego.
+        // Ajustes de bajo riesgo para Quest 2/3. No toca XR, scripting backend ni la lógica del juego.
         public static List<string> ApplyOptimizations()
         {
             var log = new List<string>();
-            // URP móvil: la nave mide 5 x 4 m → no hace falta sombra a 50 m
+            // URP móvil: la nave mide 5 x 4 m -> no hace falta sombra a 50 m
             var urp = AssetDatabase.LoadAssetAtPath<Object>("Assets/Settings/Mobile_RPAsset.asset");
             if (urp != null)
             {
@@ -55,7 +55,7 @@ namespace QCXR.EditorTools.Art
             return log;
         }
 
-        // ═════════════════════════ AUDITORÍA ═════════════════════════
+        // Auditoría
 
         class Report
         {
@@ -79,7 +79,7 @@ namespace QCXR.EditorTools.Art
             ["Clock"] = (new Vector3(0.18f, 0.18f, 0.06f), new[] { DefectType.LooseScrew, DefectType.Dent, DefectType.HiddenCrack, DefectType.BurnedCircuit }),
         };
 
-        /// Referencia rota: hay un id guardado pero el objeto no existe (API de Unity 6.6: EntityId).
+        // Referencia rota: hay un id guardado pero el objeto no existe (API de Unity 6.6: EntityId).
         static bool IsSet(SerializedProperty p) { object id = p.objectReferenceEntityIdValue; return !id.Equals(Activator.CreateInstance(id.GetType())); }
 
         static int Tris(Mesh m) => m == null ? 0 : (int)Enumerable.Range(0, m.subMeshCount).Sum(i => (long)m.GetIndexCount(i)) / 3;
@@ -96,7 +96,7 @@ namespace QCXR.EditorTools.Art
             R.sb.AppendLine("# QC · Informe de control de calidad (arte)").AppendLine()
                 .AppendLine($"Generado automáticamente por `QCXR > Arte > Fase 7 · Auditoría de calidad` el {DateTime.Now:yyyy-MM-dd HH:mm}.");
 
-            // ── Productos ──
+            // Productos
             R.Section("Productos (3.1) y defectos en producto (3.2)");
             foreach (var kv in Spec)
             {
@@ -138,7 +138,7 @@ namespace QCXR.EditorTools.Art
                 R.Check($"{kv.Key}: animación de entrada en Model (no en la raíz)", anim != null && anim.runtimeAnimatorController != null && go.GetComponent<Animator>() == null);
             }
 
-            // ── Defectos compartidos ──
+            // Defectos compartidos
             R.Section("Defectos compartidos (3.2)");
             foreach (var (name, repairable) in new[] { ("LooseScrew", true), ("Dent", true), ("HiddenCrack", false), ("BurnedCircuit", false) })
             {
@@ -158,7 +158,7 @@ namespace QCXR.EditorTools.Art
                 }
             }
 
-            // ── Herramientas ──
+            // Herramientas
             R.Section("Herramientas (4)");
             foreach (var t in new[] { "Hammer", "Screwdriver", "Magnifier" })
             {
@@ -191,7 +191,7 @@ namespace QCXR.EditorTools.Art
                 }
             }
 
-            // ── Manos ──
+            // Manos
             R.Section("Manos VR (5)");
             foreach (var s in new[] { "L", "R" })
             {
@@ -209,7 +209,7 @@ namespace QCXR.EditorTools.Art
                 R.Check($"Hand_{s}: las 9 poses del brief en el Animator", allPoses, $"{clips.Count} clips");
             }
 
-            // ── Escena ──
+            // Escena
             var scene = EditorSceneManager.OpenScene(QCXRSceneAssembler.ScenePath, OpenSceneMode.Single);
             var all = scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<Transform>(true)).ToList();
             R.Section("Escena QCXR_MainScene (11)");
@@ -258,7 +258,7 @@ namespace QCXR.EditorTools.Art
             R.Check("Productos de referencia desactivados y EditorOnly", refs != null && !refs.gameObject.activeSelf && refs.CompareTag("EditorOnly"));
             R.Check("QCXR_MainScene es la escena 0 de Build Settings", EditorBuildSettings.scenes.Length > 0 && EditorBuildSettings.scenes[0].path == QCXRSceneAssembler.ScenePath && EditorBuildSettings.scenes[0].enabled);
 
-            // ── Rendimiento ──
+            // Rendimiento
             R.Section("Rendimiento Quest (12)");
             var renderers = all.Select(t => t.GetComponent<Renderer>()).Where(r => r && r.gameObject.activeInHierarchy && r.enabled && !(r is ParticleSystemRenderer)).ToList();
             int tris = renderers.Sum(r => { if (r is SkinnedMeshRenderer s) return Tris(s.sharedMesh); var mf = r.GetComponent<MeshFilter>(); return mf ? Tris(mf.sharedMesh) : 0; });
@@ -296,7 +296,7 @@ namespace QCXR.EditorTools.Art
             R.Check("Texturas del arte con formato Android definido (ASTC / paleta RGBA32)", texAstc == texTotal, $"{texAstc}/{texTotal}");
             R.Check("Iluminación horneada", false, "No horneada a propósito: el evento de falla eléctrica modifica la intensidad de las luces en tiempo real (RandomEventSystem). El entorno ya está marcado como estático para hornear GI indirecta si se decide.", true);
 
-            // ── UI 2D ──
+            // UI 2D
             R.Section("Elementos 2D y UI (7)");
             foreach (var p in new[] { "Robot", "Radio", "Lamp", "Toaster", "Clock" }) R.Check($"Icono de producto {p}", QCXRUIBuilder.ProductIcon(p) != null);
             for (int i = 0; i < 4; i++) R.Check($"Icono de defecto {(DefectType)i}", QCXRUIBuilder.DefectIcon(i) != null);
@@ -304,7 +304,7 @@ namespace QCXR.EditorTools.Art
                 R.Check($"Sprite {f}", QCXRUIBuilder.Sprite(f) != null);
             for (int i = 0; i < 4; i++) R.Check($"Sello {QCXRFxBuilder.Grades[i]}", QCXRFxBuilder.GradeSprite(i) != null);
 
-            // ── Animaciones y VFX ──
+            // Animaciones y VFX
             R.Section("Animaciones (8) y efectos (9)");
             string[] clipFiles = { "Products/Defect_ScrewTighten", "Products/Defect_DentStraighten", "Products/Defect_CrackReveal", "Products/Product_Enter",
                                    "Environment/Button_Press", "Environment/Belt_Jam", "Environment/Beacon_Spin", "Environment/Flash_Good", "Environment/Flash_Bad",

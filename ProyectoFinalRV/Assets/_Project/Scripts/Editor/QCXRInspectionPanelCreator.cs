@@ -6,10 +6,7 @@ using UnityEngine.UI;
 
 namespace QCXR.EditorTools
 {
-    /// <summary>
-    /// Crea, con una acción de menú, el nuevo panel de inspección en la escena activa.
-    /// No modifica GameUI.cs, GameEvents.cs, ProductFlow.cs ni las herramientas.
-    /// </summary>
+    // Crea, con una acción de menú, el nuevo panel de inspección en la escena activa.
     public static class QCXRInspectionPanelCreator
     {
         [MenuItem("QCXR/UI/Crear panel de inspección (fase 1)")]
@@ -45,7 +42,7 @@ namespace QCXR.EditorTools
             rect.localScale = Vector3.one * 0.0013f;
 
             // Ubicación inicial: izquierda y un poco más abajo del HUD existente.
-            // Es solo una propuesta editable: ajusta en Scene View a la comodidad real del visor.
+            // Ajustar en la Scene View según cómo se vea en el visor.
             var hud = parent.Find("HUD");
             if (hud != null)
             {

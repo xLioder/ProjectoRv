@@ -2,10 +2,10 @@ using UnityEngine;
 
 namespace QCXR.Visual
 {
-    /// Respuesta VISUAL de la lupa: mientras se sujeta y apunta a un defecto OCULTO dentro de su cono de visión,
-    /// activa el bool "Focus" del Animator (aro cian pulsante = "aquí hay algo, mantén la lupa").
-    /// Solo lee el estado (Product.Active / ProductDefect.State); revelar sigue siendo trabajo de Tool.cs.
-    /// Distancia y ángulo por defecto = los de Tool.cs (revealDistance 0.30 m, revealAngle 25°).
+    // Respuesta visual de la lupa: mientras se sujeta y apunta a un defecto oculto dentro de su cono de visión,
+    // activa el bool "Focus" del Animator (aro cian pulsante = "aquí hay algo, mantén la lupa").
+    // Solo lee el estado (Product.Active / ProductDefect.State); revelar sigue siendo trabajo de Tool.cs.
+    // Distancia y ángulo por defecto = los de Tool.cs (revealDistance 0.30 m, revealAngle 25°).
     [RequireComponent(typeof(Animator))]
     public class MagnifierFocusFX : MonoBehaviour
     {

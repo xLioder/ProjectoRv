@@ -14,13 +14,13 @@ using Object = UnityEngine.Object;
 
 namespace QCXR.EditorTools.Art
 {
-    /// Fase 5 · Animaciones y VFX. Lo llama QCXRSceneAssembler (menú QCXR > Arte > Fase 4/5 · Montar QCXR_MainScene).
-    ///  1) Texturas/materiales de partículas y 5 prefabs de efecto (Prefabs/Effects).
-    ///  2) Clips y AnimatorControllers (Animations/Products|Environment|UI).
-    ///  3) Parches a prefabs existentes (productos, defectos, estación) — idempotentes.
-    ///  4) Ganchos de escena: efectos, PresentationBridge, botones, paneles UI y sello de nota.
-    /// No duplica animaciones del código: encogimiento al desaparecer, giro del eje del destornillador,
-    /// parpadeo de luces y mensajes de pantalla siguen siendo de los scripts.
+    // Efectos y animaciones. Se ejecuta desde QCXRSceneAssembler al montar la escena.
+    // - Materiales de partículas y 5 prefabs de efecto (Prefabs/Effects).
+    // - Clips y AnimatorControllers (Animations/Products|Environment|UI).
+    // - Ajustes a los prefabs que ya existen (productos, defectos, estación). Se puede correr varias veces.
+    // - Conexiones en la escena: efectos, PresentationBridge, botones, paneles y sello de nota.
+    // Lo que ya se anima por código (encoger al desaparecer, giro del destornillador,
+    // parpadeo de luces, mensajes) se queda en los scripts.
     public static class QCXRFxBuilder
     {
         const string VfxDir = "Assets/_Project/VFX";
@@ -44,7 +44,7 @@ namespace QCXR.EditorTools.Art
             Debug.Log("[QCXR Art] Fase 5: efectos, clips, controladores y parches de prefabs listos.");
         }
 
-        // ═════════════════════════ MATERIALES DE PARTÍCULAS ═════════════════════════
+        // Materiales de partículas
 
         static Texture2D Tex(string name, int size, Func<float, float, Color> f, bool sprite = false)
         {
@@ -103,7 +103,7 @@ namespace QCXR.EditorTools.Art
             confettiMat = ParticleMat("QCXR_FX_Confetti", null, false);
         }
 
-        // ═════════════════════════ EFECTOS ═════════════════════════
+        // Efectos
 
         static ParticleSystem NewPs(GameObject go, Material mat, bool loop, float duration, int max, bool playOnAwake)
         {
@@ -254,7 +254,7 @@ namespace QCXR.EditorTools.Art
             }
         }
 
-        // ═════════════════════════ SELLOS DE NOTA (S, A, B, C) ═════════════════════════
+        // Sellos de nota (S, A, B, C)
 
         public static readonly string[] Grades = { "S", "A", "B", "C" };
 
@@ -288,7 +288,7 @@ namespace QCXR.EditorTools.Art
 
         public static Sprite GradeSprite(int i) => AssetDatabase.LoadAssetAtPath<Sprite>($"{UiArtDir}/QCXR_Stamp_{Grades[i]}.png");
 
-        // ═════════════════════════ CLIPS Y CONTROLADORES ═════════════════════════
+        // Clips Y controladores
 
         struct Curve
         {
@@ -377,31 +377,31 @@ namespace QCXR.EditorTools.Art
             string P = AnimRoot + "/Products", E = AnimRoot + "/Environment", U = AnimRoot + "/UI";
             var T = typeof(Transform);
 
-            // ── Producto entrando a la banda (0.3 s, rebote) — en el hijo Model ──
+            // Producto entrando a la banda (0.3 s, rebote), en el hijo Model
             var enter = MakeClip($"{P}/Product_Enter.anim", false, Join(
                 Vec("", T, "m_LocalScale", new[] { 0f, 0.14f, 0.22f, 0.3f }, new[] { new Vector3(0.6f, 0.6f, 0.6f), new Vector3(1.1f, 0.9f, 1.1f), new Vector3(0.96f, 1.05f, 0.96f), Vector3.one }),
                 new[] { new Curve("", T, "m_LocalPosition.y", new[] { 0f, 0.14f, 0.22f, 0.3f }, new[] { 0.06f, 0f, 0.012f, 0f }) }));
             var c = NewController($"{P}/Product_Model.controller"); State(c, "Enter", enter, true); Ctrl["Product"] = c;
 
-            // ── Tornillo apretándose (0.4 s): de levantado/inclinado a plano con dos vueltas — en Fixed ──
+            // Tornillo apretándose (0.4 s): de levantado/inclinado a plano con dos vueltas, en Fixed
             Vector3 raised = Quaternion.Euler(0, 0, 24f) * Vector3.up * 0.016f;
             var screw = MakeClip($"{P}/Defect_ScrewTighten.anim", false, Join(
                 Vec("ScrewHead", T, "m_LocalPosition", new[] { 0f, 0.3f, 0.4f }, new[] { raised, new Vector3(0, 0.0015f, 0), Vector3.zero }),
                 Vec("ScrewHead", T, "localEulerAnglesRaw", new[] { 0f, 0.3f, 0.4f }, new[] { new Vector3(0, 745f, 24f), new Vector3(0, 30f, 2f), Vector3.zero })));
             c = NewController($"{P}/Defect_Screw.controller"); State(c, "Tighten", screw, true); Ctrl["Screw"] = c;
 
-            // ── Abolladura enderezándose (0.3 s): la chapa cede y recupera su forma — en Fixed ──
+            // Abolladura enderezándose (0.3 s): la chapa cede y recupera su forma, en Fixed
             var dent = MakeClip($"{P}/Defect_DentStraighten.anim", false,
                 Vec("PlateSmooth", T, "m_LocalScale", new[] { 0f, 0.1f, 0.2f, 0.3f }, new[] { new Vector3(1.04f, 0.3f, 1.04f), new Vector3(0.97f, 1.35f, 0.97f), new Vector3(1.01f, 0.9f, 1.01f), Vector3.one }));
             c = NewController($"{P}/Defect_Dent.controller"); State(c, "Straighten", dent, true); Ctrl["Dent"] = c;
 
-            // ── Revelar grieta (0.4 s): brillo naranja que se apaga dejando un rescoldo; la grieta "se propaga" — en Visual ──
+            // Revelar grieta (0.4 s): brillo naranja que se apaga dejando un rescoldo; la grieta "se propaga", en Visual
             var crack = MakeClip($"{P}/Defect_CrackReveal.anim", false, Join(
                 BaseColor("Crack", new[] { 0f, 0.12f, 0.4f }, new[] { new Color(0.05f, 0.04f, 0.04f), new Color(1f, 0.7f, 0.25f), new Color(0.4f, 0.13f, 0.03f) }),
                 new[] { new Curve("Crack", T, "m_LocalScale.x", new[] { 0f, 0.25f }, new[] { 0.3f, 1f }) }));
             c = NewController($"{P}/Defect_Crack.controller"); State(c, "Reveal", crack, true); Ctrl["Crack"] = c;
 
-            // ── Botón presionándose (0.15 s) — raíz de Env_ButtonCap ──
+            // Botón presionándose (0.15 s), raíz de Env_ButtonCap
             var bIdle = MakeClip($"{E}/Button_Idle.anim", true, new Curve("Cap", T, "m_LocalPosition.y", new[] { 0f, 1f / 30f }, new[] { 0f, 0f }));
             var bPress = MakeClip($"{E}/Button_Press.anim", false, new Curve("Cap", T, "m_LocalPosition.y", new[] { 0f, 0.05f, 0.15f }, new[] { 0f, -0.012f, 0f }));
             c = NewController($"{E}/Button.controller");
@@ -409,7 +409,7 @@ namespace QCXR.EditorTools.Art
             var si = State(c, "Idle", bIdle, true); var sp = State(c, "Press", bPress); Trigger(c, sp, "Press"); Back(sp, si, 0.01f);
             Ctrl["Button"] = c;
 
-            // ── Banda atascada (bucle): vibración de la cinta — raíz de Env_ConveyorBelt ──
+            // Banda atascada (bucle): vibración de la cinta, raíz de Env_ConveyorBelt
             var beltIdle = MakeClip($"{E}/Belt_Idle.anim", true, Vec("BeltSurface", T, "m_LocalPosition", new[] { 0f, 1f / 30f }, new[] { Vector3.zero, Vector3.zero }));
             float[] jt = { 0f, 0.04f, 0.08f, 0.12f, 0.16f, 0.2f };
             var beltJam = MakeClip($"{E}/Belt_Jam.anim", true, Vec("BeltSurface", T, "m_LocalPosition", jt, new[]
@@ -423,7 +423,7 @@ namespace QCXR.EditorTools.Art
             var t2 = bj.AddTransition(bi); t2.AddCondition(AnimatorConditionMode.IfNot, 0, "Jammed"); t2.duration = 0.1f; t2.hasExitTime = false;
             Ctrl["Belt"] = c;
 
-            // ── Balizas (bucle): reflector girando + pulso de la cúpula — raíz de Env_*Lit ──
+            // Balizas (bucle): reflector girando + pulso de la cúpula, raíz de Env_*Lit
             var spin = MakeClip($"{E}/Beacon_Spin.anim", true, Join(
                 new[] { new Curve("Rotor", T, "localEulerAnglesRaw.y", new[] { 0f, 0.8f }, new[] { 0f, 360f }) },
                 Vec("LitDome", T, "m_LocalScale", new[] { 0f, 0.2f, 0.4f, 0.6f, 0.8f }, new[] { Vector3.one, Vector3.one * 1.06f, Vector3.one, Vector3.one * 1.06f, Vector3.one })));
@@ -432,7 +432,7 @@ namespace QCXR.EditorTools.Art
             AnimationUtility.SetEditorCurve(spin, EditorCurveBinding.FloatCurve("Rotor", T, "localEulerAnglesRaw.y"), curveSpin);
             c = NewController($"{E}/Beacon.controller"); State(c, "Spin", spin, true); Ctrl["Beacon"] = c;
 
-            // ── Destellos (estante 0.4 s verde/rojo · cubo 0.3 s) — en BayLight / FlashRing ──
+            // Destellos (estante 0.4 s verde/rojo, cubo 0.3 s), en BayLight / FlashRing
             Color idle = new Color(0.35f, 0.35f, 0.35f), green = new Color(0.4f, 3.2f, 0.9f), red = new Color(3.2f, 0.35f, 0.25f);
             var fIdle = MakeClip($"{E}/Flash_Idle.anim", true, Emission("", new[] { 0f, 1f / 30f }, new[] { idle, idle }));
             var fGood = MakeClip($"{E}/Flash_Good.anim", false, Emission("", new[] { 0f, 0.06f, 0.4f }, new[] { idle, green, idle }));
@@ -449,7 +449,7 @@ namespace QCXR.EditorTools.Art
             AssetDatabase.DeleteAsset(binPath); AssetDatabase.CreateAsset(bin, binPath);
             Ctrl["BinFlash"] = bin;
 
-            // ── Panel de UI: fundido de entrada al activarse (0.2 s) y de salida con trigger "Hide" ──
+            // Panel de UI: fundido de entrada al activarse (0.2 s) y de salida con trigger "Hide"
             var uiIn = MakeClip($"{U}/UI_FadeIn.anim", false, Join(
                 new[] { new Curve("", typeof(CanvasGroup), "m_Alpha", new[] { 0f, 0.2f }, new[] { 0f, 1f }) }));
             var uiShown = MakeClip($"{U}/UI_Shown.anim", true, new Curve("", typeof(CanvasGroup), "m_Alpha", new[] { 0f, 1f / 30f }, new[] { 1f, 1f }));
@@ -460,7 +460,7 @@ namespace QCXR.EditorTools.Art
             Back(ui1, ui2, 0f); Trigger(c, ui3, "Hide");
             Ctrl["UIPanel"] = c;
 
-            // ── Sello de nota final (0.5 s): cae, golpea y rebota ──
+            // Sello de nota final (0.5 s): cae, golpea y rebota
             var stamp = MakeClip($"{U}/Stamp_Drop.anim", false, Join(
                 Vec("", T, "m_LocalScale", new[] { 0f, 0.22f, 0.32f, 0.42f, 0.5f }, new[] { Vector3.one * 2.4f, Vector3.one * 0.86f, Vector3.one * 1.08f, Vector3.one * 0.97f, Vector3.one }),
                 new[]
@@ -470,12 +470,12 @@ namespace QCXR.EditorTools.Art
                 }));
             c = NewController($"{U}/Stamp.controller"); State(c, "Drop", stamp, true); Ctrl["Stamp"] = c;
 
-            // ═══ Herramientas (sección 8 · "animaciones adicionales"). Solo piezas hijas: la raíz la mueve la mano real. ═══
+            // Herramientas: solo se animan piezas hijas, la raíz la mueve la mano.
             string Tl = AnimRoot + "/Tools";
             QCXRPrefabBuilder.EnsureFolder(Tl);
 
-            // Martillo: golpe (la cabeza se aplasta al impactar) y recuperación con rebote · 0.25 s
-            Vector3 hp = new Vector3(0, 0, 0.19f);   // posición de reposo de Head (se anima el vector COMPLETO: una sola componente pondría las otras a 0)
+            // Martillo: golpe (la cabeza se aplasta al impactar) y recuperación con rebote, 0.25 s
+            Vector3 hp = new Vector3(0, 0, 0.19f);   // posición de reposo de Head (hay que animar x, y, z juntos o las otras quedan en 0)
             var hIdle = MakeClip($"{Tl}/Hammer_Idle.anim", true, Join(
                 Vec("Head", T, "m_LocalScale", new[] { 0f, 1f / 30f }, new[] { Vector3.one, Vector3.one }),
                 Vec("Head", T, "m_LocalPosition", new[] { 0f, 1f / 30f }, new[] { hp, hp })));
@@ -488,8 +488,8 @@ namespace QCXR.EditorTools.Art
             var hi = State(c, "Idle", hIdle, true); var hh = State(c, "Hit", hHit); Trigger(c, hh, "Hit"); Back(hh, hi, 0.02f);
             Ctrl["Hammer"] = c;
 
-            // Destornillador: presión (el eje entra 6 mm y vuelve) · 0.25 s. El GIRO del eje sigue siendo de Tool.cs:
-            // estos clips solo tocan la POSICIÓN del Shaft, nunca su rotación.
+            // Destornillador: presión (el eje entra 6 mm y vuelve), 0.25 s. El giro del eje sigue siendo de Tool.cs:
+            // estos clips solo tocan la posición del Shaft, nunca su rotación.
             var sIdle = MakeClip($"{Tl}/Screwdriver_Idle.anim", true, Vec("Shaft", T, "m_LocalPosition", new[] { 0f, 1f / 30f }, new[] { new Vector3(0, 0, 0.07f), new Vector3(0, 0, 0.07f) }));
             var sPress = MakeClip($"{Tl}/Screwdriver_Press.anim", false, Vec("Shaft", T, "m_LocalPosition", new[] { 0f, 0.06f, 0.25f }, new[] { new Vector3(0, 0, 0.07f), new Vector3(0, 0, 0.064f), new Vector3(0, 0, 0.07f) }));
             c = NewController($"{Tl}/Tool_Screwdriver.controller");
@@ -516,7 +516,7 @@ namespace QCXR.EditorTools.Art
             Ctrl["Magnifier"] = c;
         }
 
-        // ═════════════════════════ PARCHES A PREFABS ═════════════════════════
+        // Ajustes a prefabs
 
         static void EditPrefab(string path, Action<GameObject> edit)
         {
@@ -587,9 +587,9 @@ namespace QCXR.EditorTools.Art
             });
         }
 
-        // ═════════════════════════ VISTAS DE VERIFICACIÓN ═════════════════════════
+        // Vistas de verificación
 
-        /// Hoja de efectos (simulados a media vida) + hoja de animaciones de defectos muestreadas en el tiempo.
+        // Hoja de efectos (simulados a media vida) + hoja de animaciones de defectos muestreadas en el tiempo.
         public static void RenderPreviews(string outDir)
         {
             Directory.CreateDirectory(outDir);
@@ -688,7 +688,7 @@ namespace QCXR.EditorTools.Art
             Debug.Log("[QCXR Art] Vistas de la Fase 5 en " + outDir);
         }
 
-        // ═════════════════════════ GANCHOS DE ESCENA ═════════════════════════
+        // Conexiones en la escena
 
         public static void HookScene(Func<string, Transform> find, Transform sceneRoot, GameObject belt, GameObject rack, GameObject bin)
         {
@@ -706,7 +706,7 @@ namespace QCXR.EditorTools.Art
             var results = find("Results");
             var confetti = Spawn("FX_Confetti", results.position + Vector3.down * 0.45f);
 
-            // Botones: XRButton.onPressed → Animator.SetTrigger("Press") de su tapa
+            // Botones: XRButton.onPressed -> Animator.SetTrigger("Press") de su tapa
             foreach (var btn in new[] { "Btn_StartShift", "Btn_ResetBelt" })
             {
                 var b = find(btn);

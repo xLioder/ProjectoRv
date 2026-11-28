@@ -11,8 +11,8 @@ using UnityEngine.XR.Interaction.Toolkit.UI;
 
 namespace QCXR.EditorTools
 {
-    /// Menú QCXR > Construir escena base. Arma toda la escena en la escena abierta.
-    /// Requisito previo: haber corrido "QCXR > Construir layer, config y prefabs".
+    // Menú QCXR > Construir escena base. Arma toda la escena en la escena abierta.
+    // Requisito previo: haber corrido "QCXR > Construir layer, config y prefabs".
     public static class QCXRSceneBuilder
     {
         const string Data = "Assets/_Project/Data/GameConfig.asset";
@@ -71,7 +71,7 @@ namespace QCXR.EditorTools
                 "Escena base lista.\n\n• Guarda la escena (Ctrl+S).\n• Si no había XR Origin, agrega uno (Starter Assets) en 0,0,0.\n• Dale Play (o Build & Run al Quest).", "OK");
         }
 
-        // ───────────────── ENTORNO ─────────────────
+        // Entorno
         static void BuildEnvironment(Transform env)
         {
             var floor = GameObject.CreatePrimitive(PrimitiveType.Plane);
@@ -80,7 +80,7 @@ namespace QCXR.EditorTools
             floor.GetComponent<MeshRenderer>().sharedMaterial = QCXRPrefabBuilder.Mat(new Color(0.35f, 0.37f, 0.4f), false);
         }
 
-        // ───────────────── BANDA ─────────────────
+        // Banda
         class FactoryRefs { public Transform spawn; public Product[] products; }
 
         static FactoryRefs BuildFactory(Transform fac, GameConfigSO config, Product[] products)
@@ -133,7 +133,7 @@ namespace QCXR.EditorTools
             go.transform.rotation = Quaternion.Euler(euler);
         }
 
-        // ───────────────── ESTANTES ─────────────────
+        // Estantes
         static void BuildShelves(Transform stations)
         {
             Color wood = new Color(0.45f, 0.33f, 0.22f);
@@ -171,7 +171,7 @@ namespace QCXR.EditorTools
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        // ───────────────── CUBO DE DESECHO ─────────────────
+        // Cubo de desecho
         static void BuildBin(Transform stations)
         {
             Vector3 c = new Vector3(0.8f, 0.82f, -0.3f);
@@ -196,7 +196,7 @@ namespace QCXR.EditorTools
             Label3D(go.transform, "DESECHO", c + new Vector3(0, 0.4f, 0));
         }
 
-        // ───────────────── BOTONES ─────────────────
+        // Botones
         class ButtonRefs { public GameObject resetButton; }
 
         static ButtonRefs BuildButtons(Transform stations)
@@ -220,7 +220,7 @@ namespace QCXR.EditorTools
             return go;
         }
 
-        // ───────────────── MANAGERS ─────────────────
+        // Managers
         static void BuildManagers(Transform mgr, GameConfigSO config, FactoryRefs f, GameObject resetButton)
         {
             new GameObject("GameManager").transform.SetParent(mgr, false);
@@ -274,7 +274,7 @@ namespace QCXR.EditorTools
             fso.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        // ───────────────── UI ─────────────────
+        // UI
         static void BuildUI(Transform ui)
         {
             var uiRoot = new GameObject("GameUI");
@@ -412,7 +412,7 @@ namespace QCXR.EditorTools
             return slider;
         }
 
-        // ───────────────── XR ORIGIN + EVENTSYSTEM ─────────────────
+        // XR Origin y EventSystem
         static void EnsureXRRigAndEventSystem(Transform mgr)
         {
             var originType = System.Type.GetType("Unity.XR.CoreUtils.XROrigin, Unity.XR.CoreUtils");
@@ -447,7 +447,7 @@ namespace QCXR.EditorTools
             }
         }
 
-        // ───────────────── Utilidades ─────────────────
+        // Utilidades
         static Transform Group(string name, Transform parent)
         {
             var t = new GameObject(name).transform;

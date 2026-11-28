@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 namespace QCXR
 {
-    // Controlador de una escena INDEPENDIENTE. No altera GameManager ni el tutorial.
+    // Controla la escena del menú. Va aparte del juego: no usa GameManager ni el tutorial.
     public sealed class QCXRMenuController : MonoBehaviour
     {
         [Header("Contenido que puedes editar sin programar")]
@@ -58,7 +58,7 @@ namespace QCXR
 
         void Start()
         {
-            // Se ubica UNA vez al entrar. No persigue la cabeza del jugador en VR.
+            // Se ubica una vez al entrar. No persigue la cabeza del jugador en VR.
             Camera cam = Camera.main;
             if (!menuEnElMundo || !cam) return;
             Vector3 direccion = Vector3.ProjectOnPlane(cam.transform.forward, Vector3.up).normalized;

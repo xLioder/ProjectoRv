@@ -5,11 +5,11 @@ using UnityEngine;
 
 namespace QCXR.EditorTools.Art
 {
-    /// Menú QCXR > Arte > Fase 2. Genera (de forma reproducible) la paleta, los materiales,
-    /// los 4 defectos compartidos y los modelos de los 5 productos.
-    /// Los prefabs de producto se EDITAN en sitio: se conservan Product, Rigidbody y XRGrabInteractable
-    /// (y sus fileID), por lo que las referencias del catálogo de ProductFlow siguen siendo válidas.
-    /// Solo editor: no entra en el build y no forma parte de los 17 scripts del juego.
+    // Menú QCXR > Arte. Genera la paleta, los materiales,
+    // los 4 defectos compartidos y los modelos de los 5 productos.
+    // Los prefabs de producto se editan en sitio para no perder Product, Rigidbody ni XRGrabInteractable
+    // (así el catálogo de ProductFlow sigue apuntando a los mismos objetos).
+    // Solo para el editor, no entra en el build.
     public static class QCXRArtBuilder
     {
         public const string ArtRoot = "Assets/_Project/Art";
@@ -62,7 +62,7 @@ namespace QCXR.EditorTools.Art
             Debug.Log("[QCXR Art] Fase 2 completada: paleta, materiales, 4 defectos y 5 productos.");
         }
 
-        // ═════════════════════════ MATERIALES ═════════════════════════
+        // Materiales
 
         internal static void BuildMaterials()
         {
@@ -108,7 +108,7 @@ namespace QCXR.EditorTools.Art
             // Grieta: material propio para poder animar su emisión (brillo al revelarse con la lupa).
             crackMat = Mat(MatDir + "/QCXR_Crack.mat", m =>
             {
-                // Unlit: el revelado anima _BaseColor (oscuro → naranja intenso → rescoldo) y se ve como brillo propio,
+                // Unlit: el revelado anima _BaseColor (oscuro -> naranja intenso -> rescoldo) y se ve como brillo propio,
                 // sin depender de la palabra clave _EMISSION (que la validación de URP retiraba). Además es más barato.
                 m.shader = Shader.Find("Universal Render Pipeline/Unlit");
                 m.SetColor("_BaseColor", new Color(0.05f, 0.04f, 0.04f, 1f));
@@ -171,7 +171,7 @@ namespace QCXR.EditorTools.Art
             return go;
         }
 
-        // ═════════════════════════ DEFECTOS COMPARTIDOS ═════════════════════════
+        // Defectos compartidos
         // Convención: origen = punto sobre la superficie del producto, +Y local = normal de la superficie.
         // Jerarquía: Defect_X (ProductDefect) > Visual | Fixed | WorkCollider. Todo en la capa "Defect".
 
@@ -216,7 +216,7 @@ namespace QCXR.EditorTools.Art
             foreach (Transform t in go.transform) SetLayer(t.gameObject, layer);
         }
 
-        // ── Tornillo flojo ──
+        // Tornillo flojo
         static GameObject BuildLooseScrew(int layer)
         {
             const string dir = ArtRoot + "/Defects/LooseScrew";
@@ -235,7 +235,7 @@ namespace QCXR.EditorTools.Art
             MeshObject("ScrewLoose", visual, SaveMesh(k, dir + "/LooseScrew_Visual.asset", "LooseScrew_Visual"), atlas, false);
 
             // Fixed: tornillo asentado. El pivote del hijo ScrewHead está en el eje del tornillo
-            // (listo para la animación de giro + descenso de la Fase 5).
+            // (así se puede animar el giro y la bajada).
             var kf = new MeshKit();
             kf.ScrewHead(Matrix4x4.identity);
             MeshObject("ScrewHead", fix, SaveMesh(kf, dir + "/LooseScrew_Fixed.asset", "LooseScrew_Fixed"), atlas, false);
@@ -243,7 +243,7 @@ namespace QCXR.EditorTools.Art
             return FinishDefect(root, layer, DefectType.LooseScrew, ToolType.Screwdriver, 2f, true, false, visual, fix, col);
         }
 
-        // ── Abolladura ──
+        // Abolladura
         static GameObject BuildDent(int layer)
         {
             const string dir = ArtRoot + "/Defects/Dent";
@@ -253,7 +253,7 @@ namespace QCXR.EditorTools.Art
             return FinishDefect(root, layer, DefectType.Dent, ToolType.Hammer, 3f, true, false, visual, fix, col);
         }
 
-        /// Placa de blindaje atornillada 6 x 6 cm (tipo panel industrial). dented = hundimiento facetado.
+        // Placa de blindaje atornillada 6 x 6 cm (tipo panel industrial). dented = hundimiento facetado.
         static MeshKit DentPlate(bool dented)
         {
             var k = new MeshKit();
@@ -312,7 +312,7 @@ namespace QCXR.EditorTools.Art
         static void SideQuad(MeshKit k, Vector3 ta, Vector3 tb, Vector3 ba, Vector3 bb, Vector3 outward)
             => k.Poly(new[] { ta, tb, bb, ba }, Sw.SteelDark, Matrix4x4.identity, outward + Vector3.up * 0.2f);
 
-        // ── Grieta oculta ──
+        // Grieta oculta
         static GameObject BuildCrack(int layer)
         {
             const string dir = ArtRoot + "/Defects/HiddenCrack";
@@ -335,7 +335,7 @@ namespace QCXR.EditorTools.Art
             return FinishDefect(root, layer, DefectType.HiddenCrack, ToolType.None, 1f, false, true, visual, fix, col);
         }
 
-        // ── Circuito quemado ──
+        // Circuito quemado
         static GameObject BuildBurnedCircuit(int layer)
         {
             const string dir = ArtRoot + "/Defects/BurnedCircuit";
@@ -371,7 +371,7 @@ namespace QCXR.EditorTools.Art
             k.Blotch(new Vector3(0.012f, 0.0028f, -0.006f), 0.0015f, 6, 0.5f, 13, Sw.Ember, id);
             MeshObject("Board", visual, SaveMesh(k, dir + "/BurnedCircuit_Visual.asset", "BurnedCircuit_Visual"), atlas, false);
 
-            // Punto de anclaje del humo (Fase 5). Su +Z apunta hacia afuera de la superficie.
+            // De aquí sale el humo. Su +Z apunta hacia afuera de la superficie.
             var smoke = new GameObject("SmokeAnchor").transform;
             smoke.SetParent(visual, false);
             smoke.localPosition = new Vector3(0.010f, 0.006f, 0.005f);
@@ -380,7 +380,7 @@ namespace QCXR.EditorTools.Art
             return FinishDefect(root, layer, DefectType.BurnedCircuit, ToolType.None, 1f, false, false, visual, fix, col);
         }
 
-        // ═════════════════════════ PRODUCTOS ═════════════════════════
+        // Productos
         // Ejes: frente = -Z (mira al jugador en la banda), arriba = +Y, pivote en el centro de la envolvente.
 
         static void PatchProduct(string name, MeshKit kit, List<Slot> slots, List<Col> cols, Dictionary<DefectType, GameObject> defectPrefabs)
@@ -436,7 +436,7 @@ namespace QCXR.EditorTools.Art
             finally { PrefabUtility.UnloadPrefabContents(root); }
         }
 
-        // ── Robot (0.18 x 0.22 x 0.12) · producto del tutorial ──
+        // Robot (0.18 x 0.22 x 0.12), producto del tutorial
         static MeshKit Robot(out List<Slot> slots, out List<Col> cols)
         {
             var k = new MeshKit();
@@ -504,7 +504,7 @@ namespace QCXR.EditorTools.Art
             return k;
         }
 
-        // ── Radio (0.30 x 0.16 x 0.10) ──
+        // Radio (0.30 x 0.16 x 0.10)
         static MeshKit Radio(out List<Slot> slots, out List<Col> cols)
         {
             var k = new MeshKit();
@@ -563,7 +563,7 @@ namespace QCXR.EditorTools.Art
             return k;
         }
 
-        // ── Lámpara (base 0.14 x 0.10 x 0.14 + brazo y pantalla) ──
+        // Lámpara (base 0.14 x 0.10 x 0.14 + brazo y pantalla)
         static MeshKit Lamp(out List<Slot> slots, out List<Col> cols)
         {
             var k = new MeshKit();
@@ -611,7 +611,7 @@ namespace QCXR.EditorTools.Art
             return k;
         }
 
-        // ── Tostadora (0.26 x 0.13 x 0.15) ──
+        // Tostadora (0.26 x 0.13 x 0.15)
         static MeshKit Toaster(out List<Slot> slots, out List<Col> cols)
         {
             var k = new MeshKit();
@@ -647,7 +647,7 @@ namespace QCXR.EditorTools.Art
             return k;
         }
 
-        // ── Reloj (0.18 x 0.18 x 0.06) · los cuatro defectos ──
+        // Reloj (0.18 x 0.18 x 0.06), los cuatro defectos
         static MeshKit Clock(out List<Slot> slots, out List<Col> cols)
         {
             var k = new MeshKit();
@@ -678,7 +678,7 @@ namespace QCXR.EditorTools.Art
             k.ScrewHead(new Vector3(-0.07f, fy + 0.07f, -0.03f), Front, 0.0045f);
             k.ScrewHead(new Vector3(0.07f, fy - 0.07f, -0.03f), Front, 0.0045f);
             // Llave de cuerda trasera
-            k.Cyl(new Vector3(0, 0.03f, 0.032f), 0.012f, 0.004f, Sw.Orange, new Vector3(90, 0, 0), 12, 0.0015f);   // llave de cuerda plana (fondo total ≈ 6.8 cm)
+            k.Cyl(new Vector3(0, 0.03f, 0.032f), 0.012f, 0.004f, Sw.Orange, new Vector3(90, 0, 0), 12, 0.0015f);   // llave de cuerda plana (fondo total ~6.8 cm)
 
             slots = new List<Slot>
             {

@@ -6,8 +6,8 @@ using UnityEngine;
 
 namespace QCXR.EditorTools.Art
 {
-    /// Build de PRUEBA para Quest (Android · IL2CPP · ARM64) de QCXR_MainScene. No cambia ajustes del proyecto:
-    /// usa los de Player Settings tal como están. El APK va a la ruta de -qcxrOut (o Temp/QCXRBuild).
+    // Build de prueba para Quest (Android, IL2CPP, ARM64) de QCXR_MainScene. No cambia ajustes del proyecto:
+    // usa los de Player Settings tal como están. El APK va a la ruta de -qcxrOut (o Temp/QCXRBuild).
     public static class QCXRBuildCheck
     {
         [MenuItem("QCXR/Arte/Build de prueba Quest (APK)")]

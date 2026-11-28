@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace QCXR
 {
-    /// Recolecta métricas, arma el SessionRecord y lo guarda al terminar (JSON + CSV).
+    // Recolecta métricas, arma el SessionRecord y lo guarda al terminar (JSON + CSV).
     public class SessionStats : GameSystem
     {
         [SerializeField] GameConfigSO config;
@@ -87,7 +87,7 @@ namespace QCXR
         }
     }
 
-    /// Persistencia: historial + récord en JSON y registro por producto en CSV.
+    // Persistencia: historial + récord en JSON y registro por producto en CSV.
     public static class SaveSystem
     {
         const int MaxHistory = 20;

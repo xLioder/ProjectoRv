@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace QCXR.EditorTools.Art
 {
-    /// Celdas de la paleta. Cada valor es una celda del atlas (8x8). El orden NO debe cambiar
-    /// una vez generados los modelos: las UV apuntan al centro de cada celda.
+    // Celdas de la paleta. Cada valor es una celda del atlas (8x8). El orden no debe cambiar
+    // una vez generados los modelos: las UV apuntan al centro de cada celda.
     public enum Sw
     {
         Cream, CreamDark, Orange, OrangeDark, Graphite, GraphiteLight, Steel, SteelDark,
@@ -15,7 +15,7 @@ namespace QCXR.EditorTools.Art
         WallPanel, Count
     }
 
-    /// Paleta industrial estilizada: pintura crema y naranja, chasis grafito, acero, goma y LEDs emisivos.
+    // Paleta industrial estilizada: pintura crema y naranja, chasis grafito, acero, goma y LEDs emisivos.
     public static class Palette
     {
         public const int Grid = 8;
@@ -89,8 +89,8 @@ namespace QCXR.EditorTools.Art
         }
     }
 
-    /// Constructor de mallas low-poly con sombreado facetado (chaflanes visibles).
-    /// Todas las piezas se combinan en una sola malla por objeto para reducir draw calls.
+    // Constructor de mallas low-poly con sombreado facetado (chaflanes visibles).
+    // Todas las piezas se combinan en una sola malla por objeto para reducir draw calls.
     public class MeshKit
     {
         readonly List<Vector3> verts = new List<Vector3>();
@@ -98,7 +98,7 @@ namespace QCXR.EditorTools.Art
         readonly List<Vector2> uvs = new List<Vector2>();
         readonly List<int> tris = new List<int>();
 
-        /// Transformación base aplicada a todo lo que se agregue (útil para sub-ensamblajes).
+        // Transformación base aplicada a todo lo que se agregue (útil para sub-ensamblajes).
         public Matrix4x4 Base = Matrix4x4.identity;
 
         public int VertexCount => verts.Count;
@@ -106,7 +106,7 @@ namespace QCXR.EditorTools.Art
 
         static Matrix4x4 TRS(Vector3 c, Vector3 euler) => Matrix4x4.TRS(c, Quaternion.Euler(euler), Vector3.one);
 
-        // ───────── Primitivas de bajo nivel ─────────
+        // Primitivas de bajo nivel
 
         void Tri(Vector3 a, Vector3 b, Vector3 c, Vector3 na, Vector3 nb, Vector3 nc, Vector2 uv, Vector3 outward)
         {
@@ -120,7 +120,7 @@ namespace QCXR.EditorTools.Art
             tris.Add(i); tris.Add(i + 1); tris.Add(i + 2);
         }
 
-        /// Polígono convexo plano (coordenadas locales + matriz). outward = hacia dónde mira la cara.
+        // Polígono convexo plano (coordenadas locales + matriz). outward = hacia dónde mira la cara.
         public void Poly(IList<Vector3> pts, Sw s, Matrix4x4 m, Vector3 outward)
         {
             var M = Base * m;
@@ -135,7 +135,7 @@ namespace QCXR.EditorTools.Art
             for (int i = 1; i < w.Length - 1; i++) Tri(w[0], w[i], w[i + 1], nrm, nrm, nrm, uv, nrm);
         }
 
-        // ───────── Caja con chaflán ─────────
+        // Caja con chaflán
 
         public void Box(Vector3 c, Vector3 size, float bevel, Sw s, Vector3 euler = default)
             => Box(TRS(c, euler), size, bevel, s);
@@ -205,9 +205,9 @@ namespace QCXR.EditorTools.Art
             Poly(p, s, m, o);
         }
 
-        // ───────── Revolución (cilindros, cúpulas, conos, aros) ─────────
+        // Revolución (cilindros, cúpulas, conos, aros)
 
-        /// Perfil (r, y) recorrido de abajo-centro hacia arriba-centro. smooth = normales suaves alrededor del eje.
+        // Perfil (r, y) recorrido de abajo-centro hacia arriba-centro. smooth = normales suaves alrededor del eje.
         public void Lathe(IList<Vector2> prof, Matrix4x4 m, Sw s, int seg = 16, bool smooth = true)
         {
             var M = Base * m;
@@ -249,11 +249,11 @@ namespace QCXR.EditorTools.Art
             };
         }
 
-        /// Cilindro con eje Y local (rotar con euler).
+        // Cilindro con eje Y local (rotar con euler).
         public void Cyl(Vector3 c, float r, float h, Sw s, Vector3 euler = default, int seg = 16, float bevel = 0f, bool smooth = true)
             => Lathe(CylProfile(r, h, bevel), TRS(c, euler), s, seg, smooth);
 
-        /// Cilindro entre dos puntos.
+        // Cilindro entre dos puntos.
         public void Tube(Vector3 a, Vector3 b, float r, Sw s, int seg = 10, float bevel = 0f)
         {
             Vector3 d = b - a;
@@ -273,7 +273,7 @@ namespace QCXR.EditorTools.Art
             Lathe(prof, TRS(c, Vector3.zero), s, seg);
         }
 
-        /// Aro (toroide) con eje Y local.
+        // Aro (toroide) con eje Y local.
         public void Ring(Vector3 c, float radius, float thickness, Sw s, Vector3 euler = default, int seg = 20, int sides = 6)
         {
             // Se construye como lathe de un círculo pequeño desplazado (perfil cerrado).
@@ -286,9 +286,9 @@ namespace QCXR.EditorTools.Art
             Lathe(prof, TRS(c, euler), s, seg);
         }
 
-        // ───────── Detalles industriales ─────────
+        // Detalles industriales
 
-        /// Tornillo de cabeza redonda asentado (base en y=0, eje +Y local).
+        // Tornillo de cabeza redonda asentado (base en y=0, eje +Y local).
         public void ScrewHead(Matrix4x4 m, Sw head = Sw.Steel, Sw slot = Sw.Graphite, float r = 0.011f)
         {
             float k = r / 0.011f;
@@ -304,14 +304,14 @@ namespace QCXR.EditorTools.Art
 
         public void ScrewHead(Vector3 c, Vector3 euler, float r = 0.011f) => ScrewHead(TRS(c, euler), Sw.Steel, Sw.Graphite, r);
 
-        /// Remache simple (cúpula baja).
+        // Remache simple (cúpula baja).
         public void Rivet(Vector3 c, Vector3 euler, float r = 0.0035f, Sw s = Sw.Steel)
         {
             var prof = new[] { new Vector2(0, 0), new Vector2(r, 0), new Vector2(r * 0.85f, r * 0.45f), new Vector2(r * 0.45f, r * 0.8f), new Vector2(0, r * 0.9f) };
             Lathe(prof, TRS(c, euler), s, 8);
         }
 
-        /// Franja de peligro en el plano XY local (mira hacia -Z local). Paralelogramos alternos.
+        // Franja de peligro en el plano XY local (mira hacia -Z local). Paralelogramos alternos.
         public void Stripes(Vector3 c, Vector3 euler, float width, float height, int count, Sw a, Sw b, float slant = 0.6f)
         {
             var m = TRS(c, euler);
@@ -331,7 +331,7 @@ namespace QCXR.EditorTools.Art
             }
         }
 
-        /// Rejilla de ranuras (ventilación) en el plano XY local, mirando a -Z local.
+        // Rejilla de ranuras (ventilación) en el plano XY local, mirando a -Z local.
         public void Vents(Vector3 c, Vector3 euler, float width, float height, int count, Sw slot, float depth = 0.002f)
         {
             var m = TRS(c, euler);
@@ -343,7 +343,7 @@ namespace QCXR.EditorTools.Art
             }
         }
 
-        /// Cinta plana (polilínea) sobre el plano XZ local a altura y. Para grietas y trazas.
+        // Cinta plana (polilínea) sobre el plano XZ local a altura y. Para grietas y trazas.
         public void Ribbon(IList<Vector2> pts, float y, float width0, float width1, Sw s, Matrix4x4 m)
         {
             for (int i = 0; i < pts.Count - 1; i++)
@@ -363,7 +363,7 @@ namespace QCXR.EditorTools.Art
             }
         }
 
-        /// Mancha irregular plana (polígono estrellado) en el plano XZ local.
+        // Mancha irregular plana (polígono estrellado) en el plano XZ local.
         public void Blotch(Vector3 c, float radius, int points, float jitter, int seed, Sw s, Matrix4x4 m)
         {
             var rnd = new System.Random(seed);
@@ -379,7 +379,7 @@ namespace QCXR.EditorTools.Art
                 Poly(new[] { Vector3.zero, ring[i], ring[(i + 1) % points] }, s, mm, Vector3.up);
         }
 
-        // ───────── Salida ─────────
+        // Salida
 
         public void Append(MeshKit other)
         {

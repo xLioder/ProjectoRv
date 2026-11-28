@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace QCXR
 {
-    /// Eventos inesperados durante el turno. Cada evento = un par Begin/End independiente:
-    /// 1) Banda atascada  2) Falla eléctrica  3) Pedido urgente.
-    /// Para agregar uno nuevo: añade un valor al enum y un par BeginX/EndX.
+    // Eventos inesperados durante el turno. Cada evento = un par Begin/End independiente:
+    // 1) Banda atascada  2) Falla eléctrica  3) Pedido urgente.
+    // Para agregar uno nuevo: añade un valor al enum y un par BeginX/EndX.
     public class RandomEventSystem : GameSystem
     {
         enum Kind { BeltJam, LightsOut, RushOrder }
@@ -51,7 +51,7 @@ namespace QCXR
             if (active.HasValue) { EndEvent(active.Value); active = null; }
         }
 
-        // ── Planificador ──
+        // Planificador
         IEnumerator Loop()
         {
             yield return new WaitForSeconds(config.firstEventDelay);
@@ -101,7 +101,7 @@ namespace QCXR
             GameEvents.RaiseRandomEventEnded(NameOf(k));
         }
 
-        // ── 1) Banda atascada ──
+        // 1) Banda atascada
         void BeginJam()
         {
             jamResolved = false;
@@ -126,7 +126,7 @@ namespace QCXR
             else GameEvents.RaiseStrikeRequested("Banda atascada sin reparar");
         }
 
-        // ── 2) Falla eléctrica ──
+        // 2) Falla eléctrica
         void BeginLights()
         {
             originalIntensity = new float[lights.Length];
@@ -153,7 +153,7 @@ namespace QCXR
             if (emergencyLight) emergencyLight.SetActive(false);
         }
 
-        // ── 3) Pedido urgente ──
+        // 3) Pedido urgente
         void BeginRush()
         {
             GameEvents.RaiseRushChanged(true, rushBeltMultiplier, rushTimeMultiplier, rushScoreMultiplier);

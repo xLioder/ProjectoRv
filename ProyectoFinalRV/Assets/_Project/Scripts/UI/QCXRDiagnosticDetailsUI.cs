@@ -3,12 +3,10 @@ using UnityEngine;
 
 namespace QCXR
 {
-    /// <summary>
-    /// FASE 3. Panel complementario del panel de inspeccion (fase 1).
-    /// Solo presenta acciones verificadas mediante GameEvents. Nunca lee los
-    /// defectos aun ocultos de Product, por lo que no revela la respuesta.
-    /// Esta clase NO decide si un producto es reparable o correcto.
-    /// </summary>
+    // Complementa al panel de inspeccion.
+    // Solo presenta acciones verificadas mediante GameEvents. Nunca lee los
+    // defectos aun ocultos de Product, por lo que no revela la respuesta.
+    // Esta clase no decide si un producto es reparable o correcto.
     [DisallowMultipleComponent]
     public sealed class QCXRDiagnosticDetailsUI : MonoBehaviour
     {

@@ -645,31 +645,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1668996569315922448, guid: 99484685725d58f4d87ff027a46ec069, type: 3}
   m_PrefabInstance: {fileID: 119776344}
   m_PrefabAsset: {fileID: 0}
---- !u!95 &119776346 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 1029125201144759704, guid: 99484685725d58f4d87ff027a46ec069, type: 3}
-  m_PrefabInstance: {fileID: 119776344}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &119776347 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 7326614720348154530, guid: 99484685725d58f4d87ff027a46ec069, type: 3}
-  m_PrefabInstance: {fileID: 119776344}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &119776348 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 4772975694520880207, guid: 99484685725d58f4d87ff027a46ec069, type: 3}
-  m_PrefabInstance: {fileID: 119776344}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &119776349 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 3249952804857768170, guid: 99484685725d58f4d87ff027a46ec069, type: 3}
-  m_PrefabInstance: {fileID: 119776344}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &119776350 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 587048047574502168, guid: 99484685725d58f4d87ff027a46ec069, type: 3}
-  m_PrefabInstance: {fileID: 119776344}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &119782851
 GameObject:
   m_ObjectHideFlags: 0
@@ -3151,17 +3126,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8205dd21c25e75349832de1f260bf53e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QCXR.Visual.PresentationBridge
-  beltAnimator: {fileID: 1845798552}
+  beltAnimator: {fileID: 0}
   repairFlash: {fileID: 734834852}
   hammerDust: {fileID: 565853650}
   confetti: {fileID: 1577542199}
   flashTargets:
-  - {fileID: 119776350}
-  - {fileID: 119776349}
-  - {fileID: 119776348}
-  - {fileID: 119776347}
-  - {fileID: 119776346}
-  - {fileID: 1617185272}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   flashRadius: 0.4
   stampImage: {fileID: 910109666}
   gradeSprites:
@@ -3169,6 +3144,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 8f4a294e70e03bc43a9d79c00cdcd2f6, type: 3}
   - {fileID: 21300000, guid: 975a611e90910fc4bb6e4cd42483ad02, type: 3}
   - {fileID: 21300000, guid: bd13543333fecab45adbf0741f6e9cce, type: 3}
+  hammerAnimator: {fileID: 0}
+  screwdriverAnimator: {fileID: 0}
+  magnifierAnimator: {fileID: 0}
 --- !u!1 &473169360
 GameObject:
   m_ObjectHideFlags: 0
@@ -3470,7 +3448,7 @@ MonoBehaviour:
   onPressed:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1156846795}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
         m_MethodName: SetTrigger
         m_Mode: 5
@@ -8319,11 +8297,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 540383850328849596, guid: 974400d6b9ba9204c8d730fa66cd4687, type: 3}
   m_PrefabInstance: {fileID: 1156846793}
   m_PrefabAsset: {fileID: 0}
---- !u!95 &1156846795 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 5330746360807492308, guid: 974400d6b9ba9204c8d730fa66cd4687, type: 3}
-  m_PrefabInstance: {fileID: 1156846793}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1180489705
 GameObject:
   m_ObjectHideFlags: 0
@@ -8411,7 +8384,7 @@ MonoBehaviour:
   onPressed:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1379931706}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
         m_MethodName: SetTrigger
         m_Mode: 5
@@ -9840,11 +9813,6 @@ PrefabInstance:
 --- !u!4 &1379931705 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8857648974226833644, guid: d5222a4a7ce1a254c89beb65267e9c04, type: 3}
-  m_PrefabInstance: {fileID: 1379931704}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &1379931706 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 642399892259383136, guid: d5222a4a7ce1a254c89beb65267e9c04, type: 3}
   m_PrefabInstance: {fileID: 1379931704}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1383214289
@@ -11887,11 +11855,6 @@ PrefabInstance:
 --- !u!4 &1617185271 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2872002144554225135, guid: 1276d518aa689fc4ea8eb018a997ad7b, type: 3}
-  m_PrefabInstance: {fileID: 1617185270}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &1617185272 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 2189119490009949935, guid: 1276d518aa689fc4ea8eb018a997ad7b, type: 3}
   m_PrefabInstance: {fileID: 1617185270}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1621657386
@@ -14344,11 +14307,6 @@ Transform:
 --- !u!23 &1845798551 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 3047584998726396569, guid: 10bd532ea2b16e544b7f120efe15d7ef, type: 3}
-  m_PrefabInstance: {fileID: 1845798549}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &1845798552 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 1859200674801476007, guid: 10bd532ea2b16e544b7f120efe15d7ef, type: 3}
   m_PrefabInstance: {fileID: 1845798549}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1849021692

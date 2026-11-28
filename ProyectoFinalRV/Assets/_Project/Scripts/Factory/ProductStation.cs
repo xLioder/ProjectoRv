@@ -8,8 +8,8 @@ namespace QCXR
 {
     public enum StationKind { Shelf, DiscardBin }
 
-    /// Estación de entrega. Shelf: estante de un tipo (XR Socket Interactor en el mismo objeto).
-    /// DiscardBin: cubo con collider TRIGGER; si el descarte es correcto abre y valida el reporte.
+    // Estación de entrega. Shelf: estante de un tipo (XR Socket Interactor en el mismo objeto).
+    // DiscardBin: cubo con collider trigger; si el descarte es correcto abre y valida el reporte.
     public class ProductStation : MonoBehaviour
     {
         [SerializeField] StationKind kind;
@@ -47,7 +47,7 @@ namespace QCXR
             if (kind == StationKind.DiscardBin) GameEvents.ReportChoiceMade -= OnReportChoice;
         }
 
-        // ── Estante ──
+        // Estante
         void OnPlaced(SelectEnterEventArgs args)
         {
             var p = args.interactableObject.transform.GetComponentInParent<Product>();
@@ -58,18 +58,18 @@ namespace QCXR
             p.Resolve(outcome);
         }
 
-        // ── Cubo de desecho ──
+        // Cubo de desecho
         void OnTriggerStay(Collider other)
         {
             if (kind != StationKind.DiscardBin) return;
             var p = other.GetComponentInParent<Product>();
-            if (p == null || p.IsResolved || p.State == ProductState.Held) return;   // hay que SOLTARLO dentro
+            if (p == null || p.IsResolved || p.State == ProductState.Held) return;   // hay que soltarlo dentro
 
             var outcome = ProductEvaluator.EvaluateDiscard(p);
             GameEvents.RaiseSfx(outcome.IsSuccess() ? SfxId.Success : SfxId.Fail, transform.position);
 
             actualDefects.Clear();
-            foreach (var t in p.UnrepairableTypes) actualDefects.Add(t);   // leer ANTES de que el producto desaparezca
+            foreach (var t in p.UnrepairableTypes) actualDefects.Add(t);   // leer antes de que el producto desaparezca
             p.Resolve(outcome);
 
             if (outcome == ProductOutcome.DiscardedCorrect)

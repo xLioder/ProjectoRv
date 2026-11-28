@@ -6,7 +6,7 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 namespace QCXR
 {
-    /// Botón físico 3D. Emite ButtonPressed(id): "StartShift", "SkipTutorial", "ResetBelt"...
+    // Botón físico 3D. Emite ButtonPressed(id): "StartShift", "SkipTutorial", "ResetBelt"...
     [RequireComponent(typeof(XRSimpleInteractable))]
     public class XRButton : MonoBehaviour
     {

@@ -6,14 +6,14 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 namespace QCXR.Visual
 {
-    /// Capa VISUAL de las manos: traduce gatillo/grip y los eventos de agarre de XRI a parámetros
-    /// del Animator. No contiene lógica de juego, no toca GameEvents y no mueve la mano
-    /// (la posición siempre la da el controlador real).
-    ///
-    /// Animator esperado (generado por QCXR > Arte > Fase 3):
-    ///   Capa 0 "Base"   : blend 2D Grip × Trigger (abierta / señalar / índice / puño)
-    ///   Capa 1 "Hold"   : poses de agarre por herramienta (peso controlado aquí)
-    ///   Capa 2 "Action" : aditiva (golpe, pulsar, girar, inspeccionar)
+    // Capa visual de las manos: traduce gatillo/grip y los eventos de agarre de XRI a parámetros
+    // del Animator. No contiene lógica de juego, no toca GameEvents y no mueve la mano
+    // (la posición siempre la da el controlador real).
+    //
+    // Animator esperado (lo genera QCXRHandBuilder):
+    //   Capa 0 "Base"   : blend 2D Grip × Trigger (abierta / señalar / índice / puño)
+    //   Capa 1 "Hold"   : poses de agarre por herramienta (peso controlado aquí)
+    //   Capa 2 "Action" : aditiva (golpe, pulsar, girar, inspeccionar)
     [RequireComponent(typeof(Animator))]
     public class HandPoseDriver : MonoBehaviour
     {
@@ -120,14 +120,14 @@ namespace QCXR.Visual
             SetPose(HandPose.None);
         }
 
-        /// Fija la pose de agarre. None = la mano vuelve a la pose natural controlada por grip/gatillo.
+        // Fija la pose de agarre. None = la mano vuelve a la pose natural controlada por grip/gatillo.
         public void SetPose(HandPose p)
         {
             pose = p;
             if (p != HandPose.None) anim.SetInteger(PoseId, (int)p);   // al soltar se conserva para el fundido de salida
         }
 
-        /// Animación de pulsar un botón. También se puede llamar desde un UnityEvent (p. ej. XRButton.onPressed).
+        // Animación de pulsar un botón. También se puede llamar desde un UnityEvent (p. ej. XRButton.onPressed).
         public void PlayPress() => anim.SetTrigger(PressId);
     }
 }

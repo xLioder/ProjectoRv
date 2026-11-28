@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace QCXR
 {
-    /// Entrega UN producto a la vez y vigila su tiempo límite.
-    /// Onboarding: producto de práctica con todos los defectos (catalog[0]).
-    /// Playing: producto aleatorio; si se acaba su tiempo se pierde.
+    // Entrega un producto a la vez y vigila su tiempo límite.
+    // Onboarding: producto de práctica con todos los defectos (catalog[0]).
+    // Playing: producto aleatorio; si se acaba su tiempo se pierde.
     public class ProductFlow : MonoBehaviour
     {
         [SerializeField] GameConfigSO config;
-        [SerializeField] Product[] catalog;     // prefabs. [0] = producto de práctica (≥3 slots de defecto)
+        [SerializeField] Product[] catalog;     // prefabs. [0] = producto de práctica (>=3 slots de defecto)
         [SerializeField] Transform spawnPoint;
 
         GameState state;
@@ -40,7 +40,7 @@ namespace QCXR
         void OnDifficulty(float d) => difficulty = d;
         void OnRush(bool on, float belt, float time, float score) => timeMultiplier = time;
 
-        // ── Spawn ──
+        // Spawn
         void OnState(GameState s)
         {
             state = s;
@@ -94,7 +94,7 @@ namespace QCXR
             foreach (var p in Product.Active.ToArray()) if (p != null) Destroy(p.gameObject);
         }
 
-        // ── Tiempo límite por producto ──
+        // Tiempo límite por producto
         void BeginTimer(Product p)
         {
             if (state != GameState.Playing || p.IsTutorial || p.IsResolved || current != null) return;

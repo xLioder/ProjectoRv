@@ -8,14 +8,14 @@ using QCXR.Visual;
 
 namespace QCXR.EditorTools.Art
 {
-    /// Menú QCXR > Arte > Fase 3 · Manos. Genera guantes izquierdo y derecho con rig de huesos,
-    /// clips de pose/acción, AnimatorController (+ override para la izquierda) y prefabs.
-    ///
-    /// Marcos de referencia
-    ///  · Modelado (M): muñeca en el origen, dedos hacia +Z, palma hacia -Y. Derecha: pulgar en -X.
-    ///  · Agarre (raíz del prefab): origen en el centro del puño cerrado, +Z = eje del puño (sale por
-    ///    el lado del índice), igual que el Attach de las herramientas. HandOffset convierte M → agarre.
-    ///  · Los dedos se flexionan con rotación +X local; la izquierda es el espejo exacto (X → -X).
+    // Menú QCXR > Arte (manos). Genera los guantes izquierdo y derecho con huesos,
+    // clips de pose/acción, AnimatorController (+ override para la izquierda) y prefabs.
+    //
+    // Marcos de referencia
+    //  - Modelado (M): muñeca en el origen, dedos hacia +Z, palma hacia -Y. Derecha: pulgar en -X.
+    //  - Agarre (raíz del prefab): origen en el centro del puño cerrado, +Z = eje del puño (sale por
+    //    el lado del índice), igual que el Attach de las herramientas. HandOffset convierte M -> agarre.
+    //  - Los dedos se flexionan con rotación +X local; la izquierda es el espejo exacto (X -> -X).
     public static class QCXRHandBuilder
     {
         const string ArtDir = QCXRArtBuilder.ArtRoot + "/Hands";
@@ -23,7 +23,7 @@ namespace QCXR.EditorTools.Art
         const string PrefabDir = "Assets/_Project/Prefabs/Hands";
         const string InputPath = "Assets/Samples/XR Interaction Toolkit/3.6.1/Starter Assets/XRI Default Input Actions.inputactions";
 
-        /// Centro del puño (donde queda el eje del mango) en el marco M.
+        // Centro del puño (donde queda el eje del mango) en el marco M.
         public static readonly Vector3 FistCenter = new Vector3(0f, -0.027f, 0.088f);
 
         static readonly string[] Fingers = { "Index", "Middle", "Ring", "Pinky" };
@@ -41,7 +41,7 @@ namespace QCXR.EditorTools.Art
 
         class Bone { public string name; public Transform t; public Quaternion restRight; public int index; }
 
-        // ═════════════════════════ POSES (grados, marco derecho) ═════════════════════════
+        // Poses (grados, marco derecho)
         // Dedos: (proximal, medio, distal) de flexión. Pulgar: (base, medio, punta).
 
         struct Pose
@@ -70,7 +70,7 @@ namespace QCXR.EditorTools.Art
             ["IndexCurl"] = new Pose(V(58, 70, 40), V(10, 12, 6), V(12, 14, 8), V(14, 16, 9), V(14, 20, 12), V(0, 8, 0)),
         };
 
-        // ═════════════════════════ ENTRADA ═════════════════════════
+        // Entrada
 
         [MenuItem("QCXR/Arte/Fase 3 · Manos")]
         public static void BuildHands()
@@ -99,7 +99,7 @@ namespace QCXR.EditorTools.Art
             Debug.Log("[QCXR Art] Fase 3: manos izquierda y derecha con rig, poses y Animator.");
         }
 
-        // ═════════════════════════ RIG + MALLA ═════════════════════════
+        // Rig + malla
 
         static Quaternion Mirror(Quaternion q) => new Quaternion(q.x, -q.y, -q.z, q.w);
         static Vector3 Mirror(Vector3 v) => new Vector3(-v.x, v.y, v.z);
@@ -223,7 +223,7 @@ namespace QCXR.EditorTools.Art
             if (seg == 0 && !thumb) k.Box(new Vector3(0, r * 0.95f, len * 0.5f), new Vector3(r * 1.5f, 0.003f, len * 0.55f), 0.001f, Sw.Graphite);
         }
 
-        // ═════════════════════════ CLIPS ═════════════════════════
+        // Clips
 
         static Dictionary<string, AnimationClip> BuildClips(Transform root, List<Bone> bones, bool left)
         {
@@ -271,7 +271,7 @@ namespace QCXR.EditorTools.Art
                 clips[name] = SaveAsset(clip, $"{dir}/Hand_{side}_{name}.anim");
             }
 
-            // Acciones ADITIVAS: el primer fotograma es la referencia (= reposo), el resto añade flexión.
+            // Acciones aditivas: el primer fotograma es la referencia (= reposo), el resto añade flexión.
             var zero = new Pose();
             AnimationClip Action(string name, bool loop, float[] times, System.Func<Bone, int, Vector3> delta)
             {
@@ -342,7 +342,7 @@ namespace QCXR.EditorTools.Art
             }
         }
 
-        /// Guarda conservando GUID/fileID si el asset ya existe.
+        // Guarda conservando GUID/fileID si el asset ya existe.
         static T SaveAsset<T>(T obj, string path) where T : Object
         {
             var existing = AssetDatabase.LoadAssetAtPath<T>(path);
@@ -353,7 +353,7 @@ namespace QCXR.EditorTools.Art
             return existing;
         }
 
-        // ═════════════════════════ ANIMATOR ═════════════════════════
+        // Animator
 
         static AnimatorController BuildController(Dictionary<string, AnimationClip> c)
         {
@@ -428,7 +428,7 @@ namespace QCXR.EditorTools.Art
             return ctrl;
         }
 
-        // ═════════════════════════ PREFAB ═════════════════════════
+        // Prefab
 
         static void SaveHandPrefab(GameObject root, RuntimeAnimatorController ctrl, bool left)
         {

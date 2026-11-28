@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace QCXR
 {
-    /// Reglas del turno: temporizador global, dificultad, puntaje con combo y fallos.
-    /// Cada regla es una sección independiente; todas reaccionan a eventos.
+    // Reglas del turno: temporizador global, dificultad, puntaje con combo y fallos.
+    // Cada regla es una sección independiente; todas reaccionan a eventos.
     public class SessionRules : GameSystem
     {
         [SerializeField] GameConfigSO config;
@@ -46,7 +46,7 @@ namespace QCXR
             GameEvents.RaiseStrikesChanged(strikes, config.maxStrikes);
         }
 
-        // ── Tiempo y dificultad ──
+        // Tiempo y dificultad
         void Update()
         {
             if (!IsPlaying) return;
@@ -65,7 +65,7 @@ namespace QCXR
             if (remaining <= 0f) GameEvents.RaiseEndRequested(EndReason.TimeUp);
         }
 
-        // ── Puntaje ──
+        // Puntaje
         void OnRush(bool on, float belt, float time, float scoreMult) => scoreMultiplier = scoreMult;
 
         void OnProductResolved(Product p, ProductOutcome outcome)
@@ -101,7 +101,7 @@ namespace QCXR
             GameEvents.RaiseFeedback($"{reason}  {(points >= 0 ? "+" : "")}{points}");
         }
 
-        // ── Fallos ──
+        // Fallos
         void OnStrikeRequested(string reason)
         {
             if (!IsPlaying) return;

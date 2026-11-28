@@ -8,7 +8,7 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 namespace QCXR
 {
-    /// Producto que viaja por la banda. Conoce su estado y sus defectos; NO decide puntaje.
+    // Producto que viaja por la banda. Conoce su estado y sus defectos; no decide puntaje.
     [RequireComponent(typeof(Rigidbody), typeof(XRGrabInteractable))]
     public class Product : MonoBehaviour
     {
@@ -60,7 +60,7 @@ namespace QCXR
             grab.selectExited.RemoveListener(OnReleased);
         }
 
-        /// Lo llama el spawner justo después de instanciar.
+        // Lo llama el spawner justo después de instanciar.
         public void ConfigureDefects(float chance, int maxDefects, bool forceAll)
         {
             foreach (var d in defects) d.Deactivate();
@@ -72,7 +72,7 @@ namespace QCXR
 
         public void SetAtInspection() { if (State == ProductState.OnBelt) State = ProductState.AtInspection; }
 
-        /// Punto único de cierre (estante, cubo, timer o pérdida).
+        // Punto único de cierre (estante, cubo, timer o pérdida).
         public void Resolve(ProductOutcome outcome)
         {
             if (IsResolved) return;
@@ -109,7 +109,7 @@ namespace QCXR
         }
     }
 
-    /// Reglas de evaluación como funciones puras: fáciles de probar y de explicar.
+    // Reglas de evaluación (funciones sin estado).
     public static class ProductEvaluator
     {
         public static ProductOutcome EvaluatePlacement(Product p, ProductType shelfType)

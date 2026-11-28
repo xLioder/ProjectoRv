@@ -3,11 +3,9 @@ using UnityEngine;
 
 namespace QCXR
 {
-    /// <summary>
-    /// FASE 5. Agrega desglose comprobable a la pantalla de resultados EXISTENTE.
-    /// No guarda datos ni altera botones; SessionStats y GameUI siguen a cargo.
-    /// Instalar en GameUI (siempre activo), no en Results (oculto al inicio).
-    /// </summary>
+    // Agrega el desglose de metricas a la pantalla de resultados.
+    // No guarda datos ni altera botones; SessionStats y GameUI siguen a cargo.
+    // Instalar en GameUI (siempre activo), no en Results (oculto al inicio).
     [DisallowMultipleComponent]
     public sealed class QCXRResultsMetricsUI : MonoBehaviour
     {

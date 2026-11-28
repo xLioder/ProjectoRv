@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace QCXR
 {
-    /// Banda completa: mueve productos, los detiene en el punto de inspección
-    /// y marca como perdidos los que caen al piso o salen por el final.
-    /// Requiere un BoxCollider TRIGGER sobre la superficie de la banda.
+    // Banda completa: mueve productos, los detiene en el punto de inspección
+    // y marca como perdidos los que caen al piso o salen por el final.
+    // Requiere un BoxCollider trigger sobre la superficie de la banda.
     public class ConveyorBelt : MonoBehaviour
     {
         [SerializeField] GameConfigSO config;

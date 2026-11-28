@@ -5,13 +5,13 @@ using QCXR.Visual;
 
 namespace QCXR.EditorTools.Art
 {
-    /// Menú QCXR > Arte > Fase 3 · Herramientas. Remodela martillo, destornillador y lupa EDITANDO
-    /// los prefabs en sitio: se conservan Tool, XRGrabInteractable, Rigidbody y los objetos de
-    /// referencia (Tip, Attach, LensPoint, LensLight) con sus fileID.
-    ///
-    /// Convención común: el mango va a lo largo de +Z local y Attach (rotación identidad) está en
-    /// el centro del puño. XRI alinea Attach con el punto de agarre del controlador, por lo que
-    /// +Z de la herramienta = eje del puño de la mano (ver QCXRHandBuilder).
+    // Menú QCXR > Arte (herramientas). Remodela martillo, destornillador y lupa editando
+    // los prefabs en sitio: se conservan Tool, XRGrabInteractable, Rigidbody y los objetos de
+    // referencia (Tip, Attach, LensPoint, LensLight) con sus fileID.
+    //
+    // Convención común: el mango va a lo largo de +Z local y Attach (rotación identidad) está en
+    // el centro del puño. XRI alinea Attach con el punto de agarre del controlador, por lo que
+    // +Z de la herramienta = eje del puño de la mano (ver QCXRHandBuilder).
     public static class QCXRToolBuilder
     {
         const string Dir = QCXRArtBuilder.ArtRoot + "/Tools";
@@ -119,7 +119,7 @@ namespace QCXR.EditorTools.Art
             b.center = center; b.size = size;
         }
 
-        // ── Martillo (≈ 0.27 m). Cara de golpe hacia -Y, uña hacia +Y ──
+        // Martillo (~0.27 m). Cara de golpe hacia -Y, uña hacia +Y
         static void BuildHammer(GameObject root)
         {
             var h = new MeshKit();
@@ -153,7 +153,7 @@ namespace QCXR.EditorTools.Art
             SetTool(root, so => so.FindProperty("tipRadius").floatValue = 0.05f);
         }
 
-        // ── Destornillador (≈ 0.24 m). Shaft separado, pivote en su raíz, gira sobre su +Z ──
+        // Destornillador (~0.24 m). Shaft separado, pivote en su raíz, gira sobre su +Z
         static void BuildScrewdriver(GameObject root)
         {
             var h = new MeshKit();
@@ -187,7 +187,7 @@ namespace QCXR.EditorTools.Art
             });
         }
 
-        // ── Lupa (≈ 0.29 m). Cristal en el plano XZ; LensPoint +Z mira a través del cristal (-Y) ──
+        // Lupa (~0.29 m). Cristal en el plano XZ; LensPoint +Z mira a través del cristal (-Y)
         static void BuildMagnifier(GameObject root, Material glass)
         {
             const float lz = 0.155f;

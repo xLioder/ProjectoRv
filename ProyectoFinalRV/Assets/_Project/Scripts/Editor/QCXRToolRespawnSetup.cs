@@ -6,9 +6,9 @@ using UnityEngine;
 
 namespace QCXR.EditorTools
 {
-    /// Menú QCXR > Herramientas > Añadir reaparición (ToolRespawn) / Probar reaparición.
-    /// Añade ToolRespawn a los 3 prefabs de herramienta (la escena lo recibe por ser instancias de prefab,
-    /// SIN tocar el archivo de la escena) y prueba el comportamiento con física real en modo editor.
+    // Menú QCXR > Herramientas > Añadir reaparición (ToolRespawn) / Probar reaparición.
+    // Añade ToolRespawn a los 3 prefabs de herramienta (la escena lo recibe por ser instancias de prefab,
+    // sin tocar el archivo de la escena) y prueba el comportamiento con física real en modo editor.
     public static class QCXRToolRespawnSetup
     {
         static readonly string[] Tools = { "Hammer", "Screwdriver", "Magnifier" };
@@ -60,21 +60,21 @@ namespace QCXR.EditorTools
                 Vector3 home = r.HomePosition;
                 Quaternion homeRot = r.transform.rotation;
 
-                // A) En el suelo, fuera de alcance → vuelve a su sitio
+                // A) En el suelo, fuera de alcance -> vuelve a su sitio
                 r.transform.position = new Vector3(home.x + 0.1f, 0.05f, home.z - 0.4f);
                 body.position = r.transform.position;
                 Simulate(r, 1.2f);
                 float dA = Vector3.Distance(r.transform.position, home);
                 Check($"{r.name}: en el suelo → vuelve al banco", dA < 0.03f, $"a {dA * 100:0.0} cm de su sitio");
 
-                // B) Caída física real por el borde delantero del banco → acaba de nuevo en su sitio
+                // B) Caída física real por el borde delantero del banco -> acaba de nuevo en su sitio
                 r.transform.SetPositionAndRotation(new Vector3(home.x, home.y + 0.05f, home.z - 0.22f), homeRot);
                 body.position = r.transform.position;
                 Simulate(r, 3f);
                 float dB = Vector3.Distance(r.transform.position, home);
                 Check($"{r.name}: cae del banco por física → reaparece y se queda", dB < 0.04f, $"a {dB * 100:0.0} cm de su sitio tras 3 s");
 
-                // C) Sobre la banda (al alcance del jugador) → NO debe reaparecer
+                // C) Sobre la banda (al alcance del jugador) -> no debe reaparecer
                 Vector3 onBelt = new Vector3(Mathf.Clamp(home.x, -0.3f, 0.3f), 0.97f, 0.62f);
                 r.transform.SetPositionAndRotation(onBelt, homeRot);
                 body.position = onBelt;
@@ -86,12 +86,12 @@ namespace QCXR.EditorTools
             }
 
             Physics.simulationMode = prevMode;
-            EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);   // descarta cambios: la escena NO se guarda
+            EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);   // descarta cambios: la escena no se guarda
             Debug.Log($"[QCXR Respawn] Resultado: {pass} OK · {fail} fallas");
             return fail == 0;
         }
 
-        /// Entrada batch: añade el componente, prueba y sale con EditorApplication.Exit.
+        // Entrada batch: añade el componente, prueba y sale con EditorApplication.Exit.
         public static void BatchAddAndTest()
         {
             int code = 0;

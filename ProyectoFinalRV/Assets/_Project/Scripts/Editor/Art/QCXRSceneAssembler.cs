@@ -9,26 +9,26 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 namespace QCXR.EditorTools.Art
 {
-    /// Menú QCXR > Arte > Fase 4 · Montar QCXR_MainScene.
-    /// Copia Assets/Scenes/SampleScene.unity (que NO se modifica) a Assets/_Project/Scenes/QCXR_MainScene.unity y,
-    /// sobre esa copia, sustituye la parte visual de los placeholders por los prefabs de arte. Los objetos con
-    /// scripts (ConveyorBelt, ProductStation, XRButton, RandomEventSystem, UI...) y sus referencias se conservan:
-    /// solo se les quitan las mallas primitivas (sus colliders siguen funcionando) y se les añaden visuales hijos.
-    /// Reproducible: cada ejecución vuelve a partir de SampleScene.
+    // Menú QCXR > Arte (montar QCXR_MainScene).
+    // Copia Assets/Scenes/SampleScene.unity (que no se modifica) a Assets/_Project/Scenes/QCXR_MainScene.unity y,
+    // sobre esa copia, sustituye la parte visual de los placeholders por los prefabs de arte. Los objetos con
+    // scripts (ConveyorBelt, ProductStation, XRButton, RandomEventSystem, UI...) y sus referencias se conservan:
+    // solo se les quitan las mallas primitivas (sus colliders siguen funcionando) y se les añaden visuales hijos.
+    // Reproducible: cada ejecución vuelve a partir de SampleScene.
     public static class QCXRSceneAssembler
     {
         public const string SourceScene = "Assets/Scenes/SampleScene.unity";
         public const string ScenePath = "Assets/_Project/Scenes/QCXR_MainScene.unity";
         const string Env = QCXRStationBuilder.PrefabDir;
 
-        /// La escena YA NO es solo del generador: el equipo la edita a mano (paneles, métricas, tutorial...).
-        /// Regenerarla parte de SampleScene y BORRA esos cambios, así que exige confirmación explícita:
-        /// diálogo en el editor, o el argumento -qcxrAllowSceneRegen en modo batch.
-        /// true mientras un montaje completo (escena + prefabs) está en curso: ahí recrear prefabs es lo esperado.
+        // Ojo: la escena también se edita a mano (paneles, métricas, tutorial...).
+        // Regenerarla vuelve a partir de SampleScene y borra esos cambios, por eso pide confirmación:
+        // diálogo en el editor, o el argumento -qcxrAllowSceneRegen en modo batch.
+        // true mientras un montaje completo (escena + prefabs) está en curso: ahí recrear prefabs es lo esperado.
         public static bool RegenInProgress;
 
-        /// Recrear prefabs de entorno, efectos o manos les cambia los identificadores internos y ROMPE las referencias
-        /// que la escena (editada a mano por el equipo) tenga hacia ellos. Fuera de un montaje completo, pedir confirmación.
+        // Recrear prefabs de entorno, efectos o manos les cambia los identificadores internos y rompe las referencias
+        // que la escena (editada a mano por el equipo) tenga hacia ellos. Fuera de un montaje completo, pedir confirmación.
         public static bool ConfirmPrefabRegen(string what)
         {
             if (RegenInProgress) return true;
@@ -65,8 +65,8 @@ namespace QCXR.EditorTools.Art
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             QCXRArtBuilder.BuildMaterials();          // paleta ampliada con colores de entorno
             QCXRStationBuilder.BuildPrefabs();
-            QCXRFxBuilder.BuildAll();                 // Fase 5: efectos, clips y parches de prefabs
-            QCXRUIBuilder.BuildSprites();             // Fase 7: iconos (render) y sprites de UI
+            QCXRFxBuilder.BuildAll();                 // efectos, clips y ajustes de prefabs
+            QCXRUIBuilder.BuildSprites();             // iconos y sprites de UI
 
             QCXRPrefabBuilder.EnsureFolder("Assets/_Project/Scenes");
             AssetDatabase.DeleteAsset(ScenePath);
@@ -81,15 +81,15 @@ namespace QCXR.EditorTools.Art
             var factory = Find("Factory");
             var stations = Find("Stations");
 
-            // ── Jugador: XR Origin en el suelo, frente a la banda (estaba a 0.87 m de altura y dentro de la banda) ──
+            // Jugador: XR Origin en el suelo, frente a la banda (estaba a 0.87 m de altura y dentro de la banda)
             var origin = all.FirstOrDefault(t => t != null && t.name.StartsWith("XR Origin"));
             if (origin != null) { origin.position = Vector3.zero; origin.rotation = Quaternion.identity; }
 
-            // ── Nave ──
+            // Nave
             Strip(Find("Floor"));
             Place("Env_Room", envGroup, Vector3.zero);
 
-            // ── Banda ──
+            // Banda
             foreach (var n in new[] { "BeltSurface", "RailFront", "RailBack" }) Strip(Find(n));
             foreach (var t in FindAll("Leg").Concat(FindAll("InspectionMark"))) Object.DestroyImmediate(t.gameObject);
             var belt = Place("Env_ConveyorBelt", factory, new Vector3(0, 0, 0.75f));
@@ -99,7 +99,7 @@ namespace QCXR.EditorTools.Art
             so.FindProperty("textureScroll").floatValue = 1f / QCXRStationBuilder.BeltTile;   // la textura avanza a la misma velocidad que los productos
             so.ApplyModifiedPropertiesWithoutUndo();
 
-            // ── Banco de herramientas (delante de la banda, al alcance) + herramientas en su sitio ──
+            // Banco de herramientas (delante de la banda, al alcance) + herramientas en su sitio
             var table = Find("ToolTable");
             Strip(table);
             table.position = QCXRStationBuilder.BenchAnchor + new Vector3(0, QCXRStationBuilder.BenchTop / 2, 0);
@@ -109,7 +109,7 @@ namespace QCXR.EditorTools.Art
             PlaceTool(Find("Tool_Screwdriver"), bench.transform.Find("Spot_Screwdriver"), Vector3.left, 0.019f);
             PlaceTool(Find("Tool_Magnifier"), bench.transform.Find("Spot_Magnifier"), Vector3.right, 0.0165f);
 
-            // ── Consola de botones (frente hacia el jugador) ──
+            // Consola de botones (frente hacia el jugador)
             var console = Find("Console");
             Strip(console);
             console.position = QCXRStationBuilder.ConsoleAnchor + new Vector3(0, QCXRStationBuilder.ConsoleSize.y / 2, 0);
@@ -118,7 +118,7 @@ namespace QCXR.EditorTools.Art
             SetupButton(Find("Btn_StartShift"), "Env_ButtonCap_Green", QCXRStationBuilder.ConsoleAnchor + QCXRStationBuilder.StartButtonLocal);
             SetupButton(Find("Btn_ResetBelt"), "Env_ButtonCap_Red", QCXRStationBuilder.ConsoleAnchor + QCXRStationBuilder.ResetButtonLocal);
 
-            // ── Estantería: visual + punto de colocación por hueco (el producto queda apoyado y mirando al jugador) ──
+            // Estantería: visual + punto de colocación por hueco (el producto queda apoyado y mirando al jugador)
             foreach (var n in new[] { "RackBase", "RackTopBoard" }) Strip(Find(n));
             foreach (var t in FindAll("RackPost")) Object.DestroyImmediate(t.gameObject);
             var rack = Place("Env_ShelfRack", stations, new Vector3(-0.85f, 0, -0.2f));
@@ -148,11 +148,11 @@ namespace QCXR.EditorTools.Art
                 if (at != null) { at.objectReferenceValue = attach; sso.ApplyModifiedPropertiesWithoutUndo(); }
             }
 
-            // ── Cubo de desecho ──
+            // Cubo de desecho
             foreach (var n in new[] { "BinPedestal", "BinFloor", "BinWallL", "BinWallR", "BinWallF", "BinWallB" }) Strip(Find(n));
             var bin = Place("Env_DiscardBin", stations, new Vector3(0.8f, 0, -0.3f));
 
-            // ── Indicador de atasco (se activa con el evento) y baliza de emergencia ──
+            // Indicador de atasco (se activa con el evento) y baliza de emergencia
             var jam = Find("JamIndicator");
             Unscale(jam); Strip(jam);
             jam.position = new Vector3(0, 1.61f, 0.75f + 0.33f);       // sobre el pórtico de inspección
@@ -164,7 +164,7 @@ namespace QCXR.EditorTools.Art
             var el = emergency.GetComponent<Light>();
             if (el != null) { el.range = 5f; el.intensity = 2.5f; el.shadows = LightShadows.None; }
 
-            // ── Iluminación: una direccional con sombras + ambiente de tres colores (sin luces extra) ──
+            // Iluminación: una direccional con sombras + ambiente de tres colores (sin luces extra)
             var sun = all.FirstOrDefault(t => t != null && t.name == "Directional Light")?.GetComponent<Light>();
             if (sun != null)
             {
@@ -178,10 +178,10 @@ namespace QCXR.EditorTools.Art
             RenderSettings.ambientGroundColor = new Color(0.26f, 0.25f, 0.24f);
             RenderSettings.fog = false;
 
-            // ── Fase 5: efectos en escena, puente de presentación, botones, paneles y sello ──
+            // Efectos en escena, puente de presentación, botones, paneles y sello
             QCXRFxBuilder.HookScene(Find, Find("QCXR_Scene"), belt, rack, bin);
 
-            // ── Fase 6: manos en el XR Origin, jerarquía del brief, productos de referencia, Build Settings ──
+            // Manos en el XR Origin, orden de la jerarquía, productos de referencia y Build Settings
             QCXRSceneFinalizer.Finalize(scene);
 
             EditorSceneManager.MarkSceneDirty(scene);
@@ -190,7 +190,7 @@ namespace QCXR.EditorTools.Art
             Debug.Log("[QCXR Art] Fase 4: QCXR_MainScene montada en " + ScenePath);
         }
 
-        // ═════════════════════════ UTILIDADES ═════════════════════════
+        // Utilidades
 
         static List<Transform> AllTransforms(Scene scene)
         {
@@ -199,14 +199,14 @@ namespace QCXR.EditorTools.Art
             return list;
         }
 
-        /// Quita la malla primitiva de un placeholder conservando su collider y sus componentes.
+        // Quita la malla primitiva de un placeholder conservando su collider y sus componentes.
         static void Strip(Transform t)
         {
             var r = t.GetComponent<MeshRenderer>(); if (r) Object.DestroyImmediate(r);
             var f = t.GetComponent<MeshFilter>(); if (f) Object.DestroyImmediate(f);
         }
 
-        /// Deja la escala en 1 sin mover a los hijos (los placeholders "Box" escalaban el objeto entero).
+        // Deja la escala en 1 sin mover a los hijos (los placeholders "Box" escalaban el objeto entero).
         static void Unscale(Transform t)
         {
             var kids = new List<(Transform, Vector3, Quaternion, Vector3)>();
@@ -232,7 +232,7 @@ namespace QCXR.EditorTools.Art
             return go;
         }
 
-        /// Herramienta tumbada sobre el banco: mango a lo largo de X, apoyada a "lift" sobre la superficie.
+        // Herramienta tumbada sobre el banco: mango a lo largo de X, apoyada a "lift" sobre la superficie.
         static void PlaceTool(Transform tool, Transform spot, Vector3 forward, float lift, Vector3? up = null)
         {
             var attach = tool.Find("Attach");
@@ -286,7 +286,7 @@ namespace QCXR.EditorTools.Art
             return mf != null ? -mf.sharedMesh.bounds.min.y + 0.002f : 0.1f;
         }
 
-        // ═════════════════════════ VISTAS PREVIAS ═════════════════════════
+        // Vistas previas
 
         public static void RenderScene(string outDir)
         {
@@ -332,7 +332,7 @@ namespace QCXR.EditorTools.Art
             return null;
         }
 
-        /// Reconstruye TODO el arte desde cero (Fases 2 → 7), en el orden correcto.
+        // Reconstruye todo el arte desde cero, en orden.
         [MenuItem("QCXR/Arte/Reconstruir todo (Fases 2-7) · BORRA cambios manuales de la escena")]
         public static void RebuildEverything()
         {
@@ -346,10 +346,10 @@ namespace QCXR.EditorTools.Art
             QCXRQualityAudit.Run(QCXRQualityAudit.ApplyOptimizations());
         }
 
-        /// Entrada batch: reconstruye todo, renderiza vistas, audita y SALE con EditorApplication.Exit.
+        // Para modo batch: reconstruye todo, renderiza vistas, audita y cierra Unity.
         public static void BatchRebuildEverything() => BatchRun(true);
 
-        /// Entrada batch: monta la escena, renderiza vistas y SALE con EditorApplication.Exit (evita cuelgues al cerrar).
+        // Para modo batch: monta la escena, renderiza vistas y cierra Unity (con -quit a veces se colgaba).
         public static void BatchAssembleAndRender() => BatchRun(false);
 
         static void BatchRun(bool everything)
@@ -364,7 +364,7 @@ namespace QCXR.EditorTools.Art
                 string outDir = Arg("-qcxrOut") ?? Path.GetFullPath(Path.Combine(Application.dataPath, "../Temp/QCXRPreviews"));
                 RenderScene(outDir);
                 QCXRFxBuilder.RenderPreviews(outDir);
-                var optimizations = QCXRQualityAudit.ApplyOptimizations();   // Fase 7
+                var optimizations = QCXRQualityAudit.ApplyOptimizations();
                 QCXRQualityAudit.Run(optimizations);
                 AssetDatabase.SaveAssets();
             }

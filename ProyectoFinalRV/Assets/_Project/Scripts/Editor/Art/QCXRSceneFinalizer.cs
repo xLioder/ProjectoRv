@@ -11,12 +11,12 @@ using Object = UnityEngine.Object;
 
 namespace QCXR.EditorTools.Art
 {
-    /// Fase 6 · Prefabs y escena final. Lo llama QCXRSceneAssembler al final del montaje.
-    ///  1) Manos VR en los controladores del XR Origin existente (sin sustituirlo).
-    ///  2) Jerarquía del brief: GameManager · Environment · Factory · Products · Tools · XR Origin · UI · Effects.
-    ///     Solo se MUEVEN y RENOMBRAN objetos: las referencias serializadas son por objeto, no por nombre.
-    ///  3) Productos de referencia (EditorOnly, desactivados) colocados en su estante.
-    ///  4) QCXR_MainScene como primera escena en Build Settings.
+    // Prefabs y escena final. Se llama al terminar QCXRSceneAssembler.
+    // - Manos VR en los controladores del XR Origin (sin reemplazarlo).
+    // - Ordena la jerarquía: GameManager, Environment, Factory, Products, Tools, XR Origin, UI, Effects.
+    //   Solo mueve y renombra objetos; las referencias no dependen del nombre.
+    // - Productos de referencia (EditorOnly, desactivados) en su estante.
+    // - QCXR_MainScene como primera escena en Build Settings.
     public static class QCXRSceneFinalizer
     {
         const string HandDir = "Assets/_Project/Prefabs/Hands";
@@ -31,11 +31,11 @@ namespace QCXR.EditorTools.Art
             AddProductReferences(find);   // antes de ordenar la raíz
             Reorganize(scene, find);
             SetBuildScene();
-            QCXRUIBuilder.ApplyToScene(scene);        // Fase 7: recursos 2D en la UI y en los estantes
+            QCXRUIBuilder.ApplyToScene(scene);        // Sprites e iconos en la UI y en los estantes
             Debug.Log("[QCXR Art] Fase 6: jerarquía final\n" + DumpHierarchy(scene));
         }
 
-        // ═════════════════════════ MANOS ═════════════════════════
+        // Manos
 
         static void SetupHands(Func<string, Transform> find)
         {
@@ -64,7 +64,7 @@ namespace QCXR.EditorTools.Art
             }
         }
 
-        // ═════════════════════════ JERARQUÍA ═════════════════════════
+        // Jerarquía
 
         static Transform Group(string name, Transform parent = null)
         {
@@ -148,7 +148,7 @@ namespace QCXR.EditorTools.Art
             }
             if (oldRoot != null && oldRoot.childCount == 0) Object.DestroyImmediate(oldRoot.gameObject);
 
-            // Orden de la raíz como en el brief
+            // Orden de los objetos raíz
             string[] order = { "GameManager", "Environment", "Factory", "Products", "Tools", "XR Origin (XR Rig)", "UI", "Effects", "EventSystem" };
             int idx = 0;
             foreach (var n in order)
@@ -160,7 +160,7 @@ namespace QCXR.EditorTools.Art
 
         static IEnumerable<Transform> SceneRoots(Scene scene) => scene.GetRootGameObjects().Select(g => g.transform);
 
-        // ═════════════════════════ PRODUCTOS DE REFERENCIA ═════════════════════════
+        // Productos de referencia
 
         static void AddProductReferences(Func<string, Transform> find)
         {
@@ -179,7 +179,7 @@ namespace QCXR.EditorTools.Art
             refs.gameObject.SetActive(false);   // nunca activos: el socket los puntuaría
         }
 
-        // ═════════════════════════ BUILD SETTINGS ═════════════════════════
+        // Build Settings
 
         static void SetBuildScene()
         {
@@ -188,7 +188,7 @@ namespace QCXR.EditorTools.Art
             EditorBuildSettings.scenes = list.ToArray();
         }
 
-        // ═════════════════════════ INFORME ═════════════════════════
+        // Informe
 
         public static string DumpHierarchy(Scene scene, int maxDepth = 2)
         {

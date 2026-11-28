@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace QCXR
 {
-    /// BUS DE EVENTOS: único punto de contacto entre bloques.
-    /// Un bloque EMITE hechos ("pasó X") y ESCUCHA hechos de otros; nunca llama métodos ajenos.
+    // Bus de eventos: los sistemas se comunican solo por aquí.
+    // Cada uno avisa lo que pasó y escucha a los demás, sin llamarse directamente.
     public static class GameEvents
     {
         // Flujo

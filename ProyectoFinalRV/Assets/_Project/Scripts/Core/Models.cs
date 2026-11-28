@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace QCXR
 {
-    // ── Enums compartidos ──
+    // Enums compartidos
     public enum GameState { Boot, Onboarding, Playing, Finished }
     public enum ToolType { None, Magnifier, Screwdriver, Hammer }
     public enum DefectType { LooseScrew, Dent, HiddenCrack, BurnedCircuit }
@@ -44,7 +44,7 @@ namespace QCXR
         }
     }
 
-    // ── Datos serializables (JSON) ──
+    // Datos serializables (JSON)
     [Serializable]
     public class ProductLogEntry { public string product; public string outcome; public string[] defects; public float seconds; }
 

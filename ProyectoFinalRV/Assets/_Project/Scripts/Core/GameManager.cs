@@ -3,8 +3,8 @@ using UnityEngine.SceneManagement;
 
 namespace QCXR
 {
-    /// Máquina de estados: Boot → Onboarding → Playing → Finished.
-    /// Solo decide el estado; no sabe nada de puntaje, banda ni herramientas.
+    // Máquina de estados: Boot -> Onboarding -> Playing -> Finished.
+    // Solo decide el estado; no sabe nada de puntaje, banda ni herramientas.
     public class GameManager : MonoBehaviour
     {
         [SerializeField] bool skipOnboarding = false;   // pruebas rápidas
@@ -50,7 +50,7 @@ namespace QCXR
         void SetState(GameState s) { State = s; GameEvents.RaiseGameStateChanged(s); }
     }
 
-    /// Base para sistemas que solo trabajan durante la partida (Playing).
+    // Base para sistemas que solo trabajan durante la partida.
     public abstract class GameSystem : MonoBehaviour
     {
         protected bool IsPlaying { get; private set; }

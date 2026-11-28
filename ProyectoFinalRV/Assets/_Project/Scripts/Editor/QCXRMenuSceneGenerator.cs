@@ -59,7 +59,7 @@ namespace QCXR.EditorTools
 
             t.Clear(); b.Clear(); allTexts.Clear(); backgrounds.Clear(); surfaces.Clear(); accents.Clear();
 
-            // Reusar el XR Rig y el EventSystem REAL de los compañeros.
+            // Reusar el XR Rig y el EventSystem que ya tiene la escena del juego.
             Scene fuente = EditorSceneManager.OpenScene(GamePath, OpenSceneMode.Single);
             GameObject originalXR = null;
             GameObject originalES = null;

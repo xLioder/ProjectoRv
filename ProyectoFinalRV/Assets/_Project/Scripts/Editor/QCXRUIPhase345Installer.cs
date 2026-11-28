@@ -7,12 +7,9 @@ using UnityEngine.UI;
 
 namespace QCXR.EditorTools
 {
-    /// <summary>
-    /// Instala las fases 3, 4 y 5 en la escena YA ABIERTA.
-    /// - No cambia GameUI, GameEvents, ProductFlow, Tool o las reglas.
-    /// - Conserva la transformacion y la ubicacion del InspectionPanel fase 1.
-    /// - Puede ejecutarse otra vez sin crear elementos duplicados.
-    /// </summary>
+    // Agrega a la escena abierta el panel de diagnóstico, las métricas del HUD y las de resultados.
+    // Respeta la posicion del InspectionPanel.
+    // Se puede correr varias veces sin duplicar nada.
     public static class QCXRUIPhase345Installer
     {
         private static readonly Color Background = new Color(0.055f, 0.098f, 0.15f, 0.97f);
@@ -67,7 +64,7 @@ namespace QCXR.EditorTools
 
         private static void InstallDiagnosis(Transform controller, Transform inspection)
         {
-            // Anade el lateral dentro del Canvas existente: se oculta junto al panel de fase 1.
+            // Anade el lateral dentro del Canvas: se oculta junto con el panel de inspeccion.
             RectTransform side = EnsureRect(inspection, "QCXR_Diagnostico", new Vector2(535f, 0f), new Vector2(470f, 365f));
             EnsureImage(side, "Fondo", Vector2.zero, new Vector2(470f, 365f), Background);
             EnsureImage(side, "BordeSuperior", new Vector2(0f, 176f), new Vector2(470f, 8f), Cyan);

@@ -3,11 +3,9 @@ using UnityEngine;
 
 namespace QCXR
 {
-    /// <summary>
-    /// UI de diagnóstico: presenta el estado de la estación sin decidir defectos,
-    /// reparaciones, clasificación ni puntuación. Escucha el bus GameEvents existente.
-    /// El controlador debe quedar ACTIVO, aunque panelRoot pueda ocultarse.
-    /// </summary>
+    // UI de diagnóstico: presenta el estado de la estación sin decidir defectos,
+    // reparaciones, clasificación ni puntuación. Escucha el bus GameEvents existente.
+    // El controlador debe quedar activo, aunque panelRoot pueda ocultarse.
     [DisallowMultipleComponent]
     public sealed class InspectionStatusUI : MonoBehaviour
     {

@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 namespace QCXR
 {
-    /// TODA la UI en un solo script. Solo escucha eventos y pinta; los botones solo emiten eventos.
-    /// Ponerlo en un objeto SIEMPRE activo; los `*Root` son hijos (cada Canvas World Space) que se muestran/ocultan.
+    // Toda la UI en un solo script. Solo escucha eventos y pinta; los botones solo emiten eventos.
+    // Ponerlo en un objeto siempre activo; los `*Root` son hijos (cada Canvas World Space) que se muestran/ocultan.
     public class GameUI : MonoBehaviour
     {
         [Serializable] public struct ReportOption { public Button button; public DefectType type; }
@@ -88,7 +88,7 @@ namespace QCXR
             GameEvents.SessionSummaryReady -= OnSummary;
         }
 
-        // ── HUD ──
+        // HUD
         void OnState(GameState s) => hudRoot.SetActive(s == GameState.Playing);
 
         void OnScore(int score, int combo)
@@ -128,7 +128,7 @@ namespace QCXR
         void OnEventStarted(string name, float duration) => bannerText.text = $"¡{name}!";
         void OnEventEnded(string name) => bannerText.text = "";
 
-        // ── Tutorial ──
+        // Tutorial
         void OnInstruction(string text, int index, int total)
         {
             bool show = !string.IsNullOrEmpty(text);
@@ -138,7 +138,7 @@ namespace QCXR
             progressText.text = $"Paso {index}/{total}";
         }
 
-        // ── Reporte ──
+        // Reporte
         void OnReportRequested(Product p)
         {
             reportTitle.text = $"Reportar daño: {p.DisplayName}";
@@ -148,7 +148,7 @@ namespace QCXR
         void OnReportSubmitted(DefectType t, bool ok) => reportRoot.SetActive(false);
         void OnReportDismissed() => reportRoot.SetActive(false);
 
-        // ── Resultados ──
+        // Resultados
         void OnSummary(SessionRecord r, SaveData save)
         {
             PlaceInFrontOfPlayer();

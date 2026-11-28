@@ -7,8 +7,8 @@ using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 
 namespace QCXR
 {
-    /// Una sola herramienta configurable: Lupa, Destornillador o Martillo (campo Tool Type).
-    /// Cada comportamiento es un método separado (UpdateHammer/UpdateScrewdriver/UpdateMagnifier).
+    // Una sola herramienta configurable: Lupa, Destornillador o Martillo (campo Tool Type).
+    // Cada comportamiento es un método separado (UpdateHammer/UpdateScrewdriver/UpdateMagnifier).
     [RequireComponent(typeof(XRGrabInteractable), typeof(Rigidbody))]
     public class Tool : MonoBehaviour
     {
@@ -68,7 +68,7 @@ namespace QCXR
             grab.deactivated.RemoveListener(OnDeactivate);
         }
 
-        // ── Agarre ──
+        // Agarre
         void OnGrab(SelectEnterEventArgs a)
         {
             if (a.interactorObject is XRSocketInteractor) return;   // guardada en un soporte
@@ -90,7 +90,7 @@ namespace QCXR
         void OnActivate(ActivateEventArgs a) => triggerPressed = true;
         void OnDeactivate(DeactivateEventArgs a) => triggerPressed = false;
 
-        // ── Bucle ──
+        // Bucle
         void FixedUpdate()
         {
             float speed = (tip.position - lastTipPos).magnitude / Time.fixedDeltaTime;
@@ -107,7 +107,7 @@ namespace QCXR
             if (transform.position.y < fallY) ReturnHome();
         }
 
-        // ── Comportamientos ──
+        // Comportamientos
         void UpdateHammer(float speed)
         {
             if (speed < minHitSpeed || Time.time - lastHit < hitCooldown) return;
@@ -188,8 +188,8 @@ namespace QCXR
         }
     }
 
-    /// ÚNICO lugar que toca la API de vibración (XRI 3.x): busca el HapticImpulsePlayer
-    /// del controlador (viene en los prefabs de Starter Assets) y le manda el pulso.
+    // Único lugar que toca la API de vibración (XRI 3.x): busca el HapticImpulsePlayer
+    // del controlador (viene en los prefabs de Starter Assets) y le manda el pulso.
     public static class HapticUtility
     {
         public static void Send(IXRInteractor interactor, float amplitude, float duration)

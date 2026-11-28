@@ -10,9 +10,9 @@ namespace QCXR
         ResolveProduct, SubmitReport, PressStart
     }
 
-    /// Tutorial guiado. Cada paso se completa con un EVENTO real del juego.
-    /// Detecta que el jugador se mueve o gira mirando la CÁMARA: cuenta joystick, teletransporte,
-    /// caminar en el cuarto y también el movimiento simulado del Meta XR Simulator.
+    // Tutorial guiado. Cada paso se completa con un evento real del juego.
+    // Detecta que el jugador se mueve o gira mirando la cámara: cuenta joystick, teletransporte,
+    // caminar en el cuarto y también el movimiento simulado del Meta XR Simulator.
     public class OnboardingManager : MonoBehaviour
     {
         [Serializable]
@@ -78,7 +78,7 @@ namespace QCXR
             ShowCurrent();
         }
 
-        // ── Detección de movimiento del jugador ──
+        // Detección de movimiento del jugador
         void Update()
         {
             if (!active) return;
@@ -105,7 +105,7 @@ namespace QCXR
             }
         }
 
-        // ── Eventos que completan pasos ──
+        // Eventos que completan pasos
         void OnToolGrabbed(ToolType t) => Try(OnboardingTrigger.GrabTool);
         void OnResolved(Product p, ProductOutcome o) => Try(OnboardingTrigger.ResolveProduct);
         void OnReport(DefectType t, bool ok) => Try(OnboardingTrigger.SubmitReport);

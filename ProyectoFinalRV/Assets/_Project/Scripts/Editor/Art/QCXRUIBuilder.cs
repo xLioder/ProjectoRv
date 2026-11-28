@@ -10,12 +10,12 @@ using Object = UnityEngine.Object;
 
 namespace QCXR.EditorTools.Art
 {
-    /// Fase 7 · Recursos 2D de UI (sección 7 del brief).
-    ///  · Iconos de los 5 productos y los 4 defectos: RENDER de los modelos reales con fondo transparente
-    ///    (doble pasada negro/blanco → alfa exacto con antialiasing).
-    ///  · Sprites procedurales 9-slice teñibles: panel, marco, botón, franja de peligro, indicadores (OK, error, aviso).
-    ///  · Sellos S/A/B/C: ya generados en la Fase 5 (QCXRFxBuilder).
-    /// ApplyToScene() los coloca en la UI existente sin cambiar la lógica (solo Images y sprites).
+    // Recursos 2D para la UI.
+    //  - Iconos de los 5 productos y los 4 defectos: render de los modelos reales con fondo transparente
+    //    (doble pasada negro/blanco -> alfa exacto con antialiasing).
+    //  - Sprites procedurales 9-slice teñibles: panel, marco, botón, franja de peligro, indicadores (OK, error, aviso).
+    // - Los sellos S/A/B/C se generan en QCXRFxBuilder.
+    // ApplyToScene() los coloca en la UI existente sin cambiar la lógica (solo Images y sprites).
     public static class QCXRUIBuilder
     {
         const string UiDir = QCXRArtBuilder.ArtRoot + "/UI";
@@ -36,7 +36,7 @@ namespace QCXR.EditorTools.Art
         public static Sprite ProductIcon(string p) => AssetDatabase.LoadAssetAtPath<Sprite>($"{IconDir}/Icon_Product_{p}.png");
         public static Sprite DefectIcon(int i) => AssetDatabase.LoadAssetAtPath<Sprite>($"{IconDir}/Icon_Defect_{Defects[i]}.png");
 
-        // ═════════════════════════ IMPORTACIÓN ═════════════════════════
+        // Importación
 
         static void SavePng(Texture2D t, string path, Vector4 border, bool repeat = false)
         {
@@ -67,7 +67,7 @@ namespace QCXR.EditorTools.Art
             return t;
         }
 
-        /// Distancia con signo a un rectángulo redondeado (px). Negativo = dentro.
+        // Distancia con signo a un rectángulo redondeado (px). Negativo = dentro.
         static float RoundRect(float x, float y, float w, float h, float r)
         {
             float qx = Mathf.Abs(x - w / 2) - (w / 2 - r), qy = Mathf.Abs(y - h / 2) - (h / 2 - r);
@@ -133,7 +133,7 @@ namespace QCXR.EditorTools.Art
             return Vector2.Dot(p - a, n);
         }
 
-        // ═════════════════════════ ICONOS (RENDER) ═════════════════════════
+        // Iconos (render)
 
         static void RenderIcons()
         {
@@ -209,7 +209,7 @@ namespace QCXR.EditorTools.Art
             Object.DestroyImmediate(disc);
         }
 
-        // ═════════════════════════ APLICAR EN LA ESCENA ═════════════════════════
+        // Aplicar en la escena
 
         public static void ApplyToScene(Scene scene)
         {

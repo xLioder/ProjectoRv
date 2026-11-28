@@ -5,9 +5,9 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 namespace QCXR.EditorTools
 {
-    /// Menú QCXR > Construir layer, config y prefabs.
-    /// Crea: capa "Defect", GameConfig, 5 prefabs de producto y 3 de herramienta (con primitivas de Unity).
-    /// Es solo de editor: no entra en el build ni cuenta como script del juego.
+    // Menú QCXR > Construir layer, config y prefabs.
+    // Crea: capa "Defect", GameConfig, 5 prefabs de producto y 3 de herramienta (con primitivas de Unity).
+    // Solo para el editor, no entra en el build.
     public static class QCXRPrefabBuilder
     {
         const string Root = "Assets/_Project";
@@ -40,7 +40,7 @@ namespace QCXR.EditorTools
                 $"Listo.\n• Capa 'Defect' = {layer}\n• GameConfig en {DataDir}\n• 5 productos en {ProdDir}\n• 3 herramientas en {ToolDir}", "OK");
         }
 
-        // ───────────── Definición de los 5 productos ─────────────
+        // Definición de los 5 productos
         static IEnumerable<Spec> Specs()
         {
             var screw = DefectType.LooseScrew; var dent = DefectType.Dent;
@@ -106,7 +106,7 @@ namespace QCXR.EditorTools
             };
         }
 
-        // ───────────── Producto ─────────────
+        // Producto
         static void BuildProduct(Spec s, int layer)
         {
             var root = new GameObject("Product_" + s.name);
@@ -191,7 +191,7 @@ namespace QCXR.EditorTools
             return d;
         }
 
-        // ───────────── Herramientas ─────────────
+        // Herramientas
         static GameObject NewTool(string name, ToolType type, int layer, out SerializedObject so, out Transform tip)
         {
             var root = new GameObject("Tool_" + name);
@@ -268,7 +268,7 @@ namespace QCXR.EditorTools
             Save(root, $"{ToolDir}/Tool_Magnifier.prefab");
         }
 
-        // ───────────── Utilidades ─────────────
+        // Utilidades
         static GameObject Prim(PrimitiveType type, string name, Transform parent, Vector3 pos, Vector3 scale, Color color,
                                bool keepCollider = false, Vector3 euler = default, bool transparent = false)
         {

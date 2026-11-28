@@ -13,11 +13,11 @@ using Object = UnityEngine.Object;
 
 namespace QCXR.EditorTools
 {
-    /// Menú QCXR > Escena > Reparar referencias del arte + botones con el dedo.
-    /// Vuelve a enlazar, POR NOMBRE y sobre la escena tal como está (sin regenerarla), las referencias que apuntan
-    /// DENTRO de prefabs de arte (luces de estantes, cubo, banda, efectos, tapas de botón). Si un prefab se regeneró,
-    /// sus componentes internos cambian de identificador y la escena pierde esas referencias; esto las recupera.
-    /// También añade el XRPokeFilter a los botones (pulsar con el dedo). Guarda la escena una sola vez.
+    // Menú QCXR > Escena > Reparar referencias del arte + botones con el dedo.
+    // Vuelve a enlazar, por nombre y sobre la escena tal como está (sin regenerarla), las referencias que apuntan
+    // dentro de prefabs de arte (luces de estantes, cubo, banda, efectos, tapas de botón). Si un prefab se regeneró,
+    // sus componentes internos cambian de identificador y la escena pierde esas referencias; esto las recupera.
+    // También añade el XRPokeFilter a los botones (pulsar con el dedo). Guarda la escena una sola vez.
     public static class QCXRSceneRelink
     {
         const string ScenePath = "Assets/_Project/Scenes/QCXR_MainScene.unity";
@@ -33,7 +33,7 @@ namespace QCXR.EditorTools
             int before = CountBroken(scene, out var brokenBefore);
             Debug.Log($"[QCXR Relink] Referencias rotas antes: {before}" + (before > 0 ? "\n  " + string.Join("\n  ", brokenBefore) : ""));
 
-            // ── Banda ──
+            // Banda
             var belt = Named(scene, "Env_ConveyorBelt");
             var conveyor = All<ConveyorBelt>(scene).FirstOrDefault();
             if (belt != null && conveyor != null)
@@ -43,7 +43,7 @@ namespace QCXR.EditorTools
                 so.ApplyModifiedPropertiesWithoutUndo();
             }
 
-            // ── Puente de presentación ──
+            // Puente de presentación
             var bridge = All<PresentationBridge>(scene).FirstOrDefault();
             if (bridge != null)
             {
@@ -64,7 +64,7 @@ namespace QCXR.EditorTools
                 Debug.Log($"[QCXR Relink] PresentationBridge: {targets.Count} destinos de destello (5 estantes + cubo).");
             }
 
-            // ── Botones: tapa animada en onPressed + pulsables con el dedo ──
+            // Botones: tapa animada en onPressed + pulsables con el dedo
             var field = typeof(XRButton).GetField("onPressed", BindingFlags.NonPublic | BindingFlags.Instance);
             foreach (var xr in All<XRButton>(scene))
             {
@@ -90,7 +90,7 @@ namespace QCXR.EditorTools
             return after;
         }
 
-        /// Referencia rota = hay un identificador guardado pero el objeto no se puede resolver.
+        // Referencia rota = hay un identificador guardado pero el objeto no se puede resolver.
         public static int CountBroken(Scene scene, out List<string> where)
         {
             where = new List<string>();

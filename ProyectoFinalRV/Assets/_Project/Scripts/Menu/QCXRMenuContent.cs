@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace QCXR
 {
-    // EDITABLE: modifica este asset desde el Inspector, sin cambiar los scripts.
+    // Los textos se cambian desde el Inspector, no hace falta tocar los scripts.
     [CreateAssetMenu(fileName = "QCXRMenuContent", menuName = "QCXR/Menu VR/Contenido editable")]
     public sealed class QCXRMenuContent : ScriptableObject
     {

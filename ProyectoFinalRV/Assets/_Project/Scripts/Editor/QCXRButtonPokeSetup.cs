@@ -7,16 +7,16 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 namespace QCXR.EditorTools
 {
-    /// Menú QCXR > Botones > Permitir pulsar con el dedo (poke).
-    /// En XRI 3 el Poke Interactor del rig tiene "Require Poke Filter" activado: solo puede SELECCIONAR (y por tanto
-    /// disparar XRButton) los interactables que tienen un XRPokeFilter. Sin él, los botones solo respondían al agarre.
-    /// Este paso añade el filtro a los Btn_* de QCXR_MainScene (pulsación hacia abajo, -Y, ángulo 45°, igual que el
-    /// botón de ejemplo de XRI). Solo añade ese componente: no toca nada más de la escena.
+    // Menú QCXR > Botones > Permitir pulsar con el dedo (poke).
+    // En XRI 3 el Poke Interactor del rig tiene "Require Poke Filter" activado: solo puede seleccionar (y por tanto
+    // disparar XRButton) los interactables que tienen un XRPokeFilter. Sin él, los botones solo respondían al agarre.
+    // Este paso añade el filtro a los Btn_* de QCXR_MainScene (pulsación hacia abajo, -Y, ángulo 45°, igual que el
+    // botón de ejemplo de XRI). Solo añade ese componente: no toca nada más de la escena.
     public static class QCXRButtonPokeSetup
     {
         const string ScenePath = "Assets/_Project/Scenes/QCXR_MainScene.unity";
 
-        /// Configura un XRPokeFilter en el botón (lo crea si falta). Reutilizable desde el generador de escena.
+        // Configura un XRPokeFilter en el botón (lo crea si falta). Reutilizable desde el generador de escena.
         public static XRPokeFilter Configure(GameObject button)
         {
             var filter = button.GetComponent<XRPokeFilter>();

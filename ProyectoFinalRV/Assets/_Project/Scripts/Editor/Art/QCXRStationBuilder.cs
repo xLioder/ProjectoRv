@@ -6,11 +6,11 @@ using UnityEngine;
 
 namespace QCXR.EditorTools.Art
 {
-    /// Menú QCXR > Arte > Fase 4 · Prefabs de estación. Genera los prefabs VISUALES del puesto de trabajo y la nave.
-    /// No llevan scripts de juego: en la escena se colocan junto a los objetos que ya tienen ConveyorBelt,
-    /// ProductStation, XRButton, etc. (ver QCXRSceneAssembler).
-    ///
-    /// Cada prefab se modela en las coordenadas de su punto de anclaje en la escena (comentado en cada uno).
+    // Menú QCXR > Arte (estación). Genera los prefabs visuales del puesto de trabajo y la nave.
+    // No llevan scripts de juego: en la escena se colocan junto a los objetos que ya tienen ConveyorBelt,
+    // ProductStation, XRButton, etc. (ver QCXRSceneAssembler).
+    //
+    // Cada prefab se modela en las coordenadas de su punto de anclaje en la escena (comentado en cada uno).
     public static class QCXRStationBuilder
     {
         public const string PrefabDir = "Assets/_Project/Prefabs/Environment";
@@ -42,7 +42,7 @@ namespace QCXR.EditorTools.Art
             Debug.Log("[QCXR Art] Fase 4: prefabs de estación y nave generados.");
         }
 
-        // ═════════════════════════ UTILIDADES ═════════════════════════
+        // Utilidades
 
         static GameObject Root(string name) => new GameObject(name);
 
@@ -87,7 +87,7 @@ namespace QCXR.EditorTools.Art
         static readonly Vector3 FaceNegX = new Vector3(0, 90, 0); // -> miran a -X
         static readonly Vector3 FaceZ = new Vector3(0, 180, 0);   // -> miran a +Z
 
-        // ═════════════════════════ BANDA ═════════════════════════
+        // Banda
 
         static Material BuildBeltMaterial()
         {
@@ -122,7 +122,7 @@ namespace QCXR.EditorTools.Art
             });
         }
 
-        /// Superficie de la banda con UV propias: U a lo ancho, V a lo largo (V crece hacia -X = sentido de avance).
+        // Superficie de la banda con UV propias: U a lo ancho, V a lo largo (V crece hacia -X = sentido de avance).
         static Mesh BeltSurfaceMesh(float length, float width, float y)
         {
             float x0 = -length / 2, x1 = length / 2, z0 = -width / 2, z1 = width / 2;
@@ -139,7 +139,7 @@ namespace QCXR.EditorTools.Art
             return existing;
         }
 
-        /// Anclaje: (0, 0, 0.75) en el mundo. X = largo (3.4 m, avance hacia -X), Z = ancho, Y = altura absoluta.
+        // Anclaje: (0, 0, 0.75) en el mundo. X = largo (3.4 m, avance hacia -X), Z = ancho, Y = altura absoluta.
         static void ConveyorBelt()
         {
             var root = Root("Env_ConveyorBelt");
@@ -221,12 +221,12 @@ namespace QCXR.EditorTools.Art
             Save(root);
         }
 
-        // ═════════════════════════ BANCO DE HERRAMIENTAS ═════════════════════════
+        // Banco de herramientas
 
         public static readonly Vector3 BenchAnchor = new Vector3(0, 0, 0.33f);
         public const float BenchTop = 0.8f;
 
-        /// Anclaje: (0, 0, 0.33). Banco de 1.0 x 0.18 m, superficie a 0.8 m, delante de la banda.
+        // Anclaje: (0, 0, 0.33). Banco de 1.0 x 0.18 m, superficie a 0.8 m, delante de la banda.
         static void ToolBench()
         {
             var root = Root("Env_ToolBench");
@@ -253,15 +253,15 @@ namespace QCXR.EditorTools.Art
             Save(root);
         }
 
-        // ═════════════════════════ CONSOLA DE BOTONES ═════════════════════════
+        // Consola de botones
 
         public static readonly Vector3 ConsoleAnchor = new Vector3(0.8f, 0, 0.25f);
         public static readonly Vector3 ConsoleSize = new Vector3(0.3f, 0.88f, 0.44f);
         public static readonly Vector3 StartButtonLocal = new Vector3(0, 0.925f, -0.1f);   // más cerca del jugador
         public static readonly Vector3 ResetButtonLocal = new Vector3(0, 0.925f, 0.1f);
 
-        /// Anclaje: (0.8, 0, 0.25). Pedestal 0.3 (X) x 0.44 (Z), superficie a 0.9 m. Frente hacia -X (el jugador).
-        /// Carcasas de botón en z = -0.1 (INICIAR TURNO) y z = +0.1 (REINICIAR BANDA).
+        // Anclaje: (0.8, 0, 0.25). Pedestal 0.3 (X) x 0.44 (Z), superficie a 0.9 m. Frente hacia -X (el jugador).
+        // Carcasas de botón en z = -0.1 ("Iniciar turno") y z = +0.1 ("Reiniciar banda").
         static void ButtonConsole()
         {
             var root = Root("Env_ButtonConsole");
@@ -285,7 +285,7 @@ namespace QCXR.EditorTools.Art
             Save(root);
         }
 
-        /// Tapa móvil del botón. Pivote en la base (se coloca 1.3 cm bajo el objeto XRButton). Hijos RestPos/PressedPos.
+        // Tapa móvil del botón. Pivote en la base (se coloca 1.3 cm bajo el objeto XRButton). Hijos RestPos/PressedPos.
         static void ButtonCap(string color, Sw sw)
         {
             var root = Root("Env_ButtonCap_" + color);
@@ -299,7 +299,7 @@ namespace QCXR.EditorTools.Art
             Save(root, false);
         }
 
-        // ═════════════════════════ ESTANTERÍA ═════════════════════════
+        // Estantería
 
         public static readonly (ProductType type, Vector3 local, Sw color)[] Bays =
         {
@@ -310,7 +310,7 @@ namespace QCXR.EditorTools.Art
             (ProductType.Clock,   new Vector3(0, 1.32f,  0.15f), Sw.ClockGreen),
         };
 
-        /// Anclaje: (-0.85, 0, -0.2). Frente hacia +X (jugador). Fila baja a 0.9 m, fila alta a 1.32 m.
+        // Anclaje: (-0.85, 0, -0.2). Frente hacia +X (jugador). Fila baja a 0.9 m, fila alta a 1.32 m.
         static void ShelfRack()
         {
             var root = Root("Env_ShelfRack");
@@ -349,9 +349,9 @@ namespace QCXR.EditorTools.Art
             Save(root);
         }
 
-        // ═════════════════════════ CUBO DE DESECHO ═════════════════════════
+        // Cubo de desecho
 
-        /// Anclaje: (0.8, 0, -0.3). Interior 0.34 m, fondo a 0.72 m, borde a 0.98 m.
+        // Anclaje: (0.8, 0, -0.3). Interior 0.34 m, fondo a 0.72 m, borde a 0.98 m.
         static void DiscardBin()
         {
             var root = Root("Env_DiscardBin");
@@ -376,10 +376,10 @@ namespace QCXR.EditorTools.Art
             Save(root);
         }
 
-        // ═════════════════════════ BALIZAS ═════════════════════════
+        // Balizas
 
-        /// Parte ENCENDIDA de una baliza (se activa/desactiva junto con su objeto de escena).
-        /// Hijo Rotor: reflector que la animación de la Fase 5 hará girar sobre +Y.
+        // Parte encendida de una baliza (se activa/desactiva junto con su objeto de escena).
+        // Hijo Rotor: el reflector que la animación hace girar sobre +Y.
         static void Beacon(string name, Sw lit, bool sparksAnchor)
         {
             var root = Root(name);
@@ -397,9 +397,9 @@ namespace QCXR.EditorTools.Art
             Save(root, false);
         }
 
-        // ═════════════════════════ NAVE ═════════════════════════
+        // Nave
 
-        /// Anclaje: origen. Nave compacta de 5.4 x 4.4 m (x ±2.7, z -1.7..2.7) y 3.2 m de alto.
+        // Anclaje: origen. Nave compacta de 5.4 x 4.4 m (x ±2.7, z -1.7..2.7) y 3.2 m de alto.
         static void Room()
         {
             var root = Root("Env_Room");

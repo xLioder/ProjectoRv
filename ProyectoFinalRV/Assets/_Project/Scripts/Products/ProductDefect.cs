@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 namespace QCXR
 {
-    /// Un "slot" de defecto dentro de un producto. La definición va aquí mismo (sin assets extra).
+    // Un "slot" de defecto dentro de un producto. La definición va aquí mismo (sin assets extra).
     public class ProductDefect : MonoBehaviour
     {
         [Header("Definición")]
@@ -37,7 +37,7 @@ namespace QCXR
 
         public void Deactivate() { State = DefectState.Inactive; Refresh(); }
 
-        /// Lo llama la lupa.
+        // Lo llama la lupa.
         public void Reveal()
         {
             if (State != DefectState.Hidden) return;
@@ -47,7 +47,7 @@ namespace QCXR
             GameEvents.RaiseFeedback(repairable ? "¡Defecto encontrado!" : "¡Irreparable! Deséchalo y repórtalo");
         }
 
-        /// Lo llaman martillo y destornillador. true = trabajo aceptado.
+        // Lo llaman martillo y destornillador. true = trabajo aceptado.
         public bool ApplyWork(ToolType tool, float amount)
         {
             if (State != DefectState.Visible) return false;

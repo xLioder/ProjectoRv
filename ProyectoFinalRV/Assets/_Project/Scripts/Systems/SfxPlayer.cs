@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace QCXR
 {
-    /// Audio espacial 3D: reproduce cada sonido en la posición donde ocurrió el evento.
+    // Audio espacial 3D: reproduce cada sonido en la posición donde ocurrió el evento.
     public class SfxPlayer : MonoBehaviour
     {
         [Serializable]

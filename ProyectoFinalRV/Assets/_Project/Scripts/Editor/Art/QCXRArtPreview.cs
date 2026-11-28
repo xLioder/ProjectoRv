@@ -6,9 +6,9 @@ using UnityEngine;
 
 namespace QCXR.EditorTools.Art
 {
-    /// Menú QCXR > Arte > Renderizar vistas previas. Genera hojas PNG de control de calidad
-    /// (vista del jugador, cenital y trasera de cada producto + defectos dañado/reparado).
-    /// Salida: Temp/QCXRPreviews (o la ruta pasada con -qcxrOut en modo batch).
+    // Menú QCXR > Arte > Renderizar vistas previas. Genera hojas PNG de control de calidad
+    // (vista del jugador, cenital y trasera de cada producto + defectos dañado/reparado).
+    // Salida: Temp/QCXRPreviews (o la ruta pasada con -qcxrOut en modo batch).
     public static class QCXRArtPreview
     {
         const int Tile = 640;
@@ -152,7 +152,7 @@ namespace QCXR.EditorTools.Art
             return null;
         }
 
-        /// Punto de entrada batch: construye la Fase 2 y renderiza las vistas previas.
+        // Para modo batch: genera productos/defectos y renderiza las vistas previas.
         public static void BuildAndRender() => RunBatch(() =>
         {
             QCXRArtBuilder.BuildPhase2();
@@ -169,7 +169,7 @@ namespace QCXR.EditorTools.Art
             if (Application.isBatchMode) EditorApplication.Exit(code);
         }
 
-        // ═════════════════════════ FASE 3 ═════════════════════════
+        // Herramientas y manos
 
         static readonly string[] Tools = { "Hammer", "Screwdriver", "Magnifier" };
         static readonly string[] PoseNames = { "Open", "Fist", "Grab", "HoldHammer", "HoldScrewdriver", "HoldMagnifier", "Point", "Press", "Inspect", "IndexCurl" };
@@ -196,7 +196,7 @@ namespace QCXR.EditorTools.Art
             return cam;
         }
 
-        /// Envolvente real de una mano posada (las bounds del SkinnedMeshRenderer son fijas).
+        // Envolvente real de una mano posada (las bounds del SkinnedMeshRenderer son fijas).
         static Bounds BoneBounds(GameObject hand)
         {
             var ts = hand.transform.Find("HandOffset/Wrist").GetComponentsInChildren<Transform>();

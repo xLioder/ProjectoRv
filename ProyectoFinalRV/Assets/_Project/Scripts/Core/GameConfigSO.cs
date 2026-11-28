@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace QCXR
 {
-    /// TODO el balance del juego en un solo asset (Create → QCXR → Game Config).
+    // Todo el balance del juego en un asset (Create > QCXR > Game Config).
     [CreateAssetMenu(fileName = "GameConfig", menuName = "QCXR/Game Config")]
     public class GameConfigSO : ScriptableObject
     {

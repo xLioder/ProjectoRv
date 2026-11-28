@@ -24,7 +24,7 @@ namespace QCXR.EditorTools
             public System.Action<Transform, Vector3> decorate;
         }
 
-        [MenuItem("QCXR/Construir layer, config y prefabs")]
+        [MenuItem("Tools/QCXR/Construir layer, config y prefabs")]
         public static void BuildAll()
         {
             int layer = EnsureLayer("Defect");

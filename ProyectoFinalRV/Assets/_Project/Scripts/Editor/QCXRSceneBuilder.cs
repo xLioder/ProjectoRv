@@ -12,7 +12,7 @@ using UnityEngine.XR.Interaction.Toolkit.UI;
 namespace QCXR.EditorTools
 {
     // Menú QCXR > Construir escena base. Arma toda la escena en la escena abierta.
-    // Requisito previo: haber corrido "QCXR > Construir layer, config y prefabs".
+    // Requisito previo: haber corrido "Tools > QCXR > Construir layer, config y prefabs".
     public static class QCXRSceneBuilder
     {
         const string Data = "Assets/_Project/Data/GameConfig.asset";
@@ -22,7 +22,7 @@ namespace QCXR.EditorTools
 
         const float BeltZ = 0.75f, BeltTop = 0.9f;
 
-        [MenuItem("QCXR/Construir escena base")]
+        [MenuItem("Tools/QCXR/Construir escena base")]
         public static void Build()
         {
             var config = AssetDatabase.LoadAssetAtPath<GameConfigSO>(Data);
@@ -36,7 +36,7 @@ namespace QCXR.EditorTools
             foreach (var p in products) if (p == null) missing = true;
             if (missing)
             {
-                EditorUtility.DisplayDialog("QCXR", "Faltan prefabs o GameConfig.\nPrimero ejecuta: QCXR > Construir layer, config y prefabs.", "OK");
+                EditorUtility.DisplayDialog("QCXR", "Faltan prefabs o GameConfig.\nPrimero ejecuta: Tools > QCXR > Construir layer, config y prefabs.", "OK");
                 return;
             }
 

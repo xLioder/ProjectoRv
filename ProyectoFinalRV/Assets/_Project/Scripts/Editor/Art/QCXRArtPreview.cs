@@ -15,7 +15,7 @@ namespace QCXR.EditorTools.Art
         static readonly string[] Products = { "Robot", "Radio", "Lamp", "Toaster", "Clock" };
         static readonly string[] Defects = { "LooseScrew", "Dent", "HiddenCrack", "BurnedCircuit" };
 
-        [MenuItem("QCXR/Arte/Renderizar vistas previas")]
+        [MenuItem("Tools/QCXR/Arte/Renderizar vistas previas")]
         public static void RenderAll()
         {
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
@@ -228,7 +228,7 @@ namespace QCXR.EditorTools.Art
             return h;
         }
 
-        [MenuItem("QCXR/Arte/Renderizar vistas previas · Fase 3")]
+        [MenuItem("Tools/QCXR/Arte/Renderizar vistas previas · Fase 3")]
         public static void RenderPhase3()
         {
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;

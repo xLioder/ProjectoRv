@@ -10,7 +10,7 @@ namespace QCXR.EditorTools.Art
     // usa los de Player Settings tal como están. El APK va a la ruta de -qcxrOut (o Temp/QCXRBuild).
     public static class QCXRBuildCheck
     {
-        [MenuItem("QCXR/Arte/Build de prueba Quest (APK)")]
+        [MenuItem("Tools/QCXR/Arte/Build de prueba Quest (APK)")]
         public static void Build() => Run(false);
 
         public static void BatchBuild() => Run(true);

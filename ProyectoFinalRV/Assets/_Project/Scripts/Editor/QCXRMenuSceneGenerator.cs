@@ -36,7 +36,7 @@ namespace QCXR.EditorTools
         static readonly List<Image> accents = new List<Image>();
         static TMP_FontAsset defaultFont;
 
-        [MenuItem("QCXR/Menú VR/1. Crear escena de menú independiente")]
+        [MenuItem("Tools/QCXR/Menú VR/1. Crear escena de menú independiente")]
         public static void Generate()
         {
             if (EditorApplication.isPlaying)
@@ -141,7 +141,7 @@ namespace QCXR.EditorTools
             EditorUtility.DisplayDialog("¡Menú VR creado!", "Guardé QCXR_Menu.unity como escena independiente. El menú ya carga QCXR_MainScene.\n\nPara editar textos y fuentes: Assets/_Project/Config/UI/QCXRMenuContent.asset", "Perfecto");
         }
 
-        [MenuItem("QCXR/Menú VR/2. Actualizar textos y tipografías")]
+        [MenuItem("Tools/QCXR/Menú VR/2. Actualizar textos y tipografías")]
         public static void UpdateContent()
         {
             QCXRMenuController[] controllers = Object.FindObjectsByType<QCXRMenuController>(FindObjectsSortMode.None);
@@ -159,7 +159,7 @@ namespace QCXR.EditorTools
             EditorUtility.DisplayDialog("QCXR", "Se aplicaron los textos, tipografías y colores. Recuerda guardar la escena (Ctrl + S).", "OK");
         }
 
-        [MenuItem("QCXR/Menú VR/3. Abrir escena del menú")]
+        [MenuItem("Tools/QCXR/Menú VR/3. Abrir escena del menú")]
         public static void OpenMenu()
         {
             if (File.Exists(MenuPath) && EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())

@@ -35,7 +35,7 @@ namespace QCXR.EditorTools
             return filter;
         }
 
-        [MenuItem("QCXR/Botones/Permitir pulsar con el dedo (poke)")]
+        [MenuItem("Tools/QCXR/Botones/Permitir pulsar con el dedo (poke)")]
         public static bool Apply()
         {
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return false;

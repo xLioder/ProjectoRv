@@ -57,7 +57,7 @@ namespace QCXR.EditorTools.Art
                 "Sí, regenerar", "Cancelar");
         }
 
-        [MenuItem("QCXR/Arte/Fase 4-6 · Montar QCXR_MainScene completa (BORRA cambios manuales)")]
+        [MenuItem("Tools/QCXR/Arte/Fase 4-6 · Montar QCXR_MainScene completa (BORRA cambios manuales)")]
         public static void Assemble()
         {
             if (!AllowSceneRegen()) throw new System.OperationCanceledException("Regeneración de QCXR_MainScene cancelada para proteger los cambios del equipo.");
@@ -333,7 +333,7 @@ namespace QCXR.EditorTools.Art
         }
 
         // Reconstruye todo el arte desde cero, en orden.
-        [MenuItem("QCXR/Arte/Reconstruir todo (Fases 2-7) · BORRA cambios manuales de la escena")]
+        [MenuItem("Tools/QCXR/Arte/Reconstruir todo (Fases 2-7) · BORRA cambios manuales de la escena")]
         public static void RebuildEverything()
         {
             if (!AllowSceneRegen()) return;

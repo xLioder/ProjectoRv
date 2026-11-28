@@ -9,7 +9,7 @@ namespace QCXR.EditorTools
     // Crea, con una acción de menú, el nuevo panel de inspección en la escena activa.
     public static class QCXRInspectionPanelCreator
     {
-        [MenuItem("QCXR/UI/Crear panel de inspección (fase 1)")]
+        [MenuItem("Tools/QCXR/UI/Crear panel de inspección (fase 1)")]
         public static void Create()
         {
             var existingUI = Object.FindFirstObjectByType<GameUI>(FindObjectsInactive.Include);

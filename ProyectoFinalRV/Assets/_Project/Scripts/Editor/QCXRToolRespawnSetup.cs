@@ -14,7 +14,7 @@ namespace QCXR.EditorTools
         static readonly string[] Tools = { "Hammer", "Screwdriver", "Magnifier" };
         const string ToolDir = "Assets/_Project/Prefabs/Tools";
 
-        [MenuItem("QCXR/Herramientas/Añadir reaparición (ToolRespawn)")]
+        [MenuItem("Tools/QCXR/Herramientas/Añadir reaparición (ToolRespawn)")]
         public static void AddToPrefabs()
         {
             foreach (var t in Tools)
@@ -32,7 +32,7 @@ namespace QCXR.EditorTools
             Debug.Log("[QCXR Respawn] ToolRespawn añadido a Tool_Hammer, Tool_Screwdriver y Tool_Magnifier.");
         }
 
-        [MenuItem("QCXR/Herramientas/Probar reaparición (física en editor)")]
+        [MenuItem("Tools/QCXR/Herramientas/Probar reaparición (física en editor)")]
         public static bool RunTests()
         {
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return false;

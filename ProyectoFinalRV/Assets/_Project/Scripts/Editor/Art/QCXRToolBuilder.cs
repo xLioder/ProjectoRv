@@ -18,7 +18,7 @@ namespace QCXR.EditorTools.Art
         const string PrefabDir = "Assets/_Project/Prefabs/Tools";
         static readonly Vector3 AlongZ = new Vector3(90, 0, 0);   // eje Y de los cilindros -> +Z
 
-        [MenuItem("QCXR/Arte/Fase 3 · Herramientas")]
+        [MenuItem("Tools/QCXR/Arte/Fase 3 · Herramientas")]
         public static void BuildTools()
         {
             var glass = QCXRArtBuilder.Mat(QCXRArtBuilder.MatDir + "/QCXR_Glass.mat", m =>

@@ -36,7 +36,7 @@ namespace QCXR.EditorTools.Art
 
         static readonly Vector3 Front = new Vector3(-90, 0, 0);   // +Y local del defecto -> -Z (cara frontal)
 
-        [MenuItem("QCXR/Arte/Fase 2 · Productos y defectos")]
+        [MenuItem("Tools/QCXR/Arte/Fase 2 · Productos y defectos")]
         public static void BuildPhase2()
         {
             int layer = LayerMask.NameToLayer("Defect");

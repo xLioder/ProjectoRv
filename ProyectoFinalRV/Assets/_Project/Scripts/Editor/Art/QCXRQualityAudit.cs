@@ -86,7 +86,7 @@ namespace QCXR.EditorTools.Art
 
         static T Load<T>(string path) where T : Object => AssetDatabase.LoadAssetAtPath<T>(path);
 
-        [MenuItem("QCXR/Arte/Fase 7 · Auditoría de calidad")]
+        [MenuItem("Tools/QCXR/Arte/Fase 7 · Auditoría de calidad")]
         public static void Run() => Run(null);
 
         public static void Run(List<string> optimizationLog)
@@ -94,7 +94,7 @@ namespace QCXR.EditorTools.Art
             var R = new Report();
             int defectLayer = LayerMask.NameToLayer("Defect");
             R.sb.AppendLine("# QC · Informe de control de calidad (arte)").AppendLine()
-                .AppendLine($"Generado automáticamente por `QCXR > Arte > Fase 7 · Auditoría de calidad` el {DateTime.Now:yyyy-MM-dd HH:mm}.");
+                .AppendLine($"Generado automáticamente por `Tools > QCXR > Arte > Fase 7 · Auditoría de calidad` el {DateTime.Now:yyyy-MM-dd HH:mm}.");
 
             // Productos
             R.Section("Productos (3.1) y defectos en producto (3.2)");

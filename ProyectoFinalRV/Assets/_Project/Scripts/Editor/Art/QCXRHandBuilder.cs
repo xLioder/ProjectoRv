@@ -72,7 +72,7 @@ namespace QCXR.EditorTools.Art
 
         // Entrada
 
-        [MenuItem("QCXR/Arte/Fase 3 · Manos")]
+        [MenuItem("Tools/QCXR/Arte/Fase 3 · Manos")]
         public static void BuildHands()
         {
             if (!QCXRSceneAssembler.ConfirmPrefabRegen("las manos (Hand_L / Hand_R)")) return;

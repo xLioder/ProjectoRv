@@ -25,7 +25,7 @@ namespace QCXR.EditorTools
         static IEnumerable<T> All<T>(Scene s) where T : Component => s.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<T>(true));
         static Transform Named(Scene s, string n) => s.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<Transform>(true)).FirstOrDefault(t => t.name == n);
 
-        [MenuItem("QCXR/Escena/Reparar referencias del arte + botones con el dedo")]
+        [MenuItem("Tools/QCXR/Escena/Reparar referencias del arte + botones con el dedo")]
         public static int Run()
         {
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return -1;

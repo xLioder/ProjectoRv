@@ -19,7 +19,7 @@ namespace QCXR.EditorTools
         private static readonly Color Muted = new Color(0.73f, 0.83f, 0.90f, 1f);
         private static readonly Color Amber = new Color(1f, 0.76f, 0.44f, 1f);
 
-        [MenuItem("QCXR/UI/Instalar mejoras fases 3-4-5")]
+        [MenuItem("Tools/QCXR/UI/Instalar mejoras fases 3-4-5")]
         private static void Install()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode)

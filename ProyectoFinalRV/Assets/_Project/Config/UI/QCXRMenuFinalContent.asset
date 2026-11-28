@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6941188b2b4db9e47b7533159fba73be, type: 3}
+  m_Name: QCXRMenuFinalContent
+  m_EditorClassIdentifier: Assembly-CSharp::QCXR.QCXRMenuFinalContent
+  insignia: UAO  /  CONTROL INDUSTRIAL
+  titulo: CONTROL DE CALIDAD XR
+  descripcion: Inspecciona, repara y clasifica los productos de la linea de produccion.
+  botonInicio: INICIAR INSPECCION
+  botonSalir: SALIR
+  tarjetaTitulo: ORDEN DE TRABAJO
+  tarjetaDetalle: Recibe objetos de la banda, identifica sus defectos y decide si se reparan o descartan.
+  instruccionInferior: El tutorial se inicia al entrar a la fabrica.
+  indicadorEstado: SISTEMA EN ESPERA  /  ESTACION 01
+  tipografia: {fileID: 0}
+  fondo: {r: 0.08, g: 0.1, b: 0.12, a: 1}
+  superficie: {r: 0.14, g: 0.17, b: 0.19, a: 1}
+  naranja: {r: 0.93, g: 0.41, b: 0.13, a: 1}
+  verde: {r: 0.28, g: 0.85, b: 0.48, a: 1}
+  texto: {r: 0.96, g: 0.95, b: 0.91, a: 1}

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b4fd42fac1ee114887ee7d2529e3d90, type: 3}
+  m_Name: QCXRMenuEspacialContent
+  m_EditorClassIdentifier: Assembly-CSharp::QCXR.MenuSpatial.QCXRSpatialMenuContent
+  superior: UAO IMMERSIVE SOLUTIONS    /    PLANTA 01
+  titulo: 'CONTROL DE
+
+    CALIDAD XR'
+  subtitulo: CENTRO DE INSPECCION INDUSTRIAL
+  iniciar: INICIAR INSPECCION
+  salir: SALIR
+  zonaIzquierda: RECEPCION DE PRODUCTOS
+  zonaDerecha: CONTROL DE CALIDAD
+  estado: LINEA LISTA   /   TURNO 01
+  pie: INSPECCIONA   /   REPARA   /   CLASIFICA
+  fuentePersonalizada: {fileID: 0}
+  texto: {r: 0.96, g: 0.94, b: 0.86, a: 1}
+  acentoNaranja: {r: 0.93, g: 0.38, b: 0.11, a: 1}
+  acentoVerde: {r: 0.26, g: 0.88, b: 0.51, a: 1}
+  tarjetaBoton: {r: 0.065, g: 0.095, b: 0.12, a: 0.75}

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3dbd187b9894708bb87a00ad2ebaf04, type: 3}
+  m_Name: QCXRMenuImmersiveContent
+  m_EditorClassIdentifier: Assembly-CSharp::QCXR.MenuImmersive.QCXRImmersiveMenuContent
+  cabecera: UAO IMMERSIVE SOLUTIONS   /   PLANTA 01
+  titulo: 'CONTROL DE
+
+    CALIDAD XR'
+  bajada: Toma tu puesto en la linea de inspeccion.
+  iniciar: INICIAR TURNO
+  salir: SALIR
+  estado: SISTEMA PREPARADO   /   ESTACION 01
+  detalle: "Inspecciona  \xB7  Repara  \xB7  Clasifica"
+  ayuda: Al comenzar, sigue el tutorial de la fabrica.
+  marcaEscenario: CONTROL DE CALIDAD
+  fuente: {fileID: 0}
+  naranja: {r: 0.92, g: 0.37, b: 0.1, a: 1}
+  azulGrafito: {r: 0.055, g: 0.088, b: 0.11, a: 1}
+  blanco: {r: 0.93, g: 0.92, b: 0.87, a: 1}
+  verde: {r: 0.25, g: 0.84, b: 0.43, a: 1}

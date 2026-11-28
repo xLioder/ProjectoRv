@@ -1,106 +1,61 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.InputSystem;
 
-namespace QCXR
+namespace QCXR.Menu
 {
-    // Controlador de una escena INDEPENDIENTE. No altera GameManager ni el tutorial.
-    public sealed class QCXRMenuController : MonoBehaviour
+    /// Controla el menú inmersivo tipo "Opción 3".
+    /// - Iniciar inspección => carga QCXR_MainScene
+    /// - Salir => cierra la app (o sale del Play Mode en Editor)
+    /// - Opcionalmente bloquea locomoción en la escena menú
+    public class QCXRMenuController : MonoBehaviour
     {
-        [Header("Contenido que puedes editar sin programar")]
-        [SerializeField] QCXRMenuContent contenido;
+        [Header("Botones")]
+        [SerializeField] private Button startButton;
+        [SerializeField] private Button exitButton;
 
-        [Header("Referencias de UI creadas por el generador")]
-        [SerializeField] TMP_Text marca;
-        [SerializeField] TMP_Text titulo;
-        [SerializeField] TMP_Text descripcion;
-        [SerializeField] TMP_Text etiquetaInicio;
-        [SerializeField] TMP_Text etiquetaAyuda;
-        [SerializeField] TMP_Text etiquetaSalida;
-        [SerializeField] TMP_Text etiquetaEstado;
-        [SerializeField] TMP_Text tarjetaTitulo;
-        [SerializeField] TMP_Text tarjetaDescripcion;
-        [SerializeField] TMP_Text tarjetaDato1;
-        [SerializeField] TMP_Text tarjetaDato2;
-        [SerializeField] TMP_Text tarjetaDato3;
-        [SerializeField] TMP_Text ayudaTitulo;
-        [SerializeField] TMP_Text ayudaContenido;
-        [SerializeField] TMP_Text etiquetaVolver;
-        [SerializeField] TMP_Text pie;
-        [SerializeField] TMP_Text aviso;
-        [SerializeField] TMP_Text[] textos;
+        [Header("Escena destino")]
+        [SerializeField] private string gameplaySceneName = "QCXR_MainScene";
+        [SerializeField] private float loadDelay = 0.35f;
 
-        [SerializeField] Button iniciar;
-        [SerializeField] Button comoJugar;
-        [SerializeField] Button salir;
-        [SerializeField] Button volver;
-        [SerializeField] GameObject pantallaAyuda;
-        [SerializeField] Transform menuEnElMundo;
-        [SerializeField] float distanciaAlJugador = 2.25f;
-        [SerializeField] string nombreEscenaJuego = "QCXR_MainScene";
-        [SerializeField] Image[] fondos;
-        [SerializeField] Image[] superficies;
-        [SerializeField] Image[] acentos;
-        [SerializeField] Image imagenBotonPrincipal;
+        [Header("Feedback visual")]
+        [SerializeField] private TMP_Text statusText;
+        [SerializeField] private string idleStatus = "ESTACIÓN PREPARADA";
+        [SerializeField] private string loadingStatus = "INICIANDO INSPECCIÓN...";
 
-        void Awake()
+        [Header("Rig / locomoción")]
+        [SerializeField] private Transform xrOriginRoot;
+        [SerializeField] private bool disableLocomotionWhileInMenu = true;
+
+        private bool isLoading;
+
+        private void Awake()
         {
-            AplicarContenido();
-            if (iniciar) iniciar.onClick.AddListener(IniciarInspeccion);
-            if (comoJugar) comoJugar.onClick.AddListener(MostrarInstrucciones);
-            if (volver) volver.onClick.AddListener(VolverAlMenu);
-            if (salir) salir.onClick.AddListener(Salir);
-            if (pantallaAyuda) pantallaAyuda.SetActive(false);
-            if (aviso) aviso.text = string.Empty;
+            if (startButton != null) startButton.onClick.AddListener(HandleStartClicked);
+            if (exitButton != null) exitButton.onClick.AddListener(HandleExitClicked);
         }
 
-        void Start()
+        private void Start()
         {
-            // Se ubica UNA vez al entrar. No persigue la cabeza del jugador en VR.
-            Camera cam = Camera.main;
-            if (!menuEnElMundo || !cam) return;
-            Vector3 direccion = Vector3.ProjectOnPlane(cam.transform.forward, Vector3.up).normalized;
-            if (direccion.sqrMagnitude < 0.01f) direccion = Vector3.forward;
-            menuEnElMundo.position = cam.transform.position + direccion * distanciaAlJugador;
-            menuEnElMundo.rotation = Quaternion.LookRotation(-direccion, Vector3.up);
+            if (statusText != null) statusText.text = idleStatus;
+            if (disableLocomotionWhileInMenu) DisableLocomotionProviders();
         }
 
-        void Update()
+        private void OnDestroy()
         {
-#if UNITY_EDITOR
-            // Atajo opcional para probar sin visor, incluso si falta el click XR.
-            Keyboard teclado = Keyboard.current;
-            if (teclado == null) return;
-            if (teclado.escapeKey.wasPressedThisFrame && pantallaAyuda && pantallaAyuda.activeSelf) VolverAlMenu();
-            else if (teclado.hKey.wasPressedThisFrame) MostrarInstrucciones();
-            else if (teclado.enterKey.wasPressedThisFrame && (!pantallaAyuda || !pantallaAyuda.activeSelf)) IniciarInspeccion();
-#endif
+            if (startButton != null) startButton.onClick.RemoveListener(HandleStartClicked);
+            if (exitButton != null) exitButton.onClick.RemoveListener(HandleExitClicked);
         }
 
-        public void IniciarInspeccion()
+        public void HandleStartClicked()
         {
-            if (!Application.CanStreamedLevelBeLoaded(nombreEscenaJuego))
-            {
-                if (aviso) aviso.text = "No se encontró QCXR_MainScene en Build Profiles > Scene List.";
-                Debug.LogError("QCXR Menú: la escena '" + nombreEscenaJuego + "' no está incluida en la compilación.");
-                return;
-            }
-            SceneManager.LoadScene(nombreEscenaJuego);
+            if (!isLoading)
+                StartCoroutine(LoadGameplayRoutine());
         }
 
-        public void MostrarInstrucciones()
-        {
-            if (pantallaAyuda) pantallaAyuda.SetActive(true);
-        }
-
-        public void VolverAlMenu()
-        {
-            if (pantallaAyuda) pantallaAyuda.SetActive(false);
-        }
-
-        public void Salir()
+        public void HandleExitClicked()
         {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
@@ -109,46 +64,55 @@ namespace QCXR
 #endif
         }
 
-        [ContextMenu("Aplicar textos, fuente y paleta")]
-        public void AplicarContenido()
+        private IEnumerator LoadGameplayRoutine()
         {
-            if (!contenido) return;
-            Set(marca, contenido.marca);
-            Set(titulo, contenido.titulo);
-            Set(descripcion, contenido.descripcion);
-            Set(etiquetaInicio, contenido.etiquetaPrincipal);
-            Set(etiquetaAyuda, contenido.etiquetaTutorial);
-            Set(etiquetaSalida, contenido.etiquetaSalir);
-            Set(etiquetaEstado, contenido.etiquetaEstado);
-            Set(tarjetaTitulo, contenido.tarjetaTitulo);
-            Set(tarjetaDescripcion, contenido.tarjetaDescripcion);
-            Set(tarjetaDato1, contenido.tarjetaDato1);
-            Set(tarjetaDato2, contenido.tarjetaDato2);
-            Set(tarjetaDato3, contenido.tarjetaDato3);
-            Set(ayudaTitulo, contenido.instruccionesTitulo);
-            Set(ayudaContenido, contenido.instrucciones);
-            Set(etiquetaVolver, contenido.etiquetaVolver);
-            Set(pie, contenido.pie);
+            isLoading = true;
+            if (statusText != null) statusText.text = loadingStatus;
 
-            if (textos != null)
-                foreach (TMP_Text t in textos)
-                {
-                    if (!t) continue;
-                    if (contenido.fuentePersonalizada) t.font = contenido.fuentePersonalizada;
-                }
+            yield return new WaitForSeconds(loadDelay);
 
-            Paint(fondos, contenido.fondo);
-            Paint(superficies, contenido.superficie);
-            Paint(acentos, contenido.acento);
-            if (imagenBotonPrincipal) imagenBotonPrincipal.color = contenido.botonPrincipal;
-            if (titulo) titulo.color = contenido.textoPrincipal;
+            if (string.IsNullOrWhiteSpace(gameplaySceneName))
+            {
+                Debug.LogError("[QCXR Menu] No se definió la escena de juego.");
+                if (statusText != null) statusText.text = idleStatus;
+                isLoading = false;
+                yield break;
+            }
+
+            SceneManager.LoadScene(gameplaySceneName, LoadSceneMode.Single);
         }
 
-        static void Set(TMP_Text target, string value) { if (target) target.text = value; }
-        static void Paint(Image[] group, Color color)
+        private void DisableLocomotionProviders()
         {
-            if (group == null) return;
-            foreach (Image image in group) if (image) image.color = color;
+            Transform root = xrOriginRoot != null ? xrOriginRoot : FindXROriginLikeRoot();
+            if (root == null) return;
+
+            var behaviours = root.GetComponentsInChildren<MonoBehaviour>(true);
+            foreach (var behaviour in behaviours)
+            {
+                if (behaviour == null || behaviour == this) continue;
+
+                string typeName = behaviour.GetType().Name;
+                if (typeName.Contains("MoveProvider") ||
+                    typeName.Contains("TurnProvider") ||
+                    typeName.Contains("TeleportationProvider") ||
+                    typeName.Contains("LocomotionMediator"))
+                {
+                    behaviour.enabled = false;
+                }
+            }
+        }
+
+        private Transform FindXROriginLikeRoot()
+        {
+            foreach (var t in FindObjectsByType<Transform>(FindObjectsSortMode.None))
+            {
+                if (t == null) continue;
+                string name = t.name.ToLowerInvariant();
+                if (name.Contains("xr origin") || name == "xrorigin" || name == "xr rig")
+                    return t;
+            }
+            return null;
         }
     }
 }
